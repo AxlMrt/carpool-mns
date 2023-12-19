@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carpool.Domain", "Carpool.Domain\Carpool.Domain.csproj", "{2405ED9E-2A69-4E1E-A65B-AEF5393DAA80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carpool.Application", "Carpool.Application\Carpool.Application.csproj", "{226AF82D-075B-428C-B311-608CF753E23E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carpool.Infrastructure", "Carpool.Infrastructure\Carpool.Infrastructure.csproj", "{35D0F659-0758-4247-927E-A77BD3E698E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carpool.API", "Carpool.API\Carpool.API.csproj", "{9788A59C-D25B-4FD6-BD83-2624727D1834}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2405ED9E-2A69-4E1E-A65B-AEF5393DAA80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2405ED9E-2A69-4E1E-A65B-AEF5393DAA80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2405ED9E-2A69-4E1E-A65B-AEF5393DAA80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2405ED9E-2A69-4E1E-A65B-AEF5393DAA80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226AF82D-075B-428C-B311-608CF753E23E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226AF82D-075B-428C-B311-608CF753E23E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226AF82D-075B-428C-B311-608CF753E23E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226AF82D-075B-428C-B311-608CF753E23E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35D0F659-0758-4247-927E-A77BD3E698E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35D0F659-0758-4247-927E-A77BD3E698E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35D0F659-0758-4247-927E-A77BD3E698E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35D0F659-0758-4247-927E-A77BD3E698E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9788A59C-D25B-4FD6-BD83-2624727D1834}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9788A59C-D25B-4FD6-BD83-2624727D1834}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9788A59C-D25B-4FD6-BD83-2624727D1834}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9788A59C-D25B-4FD6-BD83-2624727D1834}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
