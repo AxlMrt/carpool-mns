@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Carpool.Domain\Carpool.Domain.csproj" />
+    <ProjectReference Include="..\Carpool.Infrastructure\Carpool.Infrastructure.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -1,11 +1,28 @@
+using API.Middleware;
+using Carpool.Application.Services;
+using Carpool.Infrastructure.Context;
+using Carpool.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers();
+builder.Services.AddCors();
 builder.Services.AddSwaggerGen();
 
+// Intégration de la couche d'infrastructure
+builder.Services.AddDbContext<CarpoolDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    b => b.MigrationsAssembly(typeof(CarpoolDbContext).Assembly.FullName)));
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<UserService>();
+
 var app = builder.Build();
+app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -14,31 +31,27 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
+app.UseCors(opt =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:5173");
+});
 
-app.MapGet("/weatherforecast", () =>
+using (var scope = app.Services.CreateScope())
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<CarpoolDbContext>();
+        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Connexion à la base de données établie avec succès !");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Erreur de connexion à la base de données : {ex.Message}");
+    }
 }
+
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
