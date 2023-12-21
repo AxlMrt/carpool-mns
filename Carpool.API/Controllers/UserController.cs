@@ -1,14 +1,14 @@
-using Carpool.Application.Services;
 using Carpool.Domain.Entities;
+using Carpool.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carpool.API.Controllers
 {
     public class UserController : BaseApiController
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public UserController(UserService userService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }
