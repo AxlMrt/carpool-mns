@@ -23,9 +23,9 @@ namespace Carpool.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(Guid userId)
+        public async Task<IActionResult> GetUser(Guid id)
         {
-            User user = await _userService.GetUserByIdAsync(userId);
+            User user = await _userService.GetUserByIdAsync(id);
             if (user is null)
                 return NotFound();
 
@@ -42,12 +42,10 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid userId, User user)
+        public async Task<IActionResult> UpdateUser(Guid id, User user)
         {
-            if (userId != user.Id)
-                return BadRequest();
             
-            User existingUser = await _userService.GetUserByIdAsync(userId);
+            User existingUser = await _userService.GetUserByIdAsync(id);
 
             if (existingUser is null) return NotFound("User not found");
 
@@ -59,9 +57,9 @@ namespace Carpool.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid userId)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
-            await _userService.DeleteUserAsync(userId);
+            await _userService.DeleteUserAsync(id);
             return NoContent();
         }
     }
