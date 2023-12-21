@@ -1,10 +1,11 @@
 using Carpool.Domain.Entities;
+using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carpool.Infrastructure.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly CarpoolDbContext _dbContext;
 
