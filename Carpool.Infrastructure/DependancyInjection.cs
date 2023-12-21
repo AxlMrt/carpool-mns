@@ -1,12 +1,13 @@
-﻿using Carpool.Infrastructure.Context;
+﻿using Carpool.Domain.Interfaces;
+using Carpool.Infrastructure.Context;
 using Carpool.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Covoiturage.Infrastructure
+namespace Carpool.Infrastructure.DependancyInjection
 {
-    public static class DependencyInjection
+    public static class DependancyInjection
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
@@ -14,7 +15,7 @@ namespace Covoiturage.Infrastructure
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(CarpoolDbContext).Assembly.FullName)));
 
-            services.AddScoped<UserRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }
