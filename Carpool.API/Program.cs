@@ -18,8 +18,11 @@ builder.Services.AddSwaggerGen();
 // Intégration de la couche d'infrastructure
 builder.Services.AddDbContext<CarpoolDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
 
 builder.Services.AddInfrastructure(builder.Configuration);

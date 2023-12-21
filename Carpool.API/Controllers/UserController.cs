@@ -32,18 +32,11 @@ namespace Carpool.API.Controllers
             return Ok(user);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(User user)
-        {
-            user.Password = _passwordHasherService.HashPassword(user.Password);
-
-            await _userService.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, User user)
         {
+            if (id != user.Id)
+                return BadRequest();
             
             User existingUser = await _userService.GetUserByIdAsync(id);
 

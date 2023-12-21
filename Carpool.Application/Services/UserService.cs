@@ -22,11 +22,6 @@ namespace Carpool.Application.Services
             return await _userRepository.GetUserByIdAsync(userId);
         }
 
-        public async Task CreateUserAsync(User user)
-        {
-            await _userRepository.CreateUserAsync(user);
-        }
-
         public async Task UpdateUserAsync(User user)
         {
             await _userRepository.UpdateUserAsync(user);
