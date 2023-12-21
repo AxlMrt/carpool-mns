@@ -1,13 +1,13 @@
 using Carpool.Domain.Entities;
-using Carpool.Infrastructure.Repositories;
+using Carpool.Domain.Interfaces;
 
 namespace Carpool.Application.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
-        private readonly UserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
 
-        public UserService(UserRepository userRepository)
+        public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }

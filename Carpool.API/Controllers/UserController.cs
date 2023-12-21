@@ -1,16 +1,18 @@
-using Carpool.Application.Services;
 using Carpool.Domain.Entities;
+using Carpool.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carpool.API.Controllers
 {
     public class UserController : BaseApiController
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
+        private readonly IPasswordHasherService _passwordHasherService;
 
-        public UserController(UserService userService)
+        public UserController(IUserService userService, IPasswordHasherService passwordHasherService)
         {
             _userService = userService;
+            _passwordHasherService = passwordHasherService;
         }
 
         [HttpGet]
@@ -21,9 +23,9 @@ namespace Carpool.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(Guid userId)
+        public async Task<IActionResult> GetUser(Guid id)
         {
-            User user = await _userService.GetUserByIdAsync(userId);
+            User user = await _userService.GetUserByIdAsync(id);
             if (user is null)
                 return NotFound();
 
@@ -33,24 +35,31 @@ namespace Carpool.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(User user)
         {
+            user.Password = _passwordHasherService.HashPassword(user.Password);
+
             await _userService.CreateUserAsync(user);
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid userId, User user)
+        public async Task<IActionResult> UpdateUser(Guid id, User user)
         {
-            if (userId != user.Id)
-                return BadRequest();
+            
+            User existingUser = await _userService.GetUserByIdAsync(id);
+
+            if (existingUser is null) return NotFound("User not found");
+
+            if (existingUser.Password != user.Password)
+                user.Password = _passwordHasherService.HashPassword(user.Password);
             
             await _userService.UpdateUserAsync(user);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid userId)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
-            await _userService.DeleteUserAsync(userId);
+            await _userService.DeleteUserAsync(id);
             return NoContent();
         }
     }

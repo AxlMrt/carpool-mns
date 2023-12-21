@@ -1,9 +1,11 @@
 using API.Middleware;
 using Carpool.Application.Services;
+using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Context;
 using Carpool.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Carpool.Infrastructure.DependancyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +17,12 @@ builder.Services.AddSwaggerGen();
 
 // Intégration de la couche d'infrastructure
 builder.Services.AddDbContext<CarpoolDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly(typeof(CarpoolDbContext).Assembly.FullName)));
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<UserService>();
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
+
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 app.UseHttpsRedirection();
@@ -42,7 +46,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var dbContext = services.GetRequiredService<CarpoolDbContext>();
-        dbContext.Database.EnsureCreated();
+        dbContext.Database.Migrate();
         Console.WriteLine("Connexion à la base de données établie avec succès !");
     }
     catch (Exception ex)
