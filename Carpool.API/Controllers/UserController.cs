@@ -7,10 +7,12 @@ namespace Carpool.API.Controllers
     public class UserController : BaseApiController
     {
         private readonly IUserService _userService;
+        private readonly IPasswordHasherService _passwordHasherService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IPasswordHasherService passwordHasherService)
         {
             _userService = userService;
+            _passwordHasherService = passwordHasherService;
         }
 
         [HttpGet]
@@ -33,6 +35,8 @@ namespace Carpool.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(User user)
         {
+            user.Password = _passwordHasherService.HashPassword(user.Password);
+
             await _userService.CreateUserAsync(user);
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
@@ -42,6 +46,13 @@ namespace Carpool.API.Controllers
         {
             if (userId != user.Id)
                 return BadRequest();
+            
+            User existingUser = await _userService.GetUserByIdAsync(userId);
+
+            if (existingUser is null) return NotFound("User not found");
+
+            if (existingUser.Password != user.Password)
+                user.Password = _passwordHasherService.HashPassword(user.Password);
             
             await _userService.UpdateUserAsync(user);
             return NoContent();
