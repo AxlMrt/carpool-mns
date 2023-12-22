@@ -22,7 +22,6 @@ namespace Carpool.Tests.Services
             Assert.Equal(expectedUser.FirstName, user.FirstName); 
             Assert.Equal(expectedUser.LastName, user.LastName);
             Assert.Equal(expectedUser.Email, user.Email);
-        
         }
     }
 }

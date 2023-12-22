@@ -8,6 +8,26 @@ namespace Carpool.Tests.Controllers
     public class UserControllerTests
     {
         [Fact]
+        public async Task GetAllUsers_Returns_OkResult_WithUsers()
+        {
+            var mockUserService = new Mock<IUserService>();
+            var expectedUsers = new List<User>
+            {
+                TestDataGenerator.GenerateRandomUser(),
+                TestDataGenerator.GenerateRandomUser(),
+                TestDataGenerator.GenerateRandomUser()
+            };
+            mockUserService.Setup(repo => repo.GetAllUsersAsync()).ReturnsAsync(expectedUsers);
+
+            var userController = new UserController(mockUserService.Object);
+            IActionResult result = await userController.GetAllUsers();
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var users = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value);
+            Assert.Equal(expectedUsers.Count, users.Count());
+        }
+
+        [Fact]
         public async Task GetUser_Returns_OkResult_WhenValidIdProvided()
         {
             Guid userId = Guid.NewGuid(); 
