@@ -1,10 +1,11 @@
 using API.Middleware;
 using Carpool.Application.Services;
-using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Context;
 using Carpool.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Carpool.Infrastructure.DependancyInjection;
+using Carpool.Application.Interfaces;
+using Carpool.Infrastructure.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);

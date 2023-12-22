@@ -1,5 +1,6 @@
+using Carpool.Application.Exceptions;
+using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
-using Carpool.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carpool.API.Controllers
@@ -7,53 +8,81 @@ namespace Carpool.API.Controllers
     public class UserController : BaseApiController
     {
         private readonly IUserService _userService;
-        private readonly IPasswordHasherService _passwordHasherService;
 
-        public UserController(IUserService userService, IPasswordHasherService passwordHasherService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _passwordHasherService = passwordHasherService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            IEnumerable<User> users = await _userService.GetAllUsersAsync();
-            return Ok(users);
+            try
+            {
+                IEnumerable<User> users = await _userService.GetAllUsersAsync();
+                return Ok(users);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while fetching the user.");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(Guid id)
         {
-            User user = await _userService.GetUserByIdAsync(id);
-            if (user is null)
-                return NotFound();
-
-            return Ok(user);
+            try
+            {
+                User user = await _userService.GetUserByIdAsync(id);
+                return Ok(user);
+            }
+            catch(UserNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while fetching the user.");
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, User user)
         {
-            if (id != user.Id)
-                return BadRequest();
-            
-            User existingUser = await _userService.GetUserByIdAsync(id);
-
-            if (existingUser is null) return NotFound("User not found");
-
-            if (existingUser.Password != user.Password)
-                user.Password = _passwordHasherService.HashPassword(user.Password);
-            
-            await _userService.UpdateUserAsync(user);
-            return NoContent();
+            try
+            {
+                if (id != user.Id)
+                    return BadRequest();
+                
+                await _userService.UpdateUserAsync(user);
+                return NoContent();
+            }
+            catch(UserNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while updating the user.");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            await _userService.DeleteUserAsync(id);
-            return NoContent();
+            try
+            {
+                await _userService.DeleteUserAsync(id);
+                return NoContent();
+            }
+            catch (UserNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while removing the user.");
+            }
         }
     }
 }

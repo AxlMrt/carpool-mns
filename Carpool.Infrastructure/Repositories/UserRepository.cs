@@ -1,5 +1,5 @@
 using Carpool.Domain.Entities;
-using Carpool.Domain.Interfaces;
+using Carpool.Infrastructure.Interfaces;
 using Carpool.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,12 +22,6 @@ namespace Carpool.Infrastructure.Repositories
         public async Task<User> GetUserByIdAsync(Guid userId)
         {
             return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        }
-
-        public async Task CreateUserAsync(User user)
-        {
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task UpdateUserAsync(User user)

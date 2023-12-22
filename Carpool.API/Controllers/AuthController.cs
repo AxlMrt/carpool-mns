@@ -1,5 +1,5 @@
 using Carpool.API.DTOs;
-using Carpool.Domain.Interfaces;
+using Carpool.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carpool.API.Controllers
@@ -7,12 +7,10 @@ namespace Carpool.API.Controllers
     public class AuthController : BaseApiController
     {
         private readonly IAuthService _authService;
-        private readonly IPasswordHasherService _passwordHasherService;
 
-        public AuthController(IAuthService authService, IPasswordHasherService passwordHasherService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _passwordHasherService = passwordHasherService;
         }
 
         [HttpPost]
@@ -24,8 +22,6 @@ namespace Carpool.API.Controllers
                 {
                     return BadRequest("Invalid registration data.");
                 }
-
-                user.Password = _passwordHasherService.HashPassword(user.Password);
 
                 await _authService.RegisterUserAsync(user);
 

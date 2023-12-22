@@ -1,4 +1,4 @@
-namespace Carpool.Domain.Interfaces
+namespace Carpool.Application.Interfaces
 {
     public interface IPasswordHasherService
     {

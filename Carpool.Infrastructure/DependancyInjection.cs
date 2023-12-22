@@ -1,5 +1,5 @@
-﻿using Carpool.Domain.Interfaces;
-using Carpool.Infrastructure.Context;
+﻿using Carpool.Infrastructure.Context;
+using Carpool.Infrastructure.Interfaces;
 using Carpool.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

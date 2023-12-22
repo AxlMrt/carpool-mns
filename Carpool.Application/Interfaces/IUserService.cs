@@ -1,6 +1,6 @@
 using Carpool.Domain.Entities;
 
-namespace Carpool.Domain.Interfaces
+namespace Carpool.Application.Interfaces
 {
     public interface IUserService
     {

@@ -1,6 +1,6 @@
 using Carpool.API.DTOs;
 
-namespace Carpool.Domain.Interfaces
+namespace Carpool.Infrastructure.Interfaces
 {
     public interface IAuthRepository
     {
