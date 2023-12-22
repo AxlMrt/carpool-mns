@@ -28,6 +28,19 @@ namespace Carpool.Tests.Controllers
         }
 
         [Fact]
+        public async Task GetAllUsers_Returns_500_WhenServiceThrowsException()
+        {
+            var mockUserService = new Mock<IUserService>();
+            mockUserService.Setup(repo => repo.GetAllUsersAsync()).ThrowsAsync(new Exception("Some error occurred"));
+
+            var userController = new UserController(mockUserService.Object);
+            IActionResult result = await userController.GetAllUsers();
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, objectResult.StatusCode);
+        }
+
+        [Fact]
         public async Task GetUser_Returns_OkResult_WhenValidIdProvided()
         {
             Guid userId = Guid.NewGuid(); 
