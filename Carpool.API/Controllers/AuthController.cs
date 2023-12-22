@@ -1,4 +1,4 @@
-using Carpool.API.DTOs;
+using Carpool.Domain.DTOs;
 using Carpool.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +27,7 @@ namespace Carpool.API.Controllers
 
                 return Ok("User registered successfully.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "An error occurred while registering the user.");
             }

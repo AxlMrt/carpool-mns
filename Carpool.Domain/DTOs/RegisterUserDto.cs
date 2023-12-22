@@ -1,4 +1,4 @@
-namespace Carpool.API.DTOs
+namespace Carpool.Domain.DTOs
 {
     public class RegisterUserDto
     {

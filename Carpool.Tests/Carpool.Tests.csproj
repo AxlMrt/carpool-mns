@@ -28,6 +28,7 @@
     <ProjectReference Include="..\Carpool.Domain\Carpool.Domain.csproj" />
     <ProjectReference Include="..\Carpool.Application\Carpool.Application.csproj" />
     <ProjectReference Include="..\Carpool.Infrastructure\Carpool.Infrastructure.csproj" />
+    <ProjectReference Include="..\Carpool.API\Carpool.API.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-using Carpool.API.DTOs;
+using Carpool.Domain.DTOs;
 using Carpool.Application.Interfaces;
 using Carpool.Infrastructure.Interfaces;
 
