@@ -1,7 +1,3 @@
-using Carpool.Application.Interfaces;
-using Carpool.Infrastructure.Interfaces;
-using Carpool.Tests.Utilities;
-
 namespace Carpool.Tests.Services
 {
     public class UserServiceTests

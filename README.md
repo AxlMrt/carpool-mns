@@ -19,10 +19,10 @@ Before getting started, make sure you have the following tools installed:
 - Ensure that the PostgreSQL service is running on your machine.
 - Use the command line or a graphical tool to connect to PostgreSQL using the superuser or a role with database creation rights.
 ```bash
-sudo -i -u postgres
+  sudo -i -u postgres
 ```
 ```bash
-psql
+  psql
 ```
 
 ### Creating a database for your application
@@ -30,14 +30,14 @@ psql
 1. Connect to PostgreSQL.
 2. Create a database for your application:
 ```sql
-CREATE DATABASE YourDatabaseName;
+  CREATE DATABASE YourDatabaseName;
 ```
 
 ### Creating a dedicated user for the database application
 - For improved security, create a dedicated user for your application and grant appropriate privileges to the database you just created:
 ```sql
-CREATE USER YourUserName WITH PASSWORD 'YourPassword';
-GRANT ALL PRIVILEGES ON DATABASE YourDatabaseName TO YourUserName;
+  CREATE USER YourUserName WITH PASSWORD 'YourPassword';
+  GRANT ALL PRIVILEGES ON DATABASE YourDatabaseName TO YourUserName;
 ```
 
 ## API Setup
@@ -60,19 +60,63 @@ Before running the API, make sure to set up the environment by creating an `apps
 - Database services were added in Program.cs.
 
 ### Running the API
-To start the API, execute the following command in the terminal at the root of the project:
+To start the API, execute the following command in the terminal at the root of the API folder:
 ```bash
-dotnet run
+  dotnet run
 ```
-The API will be accessible at https://localhost:5011 by default.
+The API will be accessible at `https://localhost:5011` by default.
 
 ### Available Endpoints
-- `/users`: Get all registered users.
+
+UserController
+- `GET /users`: Retrieve all registered users.
+  - Example: `GET https://localhost:5011/users`
+
+- `GET /users/{id}`: Retrieve a user by ID.
+  - Example: `GET https://localhost:5011/users/123`
+
+- `POST /users`: Create a new user.
+  - Example: `POST https://localhost:5011/users`
+
+- `PUT /users/{id}`: Update a user by ID.
+  - Example: `PUT https://localhost:5011/users/123`
+
+- `DELETE /users/{id}`: Delete a user by ID.
+  - Example: `DELETE https://localhost:5011/users/123`
+
+AuthController
+
+- `POST /auth/register`: Register a new user.
+  - Example: `POST https://localhost:5011/auth/register`
+
+- `POST /auth/login`: Log in a user.
+  - Example: `POST https://localhost:5011/auth/login`
+
+- `POST /auth/logout`: Log out a user.
+  - Example: `POST https://localhost:5011/auth/logout`
 
 ### Middlewares
 #### Exception Handling Middleware
 
 The Exception Handling Middleware intercepts exceptions that occur during the processing of HTTP requests. It logs the details of these exceptions and returns a JSON response containing appropriate error information to the API clients. This middleware facilitates consistent error management within the application.
+
+## Tests
+### Running the tests
+
+1. Open a command line at the root of the test folder.
+2. Run the following command to execute all tests:
+```bash
+  dotnet test
+```
+
+### Test Structure
+Tests are organized according to the following structure:
+
+- **Carpool.Tests**
+  - **Controllers**: Tests for API controllers.
+  - **Services**: Tests for business logic services.
+  - **Repositories**: Tests for data access repositories.
+  - **Utilities**: Utility/helper classes or functions for tests.
 
 
 ## Contributions
