@@ -24,7 +24,7 @@ namespace Carpool.API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while fetching the user.");
+                return StatusCode(500, "An error occurred while fetching the users list.");
             }
         }
 
