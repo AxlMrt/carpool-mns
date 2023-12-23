@@ -62,6 +62,22 @@ namespace Carpool.Tests.Controllers
         }
 
         [Fact]
+        public async Task GetUser_Returns_BadRequest_WhenBadRequest()
+        {
+            Guid userId = Guid.NewGuid(); 
+            var invalidUserId = Guid.Empty;
+
+            var mockUserService = new Mock<IUserService>();
+            var userController = new UserController(mockUserService.Object);
+
+            IActionResult result = await userController.GetUser(invalidUserId);
+
+            var objectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Invalid user ID.", objectResult.Value);
+            Assert.Equal(400, objectResult.StatusCode);
+        }
+
+        [Fact]
         public async Task GetUser_Returns_404_WhenUserNotFound()
         {
             Guid nonExistentUserId = Guid.NewGuid();
@@ -118,7 +134,7 @@ namespace Carpool.Tests.Controllers
 
             var userController = new UserController(mockUserService.Object);
             IActionResult result = await userController.UpdateUser(userId, invalidUser);
-            var objectResult = Assert.IsType<BadRequestResult>(result);
+            var objectResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, objectResult.StatusCode);
         }
 
@@ -151,6 +167,22 @@ namespace Carpool.Tests.Controllers
 
             var objectResult = Assert.IsType<NoContentResult>(result);
             Assert.Equal(204, objectResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteUser_Returns_BadRequest_WhenBadRequest()
+        {
+            Guid userId = Guid.NewGuid();
+            var invalidUserId = Guid.Empty;
+
+            var mockUserService = new Mock<IUserService>();
+            var userController = new UserController(mockUserService.Object);
+
+            IActionResult result = await userController.DeleteUser(invalidUserId);
+
+            var objectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Invalid user ID.", objectResult.Value);
+            Assert.Equal(400, objectResult.StatusCode);
         }
 
         [Fact]
