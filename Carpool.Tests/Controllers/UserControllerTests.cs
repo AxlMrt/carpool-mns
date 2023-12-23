@@ -37,6 +37,7 @@ namespace Carpool.Tests.Controllers
             IActionResult result = await userController.GetAllUsers();
 
             var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal("An error occurred while fetching the users list.", objectResult.Value);
             Assert.Equal(500, objectResult.StatusCode);
         }
 
@@ -89,6 +90,7 @@ namespace Carpool.Tests.Controllers
             IActionResult result = await userController.GetUser(userId);
 
             var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal("An error occurred while fetching the user.", objectResult.Value);
             Assert.Equal(500, objectResult.StatusCode);
         }
     }
