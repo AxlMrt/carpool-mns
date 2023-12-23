@@ -168,5 +168,20 @@ namespace Carpool.Tests.Controllers
             Assert.Equal("User not found", objectResult.Value);
             Assert.Equal(404, objectResult.StatusCode);
         }
+
+        [Fact]
+        public async Task DeleteUser_Returns_500_OnInternalError()
+        {
+            Guid userId = Guid.NewGuid();
+            var mockUserService = new Mock<IUserService>();
+            mockUserService.Setup(repo => repo.DeleteUserAsync(userId)).ThrowsAsync(new Exception("Internal server error"));
+
+            var userController = new UserController(mockUserService.Object);
+            IActionResult result = await userController.DeleteUser(userId);
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal("An error occurred while removing the user.", objectResult.Value);
+            Assert.Equal(500, objectResult.StatusCode);
+        }
     }
 }
