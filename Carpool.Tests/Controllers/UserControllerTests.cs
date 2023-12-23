@@ -122,5 +122,21 @@ namespace Carpool.Tests.Controllers
             var objectResult = Assert.IsType<BadRequestResult>(result);
             Assert.Equal(400, objectResult.StatusCode);
         }
+
+        [Fact]
+        public async Task UpdateUser_Returns_404_WhenUserNotFound()
+        {
+            User nonExistingUser = TestDataGenerator.GenerateRandomUser();
+            var mockUserService = new Mock<IUserService>();
+            mockUserService.Setup(repo => repo.UpdateUserAsync(nonExistingUser)).ThrowsAsync(new UserNotFoundException("User not found"));
+
+            var userController = new UserController(mockUserService.Object);
+
+            IActionResult result = await userController.UpdateUser(nonExistingUser.Id, nonExistingUser);
+
+            var objectResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("User not found", objectResult.Value);
+            Assert.Equal(404, objectResult.StatusCode);
+        }
     }
 }
