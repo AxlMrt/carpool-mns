@@ -1,4 +1,5 @@
 using Carpool.API.Controllers;
+using Carpool.Application.Exceptions;
 using Carpool.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,9 +61,25 @@ namespace Carpool.Tests.Controllers
         }
 
         [Fact]
+        public async Task GetUser_Returns_404_WhenUserNotFound()
+        {
+            Guid nonExistentUserId = Guid.NewGuid();
+            var mockUserService = new Mock<IUserService>();
+            mockUserService.Setup(repo => repo.GetUserByIdAsync(nonExistentUserId)).ThrowsAsync(new UserNotFoundException("User not found"));
+
+            var userController = new UserController(mockUserService.Object);
+
+            IActionResult result = await userController.GetUser(nonExistentUserId);
+
+            var objectResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("User not found", objectResult.Value);
+            Assert.Equal(404, objectResult.StatusCode);
+        }
+
+        [Fact]
         public async Task GetUser_Returns_500_OnInternalError()
         {
-            var userId = Guid.NewGuid();
+            Guid userId = Guid.NewGuid();
             var mockUserService = new Mock<IUserService>();
             
             mockUserService.Setup(repo => repo.GetUserByIdAsync(userId)).ThrowsAsync(new Exception("Internal server error"));
