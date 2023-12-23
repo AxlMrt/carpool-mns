@@ -9,6 +9,13 @@ Before getting started, make sure you have the following tools installed:
 - [.NET SDK](https://dotnet.microsoft.com/download)
 - [PostgreSQL](https://www.postgresql.org/download/)
 
+## Project Structure Overview
+1. **Carpool.API :** Entry point, handling HTTP requests via controllers defining accessible functionalities.
+2. **Carpool.Application :** The functional core, housing business logic through services orchestrating operations.
+3. **Carpool.Domain :** The kernel, defining entities and value objects representing business concepts.
+4. **Carpool.Infrastructure :** Handling data persistence with concrete implementations of the repositories.
+5. **Carpool.Tests :** Containing unit tests ensuring the reliability of each component of the application.
+
 ## Setting up PostgreSQL
 ### Installing PostgreSQL
 
@@ -46,10 +53,16 @@ Before getting started, make sure you have the following tools installed:
 3. Open the project in your preferred code editor.
 
 ### Configuration in your ASP.NET core application
-Before running the API, make sure to set up the environment by creating an `appsettings.json` file at the root of the project with the following structure:
+Before running the API, make sure to set up the environment by creating an `appsettings.json` file at the root of the API folder with the following structure:
 
 ```json
 {
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;Port=5432;Database=YourDatabaseName;Username=YourUserName;Password=YourPassword;"
   },
