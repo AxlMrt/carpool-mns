@@ -1,7 +1,6 @@
 using Carpool.API.Controllers;
 using Carpool.Application.Exceptions;
 using Carpool.Domain.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carpool.Tests.Controllers
