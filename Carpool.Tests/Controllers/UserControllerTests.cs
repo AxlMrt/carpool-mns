@@ -1,6 +1,7 @@
 using Carpool.API.Controllers;
 using Carpool.Application.Exceptions;
 using Carpool.Domain.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carpool.Tests.Controllers
@@ -92,6 +93,34 @@ namespace Carpool.Tests.Controllers
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal("An error occurred while fetching the user.", objectResult.Value);
             Assert.Equal(500, objectResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateUser_Returns_NoContent_OnSuccess()
+        {
+            User validUser = TestDataGenerator.GenerateRandomUser();
+            var mockUserService = new Mock<IUserService>();
+            mockUserService.Setup(repo => repo.UpdateUserAsync(validUser));
+
+            var userController = new UserController(mockUserService.Object);
+
+            IActionResult result = await userController.UpdateUser(validUser.Id, validUser);
+
+            var objectResult = Assert.IsType<NoContentResult>(result);
+            Assert.Equal(204, objectResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateUser_Returns_400_WhenBadRequest()
+        {
+            Guid userId = Guid.NewGuid();
+            User invalidUser = new User();
+            var mockUserService = new Mock<IUserService>();
+
+            var userController = new UserController(mockUserService.Object);
+            IActionResult result = await userController.UpdateUser(userId, invalidUser);
+            var objectResult = Assert.IsType<BadRequestResult>(result);
+            Assert.Equal(400, objectResult.StatusCode);
         }
     }
 }
