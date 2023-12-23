@@ -88,9 +88,6 @@ UserController
 - `GET /users/{id}`: Retrieve a user by ID.
   - Example: `GET https://localhost:5011/users/123`
 
-- `POST /users`: Create a new user.
-  - Example: `POST https://localhost:5011/users`
-
 - `PUT /users/{id}`: Update a user by ID.
   - Example: `PUT https://localhost:5011/users/123`
 
