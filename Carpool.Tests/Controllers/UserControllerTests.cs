@@ -1,7 +1,6 @@
 using Carpool.API.Controllers;
 using Carpool.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 
 namespace Carpool.Tests.Controllers
 {
@@ -28,10 +27,10 @@ namespace Carpool.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetAllUsers_Returns_500_WhenServiceThrowsException()
+        public async Task GetAllUsers_Returns_500_OnInternalError()
         {
             var mockUserService = new Mock<IUserService>();
-            mockUserService.Setup(repo => repo.GetAllUsersAsync()).ThrowsAsync(new Exception("Some error occurred"));
+            mockUserService.Setup(repo => repo.GetAllUsersAsync()).ThrowsAsync(new Exception("Internal server error"));
 
             var userController = new UserController(mockUserService.Object);
             IActionResult result = await userController.GetAllUsers();
@@ -58,6 +57,22 @@ namespace Carpool.Tests.Controllers
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
             Assert.Equal(200, okResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetUser_Returns_500_OnInternalError()
+        {
+            var userId = Guid.NewGuid();
+            var mockUserService = new Mock<IUserService>();
+            
+            mockUserService.Setup(repo => repo.GetUserByIdAsync(userId)).ThrowsAsync(new Exception("Internal server error"));
+
+            var userController = new UserController(mockUserService.Object);
+
+            IActionResult result = await userController.GetUser(userId);
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, objectResult.StatusCode);
         }
     }
 }
