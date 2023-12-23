@@ -152,5 +152,21 @@ namespace Carpool.Tests.Controllers
             var objectResult = Assert.IsType<NoContentResult>(result);
             Assert.Equal(204, objectResult.StatusCode);
         }
+
+        [Fact]
+        public async Task DeleteUser_Returns_404_WhenUserNotFound()
+        {
+            Guid nonExistentUserId = Guid.NewGuid();
+            var mockUserService = new Mock<IUserService>();
+            mockUserService.Setup(repo => repo.DeleteUserAsync(nonExistentUserId)).ThrowsAsync(new UserNotFoundException("User not found"));
+
+            var userController = new UserController(mockUserService.Object);
+
+            IActionResult result = await userController.DeleteUser(nonExistentUserId);
+
+            var objectResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("User not found", objectResult.Value);
+            Assert.Equal(404, objectResult.StatusCode);
+        }
     }
 }
