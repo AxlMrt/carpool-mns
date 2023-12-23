@@ -33,6 +33,9 @@ namespace Carpool.API.Controllers
         {
             try
             {
+                if (id == Guid.Empty)
+                    return BadRequest("Invalid user ID.");
+
                 User user = await _userService.GetUserByIdAsync(id);
                 return Ok(user);
             }
@@ -52,7 +55,7 @@ namespace Carpool.API.Controllers
             try
             {
                 if (id != user.Id)
-                    return BadRequest();
+                    return BadRequest("IDs does not match.");
                 
                 await _userService.UpdateUserAsync(user);
                 return NoContent();
@@ -72,6 +75,9 @@ namespace Carpool.API.Controllers
         {
             try
             {
+                if (id == Guid.Empty)
+                    return BadRequest("Invalid user ID.");
+
                 await _userService.DeleteUserAsync(id);
                 return NoContent();
             }
