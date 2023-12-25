@@ -20,6 +20,10 @@ namespace Carpool.API.Controllers
             try
             {
                 IEnumerable<User> users = await _userService.GetAllUsersAsync();
+
+                if (users is null || !users.Any())
+                    return NotFound("No users found.");
+
                 return Ok(users);
             }
             catch (Exception)
