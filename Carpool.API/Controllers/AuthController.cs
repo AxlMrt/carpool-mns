@@ -19,9 +19,7 @@ namespace Carpool.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest("Invalid registration data.");
-                }
 
                 await _authService.RegisterUserAsync(user);
 
