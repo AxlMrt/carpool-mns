@@ -28,6 +28,21 @@ namespace Carpool.Tests.Controllers
         }
 
         [Fact]
+        public async Task GetAllUsers_Returns_404_WhenNoUsers()
+        {
+            var mockUserService = new Mock<IUserService>();
+            var emptyUsersList = new List<User>();
+            mockUserService.Setup(repo => repo.GetAllUsersAsync()).ReturnsAsync(emptyUsersList);
+
+            var userController = new UserController(mockUserService.Object);
+
+            IActionResult result = await userController.GetAllUsers();
+
+            var objectResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal(404, objectResult.StatusCode);
+        }
+
+        [Fact]
         public async Task GetAllUsers_Returns_500_OnInternalError()
         {
             var mockUserService = new Mock<IUserService>();
