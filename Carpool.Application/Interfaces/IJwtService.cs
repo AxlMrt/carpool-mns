@@ -4,7 +4,7 @@ namespace Carpool.Application;
 
 public interface IJwtService
 {
-    Task<string> GenerateToken(string userId, string userEmail);
-    Task<ClaimsPrincipal> GetPrincipalFromTokenAsync(string token);
+    Task<string> GenerateTokenAsync(string userId, string userEmail);
+    Task<bool> ValidateTokenAsync(string token);
 
 }
