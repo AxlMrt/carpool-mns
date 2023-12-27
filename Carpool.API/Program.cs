@@ -6,9 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Carpool.Infrastructure.DependancyInjection;
 using Carpool.Application.Interfaces;
 using Carpool.Infrastructure.Interfaces;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Carpool.Application;
 
 
 var builder = WebApplication.CreateBuilder(args);
+var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"]);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -16,15 +21,37 @@ builder.Services.AddControllers();
 builder.Services.AddCors();
 builder.Services.AddSwaggerGen();
 
-// Intégration de la couche d'infrastructure
 builder.Services.AddDbContext<CarpoolDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false; // To change in production
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
+builder.Services.AddScoped<IJwtService>(provider =>
+{
+    var secretKey = builder.Configuration["Jwt:SecretKey"]; // Lecture de la clé secrète depuis la configuration
+    return new JwtService(secretKey);
+});
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -61,5 +88,6 @@ using (var scope = app.Services.CreateScope())
 
 app.UseRouting();
 app.UseAuthorization();
+app.UseAuthentication();
 app.MapControllers();
 app.Run();
