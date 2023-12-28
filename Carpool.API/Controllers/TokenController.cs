@@ -29,11 +29,11 @@ public class TokenController : ControllerBase
         var isValid = await _jwtService.ValidateTokenAsync(token);
         if (isValid)
         {
-            return Ok(new { Valid = true, Message = "Le token est valide." });
+            return Ok(new { Valid = true, Message = "Token is valid." });
         }
         else
         {
-            return BadRequest(new { Valid = false, Message = "Le token n'est pas valide." });
+            return BadRequest(new { Valid = false, Message = "Token is invalid." });
         }
     }
 
@@ -41,10 +41,10 @@ public class TokenController : ControllerBase
     public async Task<IActionResult> RevokeTokenAsync(string userMail)
     {
         await _tokenRepository.RemoveTokenAsync(userMail);
-        return Ok(new { Message = "Token révoqué avec succès." });
+        return Ok(new { Message = "Token has been removed successfully" });
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet("{userMail}")]
     public async Task<IActionResult> GetTokenByUserIdAsync(string userMail)
     {
         var token = await _tokenRepository.GetTokenByUserMailAsync(userMail);
@@ -54,7 +54,7 @@ public class TokenController : ControllerBase
         }
         else
         {
-            return NotFound(new { Message = "Aucun token trouvé pour cet utilisateur." });
+            return NotFound(new { Message = "No token found for this user." });
         }
     }
 
