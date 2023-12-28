@@ -13,8 +13,12 @@ namespace Carpool.Infrastructure.Context
         {
             modelBuilder.Entity<User>()
                 .HasKey(u => u.Id);
+            
+            modelBuilder.Entity<Token>()
+                .HasKey(t => t.Id);
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Token> Tokens { get; set; }
     }
 }

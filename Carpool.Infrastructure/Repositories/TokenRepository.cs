@@ -1,30 +1,47 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Carpool.Domain.Entities;
+using Carpool.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Carpool.Infrastructure
 {
     public class TokenRepository : ITokenRepository
     {
-        private readonly Dictionary<string, string> _tokens = new Dictionary<string, string>();
+        private readonly CarpoolDbContext _dbContext;
+
+        public TokenRepository(CarpoolDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public async Task SaveTokenAsync(string userMail, string token)
         {
-            _tokens[userMail] = token;
-            await Task.CompletedTask;
+            Token newToken = new Token
+            {
+                UserMail = userMail,
+                TokenValue = token,
+                ExpiryDate = DateTime.UtcNow.AddDays(1) // Expiration in 1 day
+            };
+
+            _dbContext.Tokens.Add(newToken);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<string> GetTokenByUserMailAsync(string userMail)
         {
-            return await Task.FromResult(_tokens.ContainsKey(userMail) ? _tokens[userMail] : null);
+            Token token = await _dbContext.Tokens.FirstOrDefaultAsync(t => t.UserMail == userMail && t.ExpiryDate > DateTime.UtcNow);
+            return token.TokenValue;
         }
 
-        public async Task RemoveTokenAsync(string userId)
+        public async Task RemoveTokenAsync(string userMail)
         {
-            if (_tokens.ContainsKey(userId))
+            Token token = await _dbContext.Tokens.FirstOrDefaultAsync(t => t.UserMail == userMail);
+            if (token != null)
             {
-                _tokens.Remove(userId);
+                _dbContext.Tokens.Remove(token);
+                await _dbContext.SaveChangesAsync();
             }
-            await Task.CompletedTask;
         }
     }
 }
