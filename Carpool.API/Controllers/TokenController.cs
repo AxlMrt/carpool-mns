@@ -15,39 +15,47 @@ public class TokenController : ControllerBase
         _tokenRepository = tokenRepository;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetTokenByUserId(string id)
-    {
-        var token = await _tokenRepository.GetTokenByUserIdAsync(id);
-        if (token != null)
-            return Ok(new { Token = token });
-        
-        return NotFound(new { Message = "No token found for this user." });
-    }
-
     [HttpPost]
-    public async Task<IActionResult> GenerateToken(string userId)
+    public async Task<IActionResult> GenerateTokenAsync(string userMail)
     {
-        var token = await _jwtService.GenerateTokenAsync(userId);
-        await _tokenRepository.SaveTokenAsync(userId, token);
-
+        var token = await _jwtService.GenerateTokenAsync(userMail);
+        await _tokenRepository.SaveTokenAsync(userMail, token);
         return Ok(new { Token = token });
     }
 
-    [HttpPost("validateToken")]
-    public async Task<IActionResult> ValidateToken(string token)
+    [HttpPost("validate")]
+    public async Task<IActionResult> ValidateTokenAsync(string token)
     {
         var isValid = await _jwtService.ValidateTokenAsync(token);
         if (isValid)
-            return Ok(new { Valid = true, Message = "Token is valid. "});
-        
-        return BadRequest(new { Valid = false, Message = "Token isn't valid." });
+        {
+            return Ok(new { Valid = true, Message = "Le token est valide." });
+        }
+        else
+        {
+            return BadRequest(new { Valid = false, Message = "Le token n'est pas valide." });
+        }
     }
 
-    [HttpPost("revokeToken")]
-    public async Task<IActionResult> RevokeToken(string userId)
+    [HttpPost("revoke")]
+    public async Task<IActionResult> RevokeTokenAsync(string userMail)
     {
-        await _tokenRepository.RemoveTokenAsync(userId);
-        return Ok(new { Message = "Token has been removed." });
+        await _tokenRepository.RemoveTokenAsync(userMail);
+        return Ok(new { Message = "Token révoqué avec succès." });
     }
+
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetTokenByUserIdAsync(string userMail)
+    {
+        var token = await _tokenRepository.GetTokenByUserMailAsync(userMail);
+        if (token != null)
+        {
+            return Ok(new { Token = token });
+        }
+        else
+        {
+            return NotFound(new { Message = "Aucun token trouvé pour cet utilisateur." });
+        }
+    }
+
 }

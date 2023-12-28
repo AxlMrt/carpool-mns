@@ -2,6 +2,7 @@ using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 using Carpool.Infrastructure.Interfaces;
 using Carpool.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Carpool.Infrastructure.Repositories
 {
@@ -20,12 +21,17 @@ namespace Carpool.Infrastructure.Repositories
             {
                 LastName = user.LastName,
                 FirstName = user.FirstName,
-                Email = user.LastName,
+                Email = user.Email,
                 Password = user.Password,
             };
     
             await _dbContext.Users.AddAsync(newUser);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<User> FindUserAsync(string email)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
     }
 }

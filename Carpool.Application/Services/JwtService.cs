@@ -23,7 +23,7 @@ public class JwtService : IJwtService
         {
             Subject = new ClaimsIdentity(new[] { new Claim("id", userId) }),
             Expires = DateTime.UtcNow.AddDays(7),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -44,7 +44,7 @@ public class JwtService : IJwtService
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 RequireExpirationTime = true,
-                ValidateLifetime = true,
+                ValidateLifetime = true
             }, out SecurityToken validatedToken);
 
             return await Task.FromResult(true);

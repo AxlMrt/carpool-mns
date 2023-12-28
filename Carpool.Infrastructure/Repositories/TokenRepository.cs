@@ -1,25 +1,30 @@
-﻿namespace Carpool.Infrastructure;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-public class TokenRepository : ITokenRepository
+namespace Carpool.Infrastructure
 {
-    private readonly Dictionary<string, string> _tokens = new Dictionary<string, string>();
-
-    public async Task SaveTokenAsync(string userId, string token)
+    public class TokenRepository : ITokenRepository
     {
-        _tokens[userId] = token;
-        await Task.CompletedTask;
-    }
+        private readonly Dictionary<string, string> _tokens = new Dictionary<string, string>();
 
-    public async Task<string> GetTokenByUserIdAsync(string userId)
-    {
-        return await Task.FromResult(_tokens.ContainsKey(userId) ? _tokens[userId] : null);
-    }
+        public async Task SaveTokenAsync(string userMail, string token)
+        {
+            _tokens[userMail] = token;
+            await Task.CompletedTask;
+        }
 
-    public async Task RemoveTokenAsync(string userId)
-    {
-        if (_tokens.ContainsKey(userId))
-            _tokens.Remove(userId);
-        
-        await Task.CompletedTask;
+        public async Task<string> GetTokenByUserMailAsync(string userMail)
+        {
+            return await Task.FromResult(_tokens.ContainsKey(userMail) ? _tokens[userMail] : null);
+        }
+
+        public async Task RemoveTokenAsync(string userId)
+        {
+            if (_tokens.ContainsKey(userId))
+            {
+                _tokens.Remove(userId);
+            }
+            await Task.CompletedTask;
+        }
     }
 }

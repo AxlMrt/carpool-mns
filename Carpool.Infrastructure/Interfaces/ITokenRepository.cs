@@ -1,8 +1,9 @@
-﻿namespace Carpool.Infrastructure;
-
-public interface ITokenRepository
+namespace Carpool.Infrastructure
 {
-    Task SaveTokenAsync(string userId, string token);
-    Task<string> GetTokenByUserIdAsync(string userId);
-    Task RemoveTokenAsync(string userId);
+    public interface ITokenRepository
+    {
+        Task SaveTokenAsync(string userId, string token);
+        Task<string> GetTokenByUserMailAsync(string usermail);
+        Task RemoveTokenAsync(string userMail);
+    }
 }
