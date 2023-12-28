@@ -66,6 +66,11 @@ Before running the API, make sure to set up the environment by creating an `apps
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;Port=5432;Database=YourDatabaseName;Username=YourUserName;Password=YourPassword;"
   },
+  "Jwt": {
+    "SecretKey": "HMAC-SHA256_Secret_Key",
+    "Issuer": "Your_Issuer",
+    "Audience": "Your_Audience",
+  }
   // Other configurations here
 }
 ```
