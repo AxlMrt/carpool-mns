@@ -117,9 +117,19 @@ The Exception Handling Middleware intercepts exceptions that occur during the pr
 
 ## Tests
 ### Running the tests
-
-1. Open a command line at the root of the test folder.
-2. Run the following command to execute all tests:
+1. Create a `appsettings.test.json` at the root of Carpool.Tests.
+2. Add the following structure in the file:
+```json
+{
+  "Jwt": {
+    "SecretKey": "HMAC-SHA256_Secret_Key",
+    "Issuer": "Your_Issuer",
+    "Audience": "Your_Audience"
+  }
+}
+```
+3. Open a command line at the root of the test folder.
+4. Run the following command to execute all tests:
 ```bash
   dotnet test
 ```

@@ -1,6 +1,7 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
+using Carpool.Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace Carpool.API.Controllers
             _userService = userService;
         }
 
-        [Authorize]
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -34,7 +35,7 @@ namespace Carpool.API.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(Guid id)
         {
@@ -62,8 +63,8 @@ namespace Carpool.API.Controllers
         {
             try
             {
-                if (id != user.Id)
-                    return BadRequest("IDs does not match.");
+                if (id != user.Id || user.Role != Roles.Administrator)
+                    return Forbid();
                 
                 await _userService.UpdateUserAsync(user);
                 return NoContent();
@@ -86,6 +87,11 @@ namespace Carpool.API.Controllers
             {
                 if (id == Guid.Empty)
                     return BadRequest("Invalid user ID.");
+                
+                User currentUser = await _userService.GetUserByIdAsync(id);
+
+                if (currentUser.Role != Roles.Administrator || currentUser.Id != id)
+                    return Forbid();
 
                 await _userService.DeleteUserAsync(id);
                 return NoContent();
