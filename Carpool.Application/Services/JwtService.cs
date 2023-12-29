@@ -8,10 +8,14 @@ namespace Carpool.Application;
 public class JwtService : IJwtService
 {
     private readonly string _secretKey;
+    private readonly string _audience;
+    private readonly string _issuer;
 
-    public JwtService(string secretKey)
+    public JwtService(string secretKey, string audience, string issuer)
     {
         _secretKey = secretKey;
+        _audience = audience;
+        _issuer = issuer;
     }
 
     public async Task<string> GenerateTokenAsync(string userId, string role)
@@ -26,7 +30,9 @@ public class JwtService : IJwtService
                 new Claim("id", userId),
                 new Claim(ClaimTypes.Role, role)
             }),
-            Expires = DateTime.UtcNow.AddDays(7),
+            Expires = DateTime.UtcNow.AddDays(1),
+            Audience = _audience,
+            Issuer = _issuer,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
@@ -45,8 +51,8 @@ public class JwtService : IJwtService
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
+                ValidateIssuer = true,
+                ValidateAudience = true,
                 RequireExpirationTime = true,
                 ValidateLifetime = true
             }, out SecurityToken validatedToken);
