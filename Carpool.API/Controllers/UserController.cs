@@ -1,6 +1,7 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Carpool.API.Controllers
@@ -14,6 +15,7 @@ namespace Carpool.API.Controllers
             _userService = userService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -32,6 +34,7 @@ namespace Carpool.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(Guid id)
         {
@@ -53,6 +56,7 @@ namespace Carpool.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, User user)
         {
@@ -74,6 +78,7 @@ namespace Carpool.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {

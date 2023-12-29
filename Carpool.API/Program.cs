@@ -50,7 +50,6 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
-builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<IJwtService>(provider =>
 {
     var secretKey = builder.Configuration["Jwt:SecretKey"];

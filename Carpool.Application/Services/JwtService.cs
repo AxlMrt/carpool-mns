@@ -14,14 +14,18 @@ public class JwtService : IJwtService
         _secretKey = secretKey;
     }
 
-    public async Task<string> GenerateTokenAsync(string userId)
+    public async Task<string> GenerateTokenAsync(string userId, string role)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_secretKey);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim("id", userId) }),
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim("id", userId),
+                new Claim(ClaimTypes.Role, role)
+            }),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

@@ -10,12 +10,10 @@ namespace Carpool.Application.Services
     {
         private readonly IAuthRepository _authRepository;
         private readonly IPasswordHasherService _passwordHasherService;
-        private readonly IJwtService _jwtService;
         public AuthService(IAuthRepository authRepository, IPasswordHasherService passwordHasherService, IJwtService jwtService)
         {
             _authRepository = authRepository;
             _passwordHasherService = passwordHasherService;
-            _jwtService = jwtService;
         }
 
         public async Task RegisterUserAsync(RegisterUserDto user)
@@ -24,16 +22,14 @@ namespace Carpool.Application.Services
             await _authRepository.RegisterUserAsync(user);
         }
 
-        public async Task<bool> AuthenticateAsync(LoginDto loginData)
+        public async Task<User> AuthenticateAsync(LoginDto loginData)
         {
             User user = await _authRepository.FindUserAsync(loginData.Email);
-    
-            if (user is null)
-                return await Task.FromResult(false);
-            
-            var isAuthenticated = _passwordHasherService.VerifyPassword(user.Password, loginData.Password);
 
-            return await Task.FromResult(isAuthenticated);
+            if (user is null || !_passwordHasherService.VerifyPassword(user.Password, loginData.Password))
+                return null;
+
+            return user;
         }
     }
 }

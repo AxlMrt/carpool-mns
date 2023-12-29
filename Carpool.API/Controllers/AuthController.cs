@@ -3,6 +3,7 @@ using Carpool.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Carpool.Domain;
 using Carpool.Application;
+using Carpool.Domain.Entities;
 
 namespace Carpool.API.Controllers
 {
@@ -43,12 +44,12 @@ namespace Carpool.API.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest("Invalid login data.");
                 
-                bool isAuthenticated = await _authService.AuthenticateAsync(loginData);
+                User user = await _authService.AuthenticateAsync(loginData);
     
-                if (!isAuthenticated)
+                if (user is null)
                     return Unauthorized("Invalid username or password.");
                 
-                var token = _jwtService.GenerateTokenAsync(loginData.Email);
+                var token = _jwtService.GenerateTokenAsync(loginData.Email, user.Role);
                 
                 return Ok(new { Token = token });
             }
