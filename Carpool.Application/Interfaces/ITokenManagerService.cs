@@ -4,7 +4,7 @@ namespace Carpool.Application.Services
 {
     public interface ITokenManagerService
     {
-        Task AddTokenAsync(string userId, string token);
+        Task<Token> AddTokenAsync(Guid userId, string token);
         Task RemoveTokenAsync(string token);
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Carpool.Application;
 using Microsoft.OpenApi.Models;
+using Carpool.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"]);
@@ -77,6 +78,8 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
+builder.Services.AddScoped<ITokenManagerService, TokenManagerService>();
+builder.Services.AddScoped<ITokenManagerRepository, TokenManagerRepository>();
 builder.Services.AddScoped<IJwtService>(provider =>
 {
     var secretKey = builder.Configuration["Jwt:SecretKey"];

@@ -44,12 +44,10 @@ namespace Carpool.API.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest("Invalid login data.");
                 
-                User user = await _authService.AuthenticateAsync(loginData);
+                Token token = await _authService.AuthenticateAsync(loginData);
     
-                if (user is null)
+                if (token is null)
                     return Unauthorized("Invalid username or password.");
-                
-                var token = _jwtService.GenerateTokenAsync(user.Id.ToString(), user.Role);
                 
                 return Ok(new { Token = token });
             }

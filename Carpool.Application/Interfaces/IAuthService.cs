@@ -7,6 +7,6 @@ namespace Carpool.Application.Interfaces
     public interface IAuthService
     {
         Task RegisterUserAsync(RegisterUserDto user);
-        Task<User> AuthenticateAsync(LoginDto loginData);
+        Task<Token> AuthenticateAsync(LoginDto loginData);
     }
 }
