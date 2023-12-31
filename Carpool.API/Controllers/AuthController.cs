@@ -49,7 +49,7 @@ namespace Carpool.API.Controllers
                 if (user is null)
                     return Unauthorized("Invalid username or password.");
                 
-                var token = _jwtService.GenerateTokenAsync(loginData.Email, user.Role);
+                var token = _jwtService.GenerateTokenAsync(user.Id.ToString(), user.Role);
                 
                 return Ok(new { Token = token });
             }
