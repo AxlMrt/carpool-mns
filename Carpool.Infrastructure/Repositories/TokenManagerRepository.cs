@@ -24,6 +24,19 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Tokens.FirstOrDefaultAsync(t => t.UserId == userId);
         }
 
+        public async Task UpdateTokenAsync(string oldTokenString, string newTokenString)
+        {
+            Token tokenEntity = await _context.Tokens.FirstOrDefaultAsync(t => t.TokenString == oldTokenString);
+            if (tokenEntity != null)
+            {
+                tokenEntity.TokenString = newTokenString;
+                tokenEntity.ExpiryDate = DateTime.UtcNow.AddDays(1);
+
+                _context.Tokens.Update(tokenEntity);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task RemoveTokenAsync(string token)
         {
             var tokenEntity = await _context.Tokens.FirstOrDefaultAsync(t => t.TokenString == token);

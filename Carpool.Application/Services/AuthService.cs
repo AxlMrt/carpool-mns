@@ -46,8 +46,7 @@ namespace Carpool.Application.Services
         public async Task<string> RefreshTokenAsync(string token)
         {
             var newToken = await _jwtService.RefreshTokenAsync(token);
-
-            await _tokenManagerService.RemoveTokenAsync(token);
+            await _tokenManagerService.UpdateTokenAsync(token, newToken);
 
             return newToken;
         }

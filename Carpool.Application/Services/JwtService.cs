@@ -79,7 +79,9 @@ public class JwtService : IJwtService
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 RequireExpirationTime = true,
-                ValidateLifetime = true
+                ValidateLifetime = true,
+                ValidIssuer = _issuer,
+                ValidAudience = _audience
             }, out SecurityToken validatedToken);
 
             var jwtToken = validatedToken as JwtSecurityToken;
@@ -88,11 +90,11 @@ public class JwtService : IJwtService
                 throw new SecurityTokenException("Invalid token");
             }
 
-            var expires = jwtToken.ValidTo;
             var now = DateTime.UtcNow;
-            var minutesBeforeExpiration = (expires - now).TotalMinutes;
+            var timeElapsed = (now - jwtToken.ValidFrom).TotalMinutes;
+            var shouldRefresh = timeElapsed >= 60 * 24; // Refresh if more than 24 hours have passed since token issue
 
-            if (minutesBeforeExpiration <= 30)
+            if (shouldRefresh)
             {
                 var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var userRole = principal.FindFirst(ClaimTypes.Role)?.Value;

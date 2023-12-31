@@ -27,6 +27,11 @@ namespace Carpool.Application.Services
             return newToken;
         }
 
+        public async Task UpdateTokenAsync(string oldToken, string newToken)
+        {
+            await _tokenManagerRepository.UpdateTokenAsync(oldToken, newToken);
+        }
+
         public async Task RemoveTokenAsync(string token)
         {
             await _tokenManagerRepository.RemoveTokenAsync(token);
