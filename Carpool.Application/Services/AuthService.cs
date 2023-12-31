@@ -42,5 +42,14 @@ namespace Carpool.Application.Services
         {
             await _tokenManagerService.RemoveTokenAsync(token);
         }
+
+        public async Task<string> RefreshTokenAsync(string token)
+        {
+            var newToken = await _jwtService.RefreshTokenAsync(token);
+
+            await _tokenManagerService.RemoveTokenAsync(token);
+
+            return newToken;
+        }
     }
 }

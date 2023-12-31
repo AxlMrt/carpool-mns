@@ -9,5 +9,6 @@ namespace Carpool.Application.Interfaces
         Task RegisterUserAsync(RegisterUserDto user);
         Task<Token> AuthenticateAsync(LoginDto loginData);
         Task LogoutAsync(string token);
+        Task<string> RefreshTokenAsync(string token);
     }
 }

@@ -64,4 +64,48 @@ public class JwtService : IJwtService
             return await Task.FromResult(false);
         }
     }
+
+    public async Task<string> RefreshTokenAsync(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_secretKey);
+
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                RequireExpirationTime = true,
+                ValidateLifetime = true
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = validatedToken as JwtSecurityToken;
+            if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+
+            var expires = jwtToken.ValidTo;
+            var now = DateTime.UtcNow;
+            var minutesBeforeExpiration = (expires - now).TotalMinutes;
+
+            if (minutesBeforeExpiration <= 30)
+            {
+                var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userRole = principal.FindFirst(ClaimTypes.Role)?.Value;
+
+                var newToken = await GenerateTokenAsync(userId, userRole);
+                return newToken;
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+
+        return token;
+    }
 }

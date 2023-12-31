@@ -59,11 +59,27 @@ namespace Carpool.API.Controllers
         {
             try
             {
-                var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
                 await _authService.LogoutAsync(token);
 
                 return Ok("Logged out successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+                var newToken = await _authService.RefreshTokenAsync(token);
+
+                return Ok(new { AccessToken = newToken });
             }
             catch (Exception ex)
             {
