@@ -12,7 +12,7 @@ namespace Carpool.Application.Services
             _tokenManagerRepository = tokenManagerRepository;
         }
 
-        public async Task<Token> AddTokenAsync(Guid userId, string token)
+        public async Task<Token> AddTokenAsync(string userId, string token)
         {
             var expiryDate = DateTime.UtcNow.AddDays(1);
 

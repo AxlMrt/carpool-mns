@@ -37,7 +37,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginUser([FromBody] LoginDto loginData)
+        public async Task<IActionResult> Authenticate([FromBody] LoginDto loginData)
         {
             try
             {
@@ -49,11 +49,28 @@ namespace Carpool.API.Controllers
                 if (token is null)
                     return Unauthorized("Invalid username or password.");
                 
-                return Ok(new { Token = token });
+                return Ok(new { AccessToken = token.TokenString });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex);
+            }
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                await _authService.LogoutAsync(token);
+
+                return Ok("Logged out successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

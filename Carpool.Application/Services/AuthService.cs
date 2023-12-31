@@ -36,7 +36,12 @@ namespace Carpool.Application.Services
 
             var token = await _jwtService.GenerateTokenAsync(user.Id.ToString(), user.Role);
 
-            return await _tokenManagerService.AddTokenAsync(user.Id, token);
+            return await _tokenManagerService.AddTokenAsync(user.Id.ToString(), token);
+        }
+
+        public async Task LogoutAsync(string token)
+        {
+            await _tokenManagerService.RemoveTokenAsync(token);
         }
     }
 }
