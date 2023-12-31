@@ -3,7 +3,6 @@ using Carpool.Application.Interfaces;
 using Carpool.Infrastructure.Interfaces;
 using Carpool.Domain;
 using Carpool.Domain.Entities;
-using Carpool.Infrastructure;
 
 namespace Carpool.Application.Services
 {

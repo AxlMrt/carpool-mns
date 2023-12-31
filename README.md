@@ -150,4 +150,9 @@ Contributions are welcome! If you wish to contribute to this project, make sure 
 ## Issues and Questions
 If you encounter any issues or have questions, feel free to open a ticket in the "Issues" section of the repository.
 
+## To do:
+- Setting tokens expiry date dynamically in following files:
+  - JwtService.cs
+  - TokenManagerService.cs
+
 Thank you for using our API!

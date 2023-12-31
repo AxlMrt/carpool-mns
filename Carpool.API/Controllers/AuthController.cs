@@ -2,7 +2,6 @@ using Carpool.Domain.DTOs;
 using Carpool.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Carpool.Domain;
-using Carpool.Application;
 using Carpool.Domain.Entities;
 
 namespace Carpool.API.Controllers
@@ -10,12 +9,10 @@ namespace Carpool.API.Controllers
     public class AuthController : BaseApiController
     {
         private readonly IAuthService _authService;
-        private readonly IJwtService _jwtService;
 
-        public AuthController(IAuthService authService, IJwtService jwtService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
