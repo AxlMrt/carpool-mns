@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
@@ -22,6 +23,9 @@ namespace Carpool.API.Controllers
         {
             try
             {
+                if (!User.IsInRole(Roles.Administrator)) // For testing purpose
+                    return Forbid();
+
                 IEnumerable<User> users = await _userService.GetAllUsersAsync();
 
                 if (users is null || !users.Any())
@@ -41,6 +45,9 @@ namespace Carpool.API.Controllers
         {
             try
             {
+                if (!User.IsInRole(Roles.Administrator)) // For testing purpose
+                    return Forbid();
+
                 if (id == Guid.Empty)
                     return BadRequest("Invalid user ID.");
 

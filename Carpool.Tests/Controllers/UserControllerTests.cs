@@ -1,6 +1,7 @@
 using Carpool.API.Controllers;
 using Carpool.Application.Exceptions;
 using Carpool.Domain.Entities;
+using Carpool.Domain.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +13,10 @@ namespace Carpool.Tests.Controllers
         public async Task GetAllUsers_Returns_OkResult_WithUsers()
         {
             User adminUser = TestDataGenerator.GenerateRandomAdmin();
-            string adminToken = await TestDataGenerator.GenerateToken(adminUser.Id.ToString(), adminUser.Role);
         
             var mockUserService = new Mock<IUserService>();
+            var mockHttpContext = new Mock<HttpContext>();
+
             var expectedUsers = new List<User>
             {
                 TestDataGenerator.GenerateRandomUser(),
@@ -22,14 +24,14 @@ namespace Carpool.Tests.Controllers
                 TestDataGenerator.GenerateRandomUser()
             };
             mockUserService.Setup(repo => repo.GetAllUsersAsync()).ReturnsAsync(expectedUsers);
-
-            var httpContext = new DefaultHttpContext();
-            httpContext.Request.Headers.Authorization = $"Bearer {adminToken}";
-            var controllerContext = new ControllerContext { HttpContext = httpContext };
+            mockHttpContext.Setup(c => c.User.IsInRole(Roles.Administrator)).Returns(true);
 
             var userController = new UserController(mockUserService.Object)
             {
-                ControllerContext = controllerContext
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = mockHttpContext.Object
+                }
             };
 
             IActionResult result = await userController.GetAllUsers();
@@ -38,6 +40,31 @@ namespace Carpool.Tests.Controllers
             var users = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value);
             Assert.Equal(expectedUsers.Count, users.Count());
         }
+
+        [Fact]
+        public async Task GetAllUsers_Returns_Forbidden_WhenUserIsNotAdmin() // Je dois tester tous les cas ? User, Moderateur.. etc ?
+        {
+            User regularUser = TestDataGenerator.GenerateRandomUser();
+
+            var mockUserService = new Mock<IUserService>();
+            var mockHttpContext = new Mock<HttpContext>();
+
+            mockHttpContext.Setup(c => c.User.IsInRole(Roles.Administrator)).Returns(false);
+
+            var userController = new UserController(mockUserService.Object)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = mockHttpContext.Object
+                }
+            };
+
+            IActionResult result = await userController.GetAllUsers();
+
+            Assert.IsType<ForbidResult>(result);
+        }
+
+
 
         [Fact(Skip = "Update in progress to handle tokens")]
         public async Task GetAllUsers_Returns_404_WhenNoUsers()
