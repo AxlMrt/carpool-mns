@@ -10,12 +10,14 @@ public class JwtService : IJwtService
     private readonly string _secretKey;
     private readonly string _audience;
     private readonly string _issuer;
+    private readonly int _expiryDate;
 
-    public JwtService(string secretKey, string audience, string issuer)
+    public JwtService(string secretKey, string audience, string issuer, int expiryDate)
     {
         _secretKey = secretKey;
         _audience = audience;
         _issuer = issuer;
+        _expiryDate = expiryDate;
     }
 
     public async Task<string> GenerateTokenAsync(string userId, string role)
@@ -30,7 +32,7 @@ public class JwtService : IJwtService
                 new Claim("id", userId),
                 new Claim(ClaimTypes.Role, role)
             }),
-            Expires = DateTime.UtcNow.AddDays(1),
+            Expires = DateTime.UtcNow.AddDays(_expiryDate),
             Audience = _audience,
             Issuer = _issuer,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
