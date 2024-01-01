@@ -23,6 +23,16 @@ namespace Carpool.Application.Services
             return await _reservationRepository.GetReservationByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(Guid userId)
+        {
+            return await _reservationRepository.GetReservationsByUserIdAsync(userId);
+        }
+
+        public async Task<IEnumerable<Reservation>> GetReservationsByTripIdAsync(Guid tripId)
+        {
+            return await _reservationRepository.GetReservationsByTripIdAsync(tripId);
+        }
+
         public async Task<Reservation> CreateReservationAsync(Reservation reservation)
         {
             await _reservationRepository.CreateReservationAsync(reservation);
