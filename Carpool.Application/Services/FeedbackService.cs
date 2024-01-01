@@ -23,6 +23,11 @@ namespace Carpool.Application.Services
             return await _feedbackRepository.GetFeedbackByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(Guid userId)
+        {
+            return await _feedbackRepository.GetFeedbacksByUserIdAsync(userId);
+        }
+
         public async Task<Feedback> CreateFeedbackAsync(Feedback feedback)
         {
             await _feedbackRepository.CreateFeedbackAsync(feedback);

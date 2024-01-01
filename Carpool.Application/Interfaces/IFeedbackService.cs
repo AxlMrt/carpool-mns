@@ -6,6 +6,7 @@ namespace Carpool.Application.Interfaces
     {
         Task<IEnumerable<Feedback>> GetAllFeedbacksAsync();
         Task<Feedback> GetFeedbackByIdAsync(Guid id);
+        Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(Guid userId);
         Task<Feedback> CreateFeedbackAsync(Feedback feedback);
         Task<Feedback> UpdateFeedbackAsync(Guid id, Feedback feedback);
         Task<bool> DeleteFeedbackAsync(Guid id);

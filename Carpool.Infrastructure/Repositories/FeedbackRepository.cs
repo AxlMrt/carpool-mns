@@ -24,6 +24,11 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Feedbacks.FindAsync(id);
         }
 
+        public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(Guid userId)
+        {
+            return await _context.Feedbacks.Where(f => f.UserId == userId).ToListAsync();
+        }
+
         public async Task CreateFeedbackAsync(Feedback feedback)
         {
             await _context.Feedbacks.AddAsync(feedback);
