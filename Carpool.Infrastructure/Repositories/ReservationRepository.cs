@@ -24,6 +24,16 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Reservations.FindAsync(id);
         }
 
+        public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(Guid userId)
+        {
+            return await _context.Reservations.Where(r => r.UserId == userId).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Reservation>> GetReservationsByTripIdAsync(Guid tripId)
+        {
+            return await _context.Reservations.Where(r => r.TripId == tripId).ToListAsync();
+        }
+
         public async Task CreateReservationAsync(Reservation reservation)
         {
             await _context.Reservations.AddAsync(reservation);
