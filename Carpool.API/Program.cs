@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Carpool.Application;
 using Microsoft.OpenApi.Models;
 using Carpool.Infrastructure;
+using Carpool.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"]);
@@ -73,13 +74,26 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
+builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<ITokenManagerService, TokenManagerService>();
+builder.Services.AddScoped<ITripService, TripService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<ICarRepository, CarRepository>();
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<ITokenManagerRepository, TokenManagerRepository>();
+builder.Services.AddScoped<ITripRepository, TripRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtService>(provider =>
 {
     var secretKey = builder.Configuration["Jwt:SecretKey"];
@@ -87,8 +101,6 @@ builder.Services.AddScoped<IJwtService>(provider =>
     var issuer = builder.Configuration["Jwt:Issuer"];
     return new JwtService(secretKey, audience, issuer);
 });
-
-builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
