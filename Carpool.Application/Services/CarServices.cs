@@ -23,6 +23,10 @@ namespace Carpool.Application.Services
             return await _carRepository.GetCarByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Car>> GetCarsByUserIdAsync(Guid userId)
+        {
+            return await _carRepository.GetCarsByUserIdAsync(userId);
+        }
 
         public async Task<Car> CreateCarAsync(Car car)
         {

@@ -6,6 +6,7 @@ namespace Carpool.Application.Interfaces
     {
         Task<IEnumerable<Car>> GetAllCarsAsync();
         Task<Car> GetCarByIdAsync(Guid id);
+        Task<IEnumerable<Car>> GetCarsByUserIdAsync(Guid userId);
         Task<Car> CreateCarAsync(Car car);
         Task<Car> UpdateCarAsync(Guid id, Car car);
         Task<bool> DeleteCarAsync(Guid id);
