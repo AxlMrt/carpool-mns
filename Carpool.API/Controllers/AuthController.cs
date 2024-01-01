@@ -16,7 +16,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto user)
+        public async Task<IActionResult> RegisterUser(RegisterUserDto user)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Authenticate([FromBody] LoginDto loginData)
+        public async Task<IActionResult> Authenticate(LoginDto loginData)
         {
             try
             {
