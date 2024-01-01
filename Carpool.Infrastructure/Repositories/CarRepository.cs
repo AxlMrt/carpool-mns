@@ -24,6 +24,11 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Cars.FindAsync(id);
         }
 
+        public async Task<IEnumerable<Car>> GetCarsByUserIdAsync(Guid userId)
+        {
+            return await _context.Cars.Where(car => car.OwnerId == userId).ToListAsync();
+        }
+
         public async Task CreateCarAsync(Car car)
         {
             await _context.Cars.AddAsync(car);
