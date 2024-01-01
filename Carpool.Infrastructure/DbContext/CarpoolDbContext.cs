@@ -68,9 +68,7 @@ namespace Carpool.Infrastructure.Context
             modelBuilder.Entity<Trip>()
                 .HasMany(t => t.Feedbacks)
                 .WithOne(f => f.Trip)
-                .HasForeignKey(f => f.TripId);modelBuilder.Entity<User>()
-                        .HasKey(u => u.Id);
-
+                .HasForeignKey(f => f.TripId);
         }
 
         public DbSet<User> Users { get; set; }
