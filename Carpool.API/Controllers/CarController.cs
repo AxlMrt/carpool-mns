@@ -18,51 +18,77 @@ namespace Carpool.API.Controllers
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUserId(Guid userId)
         {
-            var cars = await _carService.GetCarsByUserIdAsync(userId);
-            return Ok(cars);
+            try
+            {
+                var cars = await _carService.GetCarsByUserIdAsync(userId);
+                return Ok(cars);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Car>> GetCarById(Guid id)
         {
-            var car = await _carService.GetCarByIdAsync(id);
-            if (car == null)
-                return NotFound();
+            try
+            {
+                var car = await _carService.GetCarByIdAsync(id);
+                if (car == null)
+                    return NotFound();
 
-            return Ok(car);
+                return Ok(car);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Car>> AddCar(Car car)
         {
-            var createdCar = await _carService.CreateCarAsync(car);
-            return CreatedAtAction(nameof(GetCarById), new { id = createdCar.Id }, createdCar);
+            try
+            {
+                var createdCar = await _carService.CreateCarAsync(car);
+                return CreatedAtAction(nameof(GetCarById), new { id = createdCar.Id }, createdCar);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<Car>> UpdateCar(Guid id, Car car)
         {
-            if (id != car.Id)
-                return BadRequest();
+            try
+            {
+                if (id != car.Id)
+                    return BadRequest();
 
-            var existingCar = await _carService.GetCarByIdAsync(id);
-            if (existingCar == null)
-                return NotFound();
-
-            await _carService.UpdateCarAsync(id, car);
-            return NoContent();
+                await _carService.UpdateCarAsync(id, car);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> RemoveCar(Guid id)
         {
-            var existingCar = await _carService.GetCarByIdAsync(id);
-            if (existingCar == null)
-                return NotFound();
-
-            await _carService.DeleteCarAsync(id);
-            return NoContent();
+            try
+            {
+                await _carService.DeleteCarAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
-
     }
 }
