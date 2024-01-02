@@ -5,8 +5,8 @@ namespace Carpool.Application.Interfaces
     public interface IUserService
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserByIdAsync(Guid id);
-        Task UpdateUserAsync(Guid id, User user);
-        Task DeleteUserAsync(Guid id);
+        Task<User> GetUserByIdAsync(int id);
+        Task UpdateUserAsync(int id, User user);
+        Task DeleteUserAsync(int id);
     }
 }

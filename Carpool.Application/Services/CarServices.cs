@@ -26,17 +26,17 @@ namespace Carpool.Application.Services
             return cars;
         }
 
-        public async Task<Car> GetCarByIdAsync(Guid id)
+        public async Task<Car> GetCarByIdAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             return await _carRepository.GetCarByIdAsync(id);
         }
 
-        public async Task<IEnumerable<Car>> GetCarsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Car>> GetCarsByUserIdAsync(int userId)
         {
-            if (userId == Guid.Empty)
+            if (userId < 0)
                 throw new BadRequestException("Empty ID is not allowed.");
 
             User user = await _userRepository.GetUserByIdAsync(userId) ?? throw new NotFoundException($"User with ID {userId} not found.");
@@ -52,10 +52,10 @@ namespace Carpool.Application.Services
             return car;
         }
 
-        public async Task<Car> UpdateCarAsync(Guid id, Car car)
+        public async Task<Car> UpdateCarAsync(int id, Car car)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Car existingCar = await _carRepository.GetCarByIdAsync(car.Id) ?? throw new NotFoundException($"Car with ID {id} not found.");
 
@@ -64,10 +64,10 @@ namespace Carpool.Application.Services
             return car;
         }
 
-        public async Task<bool> DeleteCarAsync(Guid id)
+        public async Task<bool> DeleteCarAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Car existingCar = await _carRepository.GetCarByIdAsync(id) ?? throw new NotFoundException($"Car with ID {id} not found.");
 

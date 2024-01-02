@@ -12,13 +12,13 @@ namespace Carpool.Application.Services
             _tokenManagerRepository = tokenManagerRepository;
         }
 
-        public async Task<Token> AddTokenAsync(string userId, string token)
+        public async Task<Token> AddTokenAsync(User user, string token)
         {
             DateTime expiryDate = DateTime.UtcNow.AddDays(1);
 
             Token newToken = new()
             {
-                UserId = userId,
+                User = user,
                 TokenString = token,
                 ExpiryDate = expiryDate
             };

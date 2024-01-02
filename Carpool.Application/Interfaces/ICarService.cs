@@ -5,10 +5,10 @@ namespace Carpool.Application.Interfaces
     public interface ICarService
     {
         Task<IEnumerable<Car>> GetAllCarsAsync();
-        Task<Car> GetCarByIdAsync(Guid id);
-        Task<IEnumerable<Car>> GetCarsByUserIdAsync(Guid userId);
+        Task<Car> GetCarByIdAsync(int id);
+        Task<IEnumerable<Car>> GetCarsByUserIdAsync(int userId);
         Task<Car> CreateCarAsync(Car car);
-        Task<Car> UpdateCarAsync(Guid id, Car car);
-        Task<bool> DeleteCarAsync(Guid id);
+        Task<Car> UpdateCarAsync(int id, Car car);
+        Task<bool> DeleteCarAsync(int id);
     }
 }

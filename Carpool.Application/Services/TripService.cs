@@ -24,10 +24,10 @@ namespace Carpool.Application.Services
             return trips;
         }
 
-        public async Task<Trip> GetTripByIdAsync(Guid id)
+        public async Task<Trip> GetTripByIdAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Trip trip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
             return trip;
@@ -42,10 +42,10 @@ namespace Carpool.Application.Services
             return trip;
         }
 
-        public async Task<Trip> UpdateTripAsync(Guid id, Trip trip)
+        public async Task<Trip> UpdateTripAsync(int id, Trip trip)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Trip existingTrip = await GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
@@ -54,10 +54,10 @@ namespace Carpool.Application.Services
             return trip;
         }
 
-        public async Task<bool> DeleteTripAsync(Guid id)
+        public async Task<bool> DeleteTripAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Trip existingTrip = await GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 

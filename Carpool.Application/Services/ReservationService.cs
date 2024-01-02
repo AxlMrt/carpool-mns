@@ -24,19 +24,19 @@ namespace Carpool.Application.Services
             return reservations;
         }
 
-        public async Task<Reservation> GetReservationByIdAsync(Guid id)
+        public async Task<Reservation> GetReservationByIdAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Reservation reservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
             return reservation;
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(Guid id)
+        public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             IEnumerable<Reservation> reservations = await _reservationRepository.GetReservationsByUserIdAsync(id);
 
@@ -46,10 +46,10 @@ namespace Carpool.Application.Services
             return reservations;
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsByTripIdAsync(Guid id)
+        public async Task<IEnumerable<Reservation>> GetReservationsByTripIdAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             var reservations = await _reservationRepository.GetReservationsByTripIdAsync(id);
             if (reservations == null || !reservations.Any())
@@ -67,10 +67,10 @@ namespace Carpool.Application.Services
             return reservation;
         }
 
-        public async Task<Reservation> UpdateReservationAsync(Guid id, Reservation reservation)
+        public async Task<Reservation> UpdateReservationAsync(int id, Reservation reservation)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Reservation existingReservation = await GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
 
@@ -78,10 +78,10 @@ namespace Carpool.Application.Services
             return existingReservation;
         }
 
-        public async Task<bool> DeleteReservationAsync(Guid id)
+        public async Task<bool> DeleteReservationAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Reservation existingReservation = await GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
 

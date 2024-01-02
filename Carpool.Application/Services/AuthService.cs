@@ -26,7 +26,7 @@ namespace Carpool.Application.Services
         public async Task RegisterUserAsync(RegisterUserDto user)
         {
             if (user is null)
-                throw new BadRequestException("Car object cannot be null");
+                throw new BadRequestException("User object cannot be null");
 
             user.Password = _passwordHasherService.HashPassword(user.Password);
             await _authRepository.RegisterUserAsync(user);
@@ -37,11 +37,11 @@ namespace Carpool.Application.Services
             User user = await _authRepository.FindUserAsync(loginData.Email) ?? throw new InvalidCredentialException("Invalid email.");
 
             if (!_passwordHasherService.VerifyPassword(user.Password, loginData.Password))
-                throw new InvalidCredentialException("Password is incorrect.");
+                throw new InvalidCredentialException("Invalid password.");
 
             string token = await _jwtService.GenerateTokenAsync(user.Id.ToString(), user.Role);
 
-            return await _tokenManagerService.AddTokenAsync(user.Id.ToString(), token);
+            return await _tokenManagerService.AddTokenAsync(user, token);
         }
 
         public async Task LogoutAsync(string token)

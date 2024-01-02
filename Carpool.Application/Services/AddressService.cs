@@ -24,10 +24,10 @@ namespace Carpool.Application.Services
             return addresses;
         }
 
-        public async Task<Address> GetAddressByIdAsync(Guid id)
+        public async Task<Address> GetAddressByIdAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
             
             return await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
         }
@@ -41,10 +41,10 @@ namespace Carpool.Application.Services
             return address;
         }
 
-        public async Task<Address> UpdateAddressAsync(Guid id, Address address)
+        public async Task<Address> UpdateAddressAsync(int id, Address address)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Address existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
@@ -53,10 +53,10 @@ namespace Carpool.Application.Services
             return address;
         }
 
-        public async Task<bool> DeleteAddressAsync(Guid id)
+        public async Task<bool> DeleteAddressAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
             
             Address existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
             await _addressRepository.DeleteAddressAsync(id);

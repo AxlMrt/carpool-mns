@@ -28,18 +28,18 @@ namespace Carpool.Application.Services
             return users;
         }
 
-        public async Task<User> GetUserByIdAsync(Guid id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             return await _userRepository.GetUserByIdAsync(id)  ?? throw new NotFoundException($"User with ID {id} not found.");
         }
 
-        public async Task UpdateUserAsync(Guid id, User user)
+        public async Task UpdateUserAsync(int id, User user)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             User existingUser = await GetUserByIdAsync(user.Id) ?? throw new NotFoundException($"User with ID {user.Id} not found.");
 
@@ -56,10 +56,10 @@ namespace Carpool.Application.Services
             await _userRepository.UpdateUserAsync(user);
         }
 
-        public async Task DeleteUserAsync(Guid id)
+        public async Task DeleteUserAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             User existingUser = await GetUserByIdAsync(id) ?? throw new NotFoundException($"User with ID {id} not found.");
 

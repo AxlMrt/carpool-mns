@@ -24,19 +24,19 @@ namespace Carpool.Application.Services
             return feedbacks;
         }
 
-        public async Task<Feedback> GetFeedbackByIdAsync(Guid id)
+        public async Task<Feedback> GetFeedbackByIdAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Feedback feedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
             return feedback;
         }
 
-        public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(int userId)
         {
-            if (userId == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (userId < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             IEnumerable<Feedback> feedback = await _feedbackRepository.GetFeedbacksByUserIdAsync(userId) ?? throw new NotFoundException($"Feedbacks with user ID {userId} not found.");
             return feedback;
@@ -51,10 +51,10 @@ namespace Carpool.Application.Services
             return feedback;
         }
 
-        public async Task<Feedback> UpdateFeedbackAsync(Guid id, Feedback feedback)
+        public async Task<Feedback> UpdateFeedbackAsync(int id, Feedback feedback)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Feedback existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
 
@@ -63,10 +63,10 @@ namespace Carpool.Application.Services
             return feedback;
         }
 
-        public async Task<bool> DeleteFeedbackAsync(Guid id)
+        public async Task<bool> DeleteFeedbackAsync(int id)
         {
-            if (id == Guid.Empty)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (id < 0)
+                throw new BadRequestException("ID cannot be negative.");
 
             Feedback existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
             await _feedbackRepository.DeleteFeedbackAsync(id);
