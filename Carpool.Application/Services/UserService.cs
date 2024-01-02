@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
@@ -29,9 +30,12 @@ namespace Carpool.Application.Services
         public async Task UpdateUserAsync(User user)
         {
             User existingUser = await GetUserByIdAsync(user.Id) ?? throw new NotFoundException($"User with ID {user.Id} not found.");
+            bool valid_password = _passwordHasherService.VerifyPassword(existingUser.Password, user.Password);
+            
+            if (!valid_password)
+                throw new InvalidCredentialException($"Wrong credentials.");
 
-            if (existingUser.Password != user.Password)
-                user.Password = _passwordHasherService.HashPassword(user.Password);
+            user.Password = _passwordHasherService.HashPassword(user.Password);
     
             await _userRepository.UpdateUserAsync(user);
         }
