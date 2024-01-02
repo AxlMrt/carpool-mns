@@ -1,14 +1,14 @@
-using System.Security.Authentication;
-using Carpool.Application.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
+using Carpool.Application.Exceptions;
 using Carpool.Domain.Roles;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Carpool.API.Controllers
 {
-    public class UserController : BaseApiController
+    public class UserController : BaseApiController, IExceptionFilter
     {
         private readonly IUserService _userService;
 
@@ -21,107 +21,52 @@ namespace Carpool.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            try
-            {
-                if (!User.IsInRole(Roles.Administrator)) // For testing purpose
-                    return Forbid();
-
-                IEnumerable<User> users = await _userService.GetAllUsersAsync();
-
-                return Ok(users);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while fetching the users list: {ex.Message}");
-            }
+            IEnumerable<User> users = await _userService.GetAllUsersAsync();
+            return Ok(users);
         }
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(Guid id)
         {
-            try
-            {
-                if (!User.IsInRole(Roles.Administrator)) // For testing purpose
-                    return Forbid();
-
-                User user = await _userService.GetUserByIdAsync(id);
-                return Ok(user);
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch(NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while fetching the user: {ex.Message}");
-            }
+            User user = await _userService.GetUserByIdAsync(id);
+            return Ok(user);
         }
 
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, User user)
         {
-            try
-            {
-                await _userService.UpdateUserAsync(id, user);
-                return NoContent();
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (NotAllowedException ex)
-            {
-                return Forbid(ex.Message);
-            }
-            catch(InvalidCredentialException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while updating the user: {ex.Message}");
-            }
+            await _userService.UpdateUserAsync(id, user);
+            return NoContent();
         }
 
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            try
+            await _userService.DeleteUserAsync(id);
+            return NoContent();
+        }
+
+        public void OnException(ExceptionContext context)
+        {
+            Exception exception = context.Exception;
+            int statusCode = 500;
+
+            if (exception is NotFoundException)
             {
-                await _userService.DeleteUserAsync(id);
-                return NoContent();
+                statusCode = 404;
             }
-            catch (BadRequestException ex)
+            else if (exception is BadRequestException || exception is ArgumentException)
             {
-                return BadRequest(ex.Message);
+                statusCode = 400;
             }
-            catch (NotFoundException ex)
+
+            context.Result = new ObjectResult(exception.Message)
             {
-                return NotFound(ex.Message);
-            }
-            catch (NotAllowedException ex)
-            {
-                return Forbid(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while removing the user: {ex.Message}");
-            }
+                StatusCode = statusCode
+            };
         }
     }
 }

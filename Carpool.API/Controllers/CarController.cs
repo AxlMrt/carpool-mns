@@ -2,14 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Application.Exceptions;
-using System.Linq.Expressions;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Domain.Roles;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Carpool.API.Controllers
 {
     [Authorize]
-    public class CarController : BaseApiController
+    public class CarController : BaseApiController, IExceptionFilter
     {
         private readonly ICarService _carService;
 
@@ -22,124 +22,65 @@ namespace Carpool.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Car>>> GetAllCars()
         {
-            try
-            {
-                IEnumerable<Car> cars = await _carService.GetAllCarsAsync();
-                return Ok(cars);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while fetching all the cars: {ex.Message}");
-            }
+            IEnumerable<Car> cars = await _carService.GetAllCarsAsync();
+            return Ok(cars);
         }
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUserId(Guid userId)
         {
-            try
-            {
-                var cars = await _carService.GetCarsByUserIdAsync(userId);
-                return Ok(cars);
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while fetching user car: {ex.Message}");
-            }
+            IEnumerable<Car> cars = await _carService.GetCarsByUserIdAsync(userId);
+            return Ok(cars);
         }
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("{id}")]
         public async Task<ActionResult<Car>> GetCarById(Guid id)
         {
-            try
-            {
-                var car = await _carService.GetCarByIdAsync(id);
-
-                return Ok(car);
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while fetching car: {ex.Message}");
-            }
+            Car car = await _carService.GetCarByIdAsync(id);
+            return Ok(car);
         }
 
         [HttpPost]
         public async Task<ActionResult<Car>> AddCar(Car car)
         {
-            try
-            {
-                var createdCar = await _carService.CreateCarAsync(car);
-                return CreatedAtAction(nameof(GetCarById), new { id = createdCar.Id }, createdCar);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while creating the car: {ex.Message}");
-            }
+            Car createdCar = await _carService.CreateCarAsync(car);
+            return CreatedAtAction(nameof(GetCarById), new { id = createdCar.Id }, createdCar);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<Car>> UpdateCar(Guid id, Car car)
         {
-            try
-            {
-                await _carService.UpdateCarAsync(id, car);
-                return NoContent();
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while updating the car: {ex.Message}");
-            }
+            await _carService.UpdateCarAsync(id, car);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> RemoveCar(Guid id)
         {
-            try
+            await _carService.DeleteCarAsync(id);
+            return NoContent();
+        }
+
+        public void OnException(ExceptionContext context)
+        {
+            Exception exception = context.Exception;
+            int statusCode = 500;
+
+            if (exception is NotFoundException)
             {
-                await _carService.DeleteCarAsync(id);
-                return NoContent();
+                statusCode = 404;
             }
-            catch (BadRequestException ex)
+            else if (exception is BadRequestException || exception is ArgumentException)
             {
-                return BadRequest(ex.Message);
+                statusCode = 400;
             }
-            catch (NotFoundException ex)
+
+            context.Result = new ObjectResult(exception.Message)
             {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while removing the car: {ex.Message}");
-            }
+                StatusCode = statusCode
+            };
         }
     }
 }

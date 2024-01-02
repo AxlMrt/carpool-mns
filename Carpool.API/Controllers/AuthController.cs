@@ -3,10 +3,12 @@ using Carpool.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Carpool.Domain;
 using Carpool.Domain.Entities;
+using Carpool.Application.Exceptions;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Carpool.API.Controllers
 {
-    public class AuthController : BaseApiController
+    public class AuthController : BaseApiController, IExceptionFilter
     {
         private readonly IAuthService _authService;
 
@@ -18,73 +20,65 @@ namespace Carpool.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(RegisterUserDto user)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest("Invalid registration data.");
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid registration data.");
 
-                await _authService.RegisterUserAsync(user);
+            await _authService.RegisterUserAsync(user);
 
-                return Ok("User registered successfully.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while registering the user.");
-            }
+            return Ok("User registered successfully.");
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate(LoginDto loginData)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest("Invalid login data.");
-                
-                Token token = await _authService.AuthenticateAsync(loginData);
-    
-                if (token is null)
-                    return Unauthorized("Invalid username or password.");
-                
-                return Ok(new { AccessToken = token.TokenString });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex);
-            }
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid login data.");
+
+            Token token = await _authService.AuthenticateAsync(loginData);
+
+            if (token is null)
+                return Unauthorized("Invalid username or password.");
+
+            return Ok(new { AccessToken = token.TokenString });
         }
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            try
-            {
-                var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+            var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
-                await _authService.LogoutAsync(token);
+            await _authService.LogoutAsync(token);
 
-                return Ok("Logged out successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok("Logged out successfully");
         }
 
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
-            try
-            {
-                var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-                var newToken = await _authService.RefreshTokenAsync(token);
+            var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+            var newToken = await _authService.RefreshTokenAsync(token);
 
-                return Ok(new { AccessToken = newToken });
-            }
-            catch (Exception ex)
+            return Ok(new { AccessToken = newToken });
+        }
+
+        public void OnException(ExceptionContext context)
+        {
+            Exception exception = context.Exception;
+            int statusCode = 500;
+
+            if (exception is NotFoundException)
             {
-                return StatusCode(500, ex.Message);
+                statusCode = 404;
             }
+            else if (exception is BadRequestException || exception is ArgumentException)
+            {
+                statusCode = 400;
+            }
+
+            context.Result = new ObjectResult(exception.Message)
+            {
+                StatusCode = statusCode
+            };
         }
     }
 }

@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Carpool.Application.Exceptions;
 
 namespace Carpool.API.Controllers
 {
-    public class ReservationController : BaseApiController
+    public class ReservationController : BaseApiController, IExceptionFilter
     {
         private readonly IReservationService _reservationService;
 
@@ -13,80 +15,61 @@ namespace Carpool.API.Controllers
             _reservationService = reservationService;
         }
 
-        [HttpPost("create")]
-        public async Task<ActionResult<Reservation>> CreateReservation(Reservation reservation)
-        {
-            try
-            {
-                var createdReservation = await _reservationService.CreateReservationAsync(reservation);
-                return CreatedAtAction(nameof(GetReservationById), new { id = createdReservation.Id }, createdReservation);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpDelete("cancel/{id}")]
-        public async Task<ActionResult> CancelReservation(Guid id)
-        {
-            try
-            {
-                var deleted = await _reservationService.DeleteReservationAsync(id);
-                if (!deleted)
-                    return NotFound();
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Reservation>> GetReservationById(Guid id)
-        {
-            try
-            {
-                var reservation = await _reservationService.GetReservationByIdAsync(id);
-                if (reservation == null)
-                    return NotFound();
-
-                return Ok(reservation);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByUserId(Guid userId)
         {
-            try
-            {
-                var reservations = await _reservationService.GetReservationsByUserIdAsync(userId);
-                return Ok(reservations);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            IEnumerable<Reservation> reservations = await _reservationService.GetReservationsByUserIdAsync(userId);
+            return Ok(reservations);
         }
 
         [HttpGet("trip/{tripId}")]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByTripId(Guid tripId)
         {
-            try
+            IEnumerable<Reservation> reservations = await _reservationService.GetReservationsByTripIdAsync(tripId);
+            return Ok(reservations);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Reservation>> GetReservationById(Guid id)
+        {
+            Reservation reservation = await _reservationService.GetReservationByIdAsync(id);
+
+            return Ok(reservation);
+        }
+
+        [HttpPost("create")]
+        public async Task<ActionResult<Reservation>> CreateReservation(Reservation reservation)
+        {
+            Reservation createdReservation = await _reservationService.CreateReservationAsync(reservation);
+            return CreatedAtAction(nameof(GetReservationById), new { id = createdReservation.Id }, createdReservation);
+        }
+
+        [HttpDelete("cancel/{id}")]
+        public async Task<ActionResult> CancelReservation(Guid id)
+        {
+            await _reservationService.DeleteReservationAsync(id);
+
+            return NoContent();
+        }
+
+        public void OnException(ExceptionContext context)
+        {
+            Exception exception = context.Exception;
+            int statusCode = 500;
+
+            if (exception is NotFoundException)
             {
-                var reservations = await _reservationService.GetReservationsByTripIdAsync(tripId);
-                return Ok(reservations);
+                statusCode = 404;
             }
-            catch (Exception ex)
+            else if (exception is BadRequestException || exception is ArgumentException)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                statusCode = 400;
             }
+
+            context.Result = new ObjectResult(exception.Message)
+            {
+                StatusCode = statusCode
+            };
         }
     }
 }

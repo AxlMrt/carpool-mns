@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Carpool.Application.Exceptions;
 
 namespace Carpool.API.Controllers
 {
-    public class TripController : BaseApiController
+    public class TripController : BaseApiController, IExceptionFilter
     {
         private readonly ITripService _tripService;
 
@@ -13,83 +15,62 @@ namespace Carpool.API.Controllers
             _tripService = tripService;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Trip>>> GetAllTrips()
+        {
+            IEnumerable<Trip> trips = await _tripService.GetAllTripsAsync();
+            return Ok(trips);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Trip>> GetTripById(Guid id)
         {
-            try
-            {
-                var trip = await _tripService.GetTripByIdAsync(id);
-                if (trip == null)
-                    return NotFound();
+            Trip trip = await _tripService.GetTripByIdAsync(id);
 
-                return Ok(trip);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok(trip);
         }
 
         [HttpPost]
         public async Task<ActionResult<Trip>> CreateTrip(Trip trip)
         {
-            try
-            {
-                var createdTrip = await _tripService.CreateTripAsync(trip);
-                return CreatedAtAction(nameof(GetTripById), new { id = createdTrip.Id }, createdTrip);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            Trip createdTrip = await _tripService.CreateTripAsync(trip);
+            return CreatedAtAction(nameof(GetTripById), new { id = createdTrip.Id }, createdTrip);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<Trip>> UpdateTrip(Guid id, Trip trip)
         {
-            try
-            {
-                var updatedTrip = await _tripService.UpdateTripAsync(id, trip);
-                if (updatedTrip == null)
-                    return NotFound();
+            await _tripService.UpdateTripAsync(id, trip);
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTrip(Guid id)
         {
-            try
-            {
-                var deleted = await _tripService.DeleteTripAsync(id);
-                if (!deleted)
-                    return NotFound();
+            await _tripService.DeleteTripAsync(id);
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return NoContent();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Trip>>> GetAllTrips()
+        public void OnException(ExceptionContext context)
         {
-            try
+            Exception exception = context.Exception;
+            int statusCode = 500;
+
+            if (exception is NotFoundException)
             {
-                var trips = await _tripService.GetAllTripsAsync();
-                return Ok(trips);
+                statusCode = 404;
             }
-            catch (Exception ex)
+            else if (exception is BadRequestException || exception is ArgumentException)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                statusCode = 400;
             }
+
+            context.Result = new ObjectResult(exception.Message)
+            {
+                StatusCode = statusCode
+            };
         }
     }
 }
