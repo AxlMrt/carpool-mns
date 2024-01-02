@@ -19,7 +19,7 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Addresses.ToListAsync();
         }
 
-        public async Task<Address> GetAddressByIdAsync(Guid id)
+        public async Task<Address> GetAddressByIdAsync(int id)
         {
             return await _context.Addresses.FindAsync(id);
         }
@@ -36,7 +36,7 @@ namespace Carpool.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAddressAsync(Guid id)
+        public async Task DeleteAddressAsync(int id)
         {
             var addressToDelete = await GetAddressByIdAsync(id);
             if (addressToDelete != null)

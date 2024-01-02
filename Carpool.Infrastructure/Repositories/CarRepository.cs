@@ -19,14 +19,14 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Cars.ToListAsync();
         }
 
-        public async Task<Car> GetCarByIdAsync(Guid id)
+        public async Task<Car> GetCarByIdAsync(int id)
         {
             return await _context.Cars.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Car>> GetCarsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Car>> GetCarsByUserIdAsync(int userId)
         {
-            return await _context.Cars.Where(car => car.OwnerId == userId).ToListAsync();
+            return await _context.Cars.Where(car => car.Owner.Id == userId).ToListAsync();
         }
 
         public async Task CreateCarAsync(Car car)
@@ -41,7 +41,7 @@ namespace Carpool.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCarAsync(Guid id)
+        public async Task DeleteCarAsync(int id)
         {
             var carToDelete = await GetCarByIdAsync(id);
             if (carToDelete != null)

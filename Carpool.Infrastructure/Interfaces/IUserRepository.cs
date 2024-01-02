@@ -5,8 +5,8 @@ namespace Carpool.Infrastructure.Interfaces
     public interface IUserRepository
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserByIdAsync(Guid userId);
+        Task<User> GetUserByIdAsync(int id);
         Task UpdateUserAsync(User user);
-        Task DeleteUserAsync(Guid userId);
+        Task DeleteUserAsync(int id);
     }
 }

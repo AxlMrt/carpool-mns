@@ -17,7 +17,7 @@ namespace Carpool.Infrastructure.Repositories
 
         public async Task RegisterUserAsync(RegisterUserDto user)
         {
-            User newUser = new User
+            User newUser = new()
             {
                 LastName = user.LastName,
                 FirstName = user.FirstName,

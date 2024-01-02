@@ -19,9 +19,9 @@ namespace Carpool.Infrastructure.Repositories
             return await _dbContext.Users.ToListAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(Guid userId)
+        public async Task<User> GetUserByIdAsync(int id)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task UpdateUserAsync(User user)
@@ -35,9 +35,9 @@ namespace Carpool.Infrastructure.Repositories
             }
         }
 
-        public async Task DeleteUserAsync(Guid userId)
+        public async Task DeleteUserAsync(int id)
         {
-            User user = await _dbContext.Users.FirstOrDefaultAsync(u=> u.Id == userId);
+            User user = await _dbContext.Users.FirstOrDefaultAsync(u=> u.Id == id);
             if (user != null)
             {
                 _dbContext.Users.Remove(user);

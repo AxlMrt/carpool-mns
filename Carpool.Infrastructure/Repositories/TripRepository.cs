@@ -19,7 +19,7 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Trips.ToListAsync();
         }
 
-        public async Task<Trip> GetTripByIdAsync(Guid id)
+        public async Task<Trip> GetTripByIdAsync(int id)
         {
             return await _context.Trips.FindAsync(id);
         }
@@ -36,7 +36,7 @@ namespace Carpool.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteTripAsync(Guid id)
+        public async Task DeleteTripAsync(int id)
         {
             var tripToDelete = await GetTripByIdAsync(id);
             if (tripToDelete != null)

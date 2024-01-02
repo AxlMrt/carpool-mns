@@ -5,10 +5,10 @@ namespace Carpool.Domain.Interfaces
     public interface IFeedbackRepository
     {
         Task<IEnumerable<Feedback>> GetAllFeedbacksAsync();
-        Task<Feedback> GetFeedbackByIdAsync(Guid id);
-        Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(Guid userId);
+        Task<Feedback> GetFeedbackByIdAsync(int id);
+        Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(int id);
         Task CreateFeedbackAsync(Feedback feedback);
         Task UpdateFeedbackAsync(Feedback feedback);
-        Task DeleteFeedbackAsync(Guid id);
+        Task DeleteFeedbackAsync(int id);
     }
 }

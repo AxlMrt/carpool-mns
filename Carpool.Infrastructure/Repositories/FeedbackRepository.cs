@@ -19,14 +19,14 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Feedbacks.ToListAsync();
         }
 
-        public async Task<Feedback> GetFeedbackByIdAsync(Guid id)
+        public async Task<Feedback> GetFeedbackByIdAsync(int id)
         {
             return await _context.Feedbacks.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(int userId)
         {
-            return await _context.Feedbacks.Where(f => f.UserId == userId).ToListAsync();
+            return await _context.Feedbacks.Where(f => f.User.Id == userId).ToListAsync();
         }
 
         public async Task CreateFeedbackAsync(Feedback feedback)
@@ -41,7 +41,7 @@ namespace Carpool.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteFeedbackAsync(Guid id)
+        public async Task DeleteFeedbackAsync(int id)
         {
             var feedbackToDelete = await GetFeedbackByIdAsync(id);
             if (feedbackToDelete != null)

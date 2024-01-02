@@ -19,19 +19,19 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Reservations.ToListAsync();
         }
 
-        public async Task<Reservation> GetReservationByIdAsync(Guid id)
+        public async Task<Reservation> GetReservationByIdAsync(int id)
         {
             return await _context.Reservations.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(int userId)
         {
-            return await _context.Reservations.Where(r => r.UserId == userId).ToListAsync();
+            return await _context.Reservations.Where(r => r.User.Id == userId).ToListAsync();
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsByTripIdAsync(Guid tripId)
+        public async Task<IEnumerable<Reservation>> GetReservationsByTripIdAsync(int tripId)
         {
-            return await _context.Reservations.Where(r => r.TripId == tripId).ToListAsync();
+            return await _context.Reservations.Where(r => r.Trip.Id == tripId).ToListAsync();
         }
 
         public async Task CreateReservationAsync(Reservation reservation)
@@ -46,7 +46,7 @@ namespace Carpool.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteReservationAsync(Guid id)
+        public async Task DeleteReservationAsync(int id)
         {
             var reservationToDelete = await GetReservationByIdAsync(id);
             if (reservationToDelete != null)

@@ -5,9 +5,9 @@ namespace Carpool.Domain.Interfaces
     public interface ITripRepository
     {
         Task<IEnumerable<Trip>> GetAllTripsAsync();
-        Task<Trip> GetTripByIdAsync(Guid id);
+        Task<Trip> GetTripByIdAsync(int id);
         Task CreateTripAsync(Trip trip);
         Task UpdateTripAsync(Trip trip);
-        Task DeleteTripAsync(Guid id);
+        Task DeleteTripAsync(int id);
     }
 }
