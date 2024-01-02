@@ -46,7 +46,7 @@ namespace Carpool.Application.Services
             if (id == Guid.Empty)
                 throw new BadRequestException("Empty ID is not allowed.");
 
-            var existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
+            Address existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
             address.Id = existingAddress.Id;
             await _addressRepository.UpdateAddressAsync(address);
@@ -58,7 +58,7 @@ namespace Carpool.Application.Services
             if (id == Guid.Empty)
                 throw new BadRequestException("Empty ID is not allowed.");
             
-            var existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
+            Address existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
             await _addressRepository.DeleteAddressAsync(id);
             return true;
         }

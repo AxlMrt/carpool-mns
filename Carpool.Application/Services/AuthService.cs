@@ -3,6 +3,9 @@ using Carpool.Application.Interfaces;
 using Carpool.Infrastructure.Interfaces;
 using Carpool.Domain;
 using Carpool.Domain.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Carpool.Application.Exceptions;
+using System.Security.Authentication;
 
 namespace Carpool.Application.Services
 {
@@ -22,18 +25,21 @@ namespace Carpool.Application.Services
 
         public async Task RegisterUserAsync(RegisterUserDto user)
         {
+            if (user is null)
+                throw new BadRequestException("Car object cannot be null");
+
             user.Password = _passwordHasherService.HashPassword(user.Password);
             await _authRepository.RegisterUserAsync(user);
         }
 
         public async Task<Token> AuthenticateAsync(LoginDto loginData)
         {
-            User user = await _authRepository.FindUserAsync(loginData.Email);
+            User user = await _authRepository.FindUserAsync(loginData.Email) ?? throw new InvalidCredentialException("Invalid email.");
 
-            if (user is null || !_passwordHasherService.VerifyPassword(user.Password, loginData.Password))
-                return null;
+            if (!_passwordHasherService.VerifyPassword(user.Password, loginData.Password))
+                throw new InvalidCredentialException("Password is incorrect.");
 
-            var token = await _jwtService.GenerateTokenAsync(user.Id.ToString(), user.Role);
+            string token = await _jwtService.GenerateTokenAsync(user.Id.ToString(), user.Role);
 
             return await _tokenManagerService.AddTokenAsync(user.Id.ToString(), token);
         }
@@ -45,7 +51,7 @@ namespace Carpool.Application.Services
 
         public async Task<string> RefreshTokenAsync(string token)
         {
-            var newToken = await _jwtService.RefreshTokenAsync(token);
+            string newToken = await _jwtService.RefreshTokenAsync(token);
             await _tokenManagerService.UpdateTokenAsync(token, newToken);
 
             return newToken;

@@ -16,28 +16,47 @@ namespace Carpool.Application.Services
 
         public async Task<IEnumerable<Feedback>> GetAllFeedbacksAsync()
         {
-            return await _feedbackRepository.GetAllFeedbacksAsync();
+            IEnumerable<Feedback> feedbacks = await _feedbackRepository.GetAllFeedbacksAsync();
+
+            if (feedbacks == null || !feedbacks.Any())
+                throw new NotFoundException("No feedbacks found in the database.");
+
+            return feedbacks;
         }
 
         public async Task<Feedback> GetFeedbackByIdAsync(Guid id)
         {
-            return await _feedbackRepository.GetFeedbackByIdAsync(id);
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            Feedback feedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
+            return feedback;
         }
 
         public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(Guid userId)
         {
-            return await _feedbackRepository.GetFeedbacksByUserIdAsync(userId);
+            if (userId == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            IEnumerable<Feedback> feedback = await _feedbackRepository.GetFeedbacksByUserIdAsync(userId) ?? throw new NotFoundException($"Feedbacks with user ID {userId} not found.");
+            return feedback;
         }
 
         public async Task<Feedback> CreateFeedbackAsync(Feedback feedback)
         {
+            if (feedback is null)
+                throw new BadRequestException("Feedback object cannot be null.");
+
             await _feedbackRepository.CreateFeedbackAsync(feedback);
             return feedback;
         }
 
         public async Task<Feedback> UpdateFeedbackAsync(Guid id, Feedback feedback)
         {
-            var existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            Feedback existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
 
             feedback.Id = existingFeedback.Id;
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
@@ -46,8 +65,10 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteFeedbackAsync(Guid id)
         {
-            var existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
 
+            Feedback existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
             await _feedbackRepository.DeleteFeedbackAsync(id);
             return true;
         }

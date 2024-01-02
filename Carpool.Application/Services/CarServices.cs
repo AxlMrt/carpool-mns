@@ -2,9 +2,7 @@ using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
-using Carpool.Domain.Roles;
 using Carpool.Infrastructure.Interfaces;
-using Carpool.Infrastructure.Repositories;
 
 namespace Carpool.Application.Services
 {
@@ -71,7 +69,7 @@ namespace Carpool.Application.Services
             if (id == Guid.Empty)
                 throw new BadRequestException("Empty ID is not allowed.");
 
-            var existingCar = await _carRepository.GetCarByIdAsync(id) ?? throw new NotFoundException($"Car with ID {id} not found.");
+            Car existingCar = await _carRepository.GetCarByIdAsync(id) ?? throw new NotFoundException($"Car with ID {id} not found.");
 
             await _carRepository.DeleteCarAsync(id);
             return true;

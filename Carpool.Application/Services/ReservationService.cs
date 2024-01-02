@@ -16,44 +16,77 @@ namespace Carpool.Application.Services
 
         public async Task<IEnumerable<Reservation>> GetAllReservationsAsync()
         {
-            return await _reservationRepository.GetAllReservationsAsync();
+            IEnumerable<Reservation> reservations = await _reservationRepository.GetAllReservationsAsync();
+
+            if (reservations == null || !reservations.Any())
+                throw new NotFoundException("No reservations found.");
+
+            return reservations;
         }
 
         public async Task<Reservation> GetReservationByIdAsync(Guid id)
         {
-            return await _reservationRepository.GetReservationByIdAsync(id);
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            Reservation reservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
+            return reservation;
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Reservation>> GetReservationsByUserIdAsync(Guid id)
         {
-            return await _reservationRepository.GetReservationsByUserIdAsync(userId);
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            IEnumerable<Reservation> reservations = await _reservationRepository.GetReservationsByUserIdAsync(id);
+
+            if (reservations == null || !reservations.Any())
+                throw new NotFoundException($"No reservations found for user with ID {id}.");
+
+            return reservations;
         }
 
-        public async Task<IEnumerable<Reservation>> GetReservationsByTripIdAsync(Guid tripId)
+        public async Task<IEnumerable<Reservation>> GetReservationsByTripIdAsync(Guid id)
         {
-            return await _reservationRepository.GetReservationsByTripIdAsync(tripId);
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            var reservations = await _reservationRepository.GetReservationsByTripIdAsync(id);
+            if (reservations == null || !reservations.Any())
+                throw new NotFoundException($"No reservations found for trip with ID {id}.");
+
+            return reservations;
         }
 
         public async Task<Reservation> CreateReservationAsync(Reservation reservation)
         {
+            if (reservation == null)
+                throw new BadRequestException("Reservation object cannot be null.");
+
             await _reservationRepository.CreateReservationAsync(reservation);
             return reservation;
         }
 
         public async Task<Reservation> UpdateReservationAsync(Guid id, Reservation reservation)
         {
-            var existingReservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
 
-            reservation.Id = existingReservation.Id;
-            await _reservationRepository.UpdateReservationAsync(reservation);
-            return reservation;
+            Reservation existingReservation = await GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
+
+            await _reservationRepository.UpdateReservationAsync(existingReservation);
+            return existingReservation;
         }
 
         public async Task<bool> DeleteReservationAsync(Guid id)
         {
-            var existingReservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            Reservation existingReservation = await GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
 
             await _reservationRepository.DeleteReservationAsync(id);
+
             return true;
         }
     }

@@ -15,6 +15,20 @@ namespace Carpool.API.Controllers
             _feedbackService = feedbackService;
         }
 
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Feedback>>> GetAllFeedbacks()
+        {
+            IEnumerable<Feedback> feedbacks = await _feedbackService.GetAllFeedbacksAsync();
+            return Ok(feedbacks);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteFeedback(Guid id)
+        {
+            await _feedbackService.DeleteFeedbackAsync(id);
+            return NoContent();
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Feedback>> GetFeedbackById(Guid id)
         {

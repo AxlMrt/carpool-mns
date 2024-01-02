@@ -16,23 +16,38 @@ namespace Carpool.Application.Services
 
         public async Task<IEnumerable<Trip>> GetAllTripsAsync()
         {
-            return await _tripRepository.GetAllTripsAsync();
+            IEnumerable<Trip> trips = await _tripRepository.GetAllTripsAsync();
+
+            if (trips == null || !trips.Any())
+                throw new NotFoundException("No trips found.");
+
+            return trips;
         }
 
         public async Task<Trip> GetTripByIdAsync(Guid id)
         {
-            return await _tripRepository.GetTripByIdAsync(id);
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            Trip trip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
+            return trip;
         }
 
         public async Task<Trip> CreateTripAsync(Trip trip)
         {
+            if (trip == null)
+                throw new BadRequestException("Trip object cannot be null.");
+
             await _tripRepository.CreateTripAsync(trip);
             return trip;
         }
 
         public async Task<Trip> UpdateTripAsync(Guid id, Trip trip)
         {
-            var existingTrip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            Trip existingTrip = await GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
             trip.Id = existingTrip.Id;
             await _tripRepository.UpdateTripAsync(trip);
@@ -41,7 +56,10 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteTripAsync(Guid id)
         {
-            var existingTrip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
+            Trip existingTrip = await GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
             await _tripRepository.DeleteTripAsync(id);
             return true;

@@ -14,9 +14,9 @@ namespace Carpool.Application.Services
 
         public async Task<Token> AddTokenAsync(string userId, string token)
         {
-            var expiryDate = DateTime.UtcNow.AddDays(1);
+            DateTime expiryDate = DateTime.UtcNow.AddDays(1);
 
-            var newToken = new Token
+            Token newToken = new()
             {
                 UserId = userId,
                 TokenString = token,

@@ -45,7 +45,7 @@ namespace Carpool.API.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+            string token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
             await _authService.LogoutAsync(token);
 
@@ -55,8 +55,8 @@ namespace Carpool.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
-            var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-            var newToken = await _authService.RefreshTokenAsync(token);
+            string token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+            string newToken = await _authService.RefreshTokenAsync(token);
 
             return Ok(new { AccessToken = newToken });
         }
