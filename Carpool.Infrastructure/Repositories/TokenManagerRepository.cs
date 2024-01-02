@@ -19,9 +19,9 @@ namespace Carpool.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Token> GetTokenByUserIdAsync(string userId)
+        public async Task<Token> GetTokenByUserIdAsync(int id)
         {
-            return await _context.Tokens.FirstOrDefaultAsync(t => t.UserId == userId);
+            return await _context.Tokens.FirstOrDefaultAsync(t => t.User.Id == id);
         }
 
         public async Task UpdateTokenAsync(string oldTokenString, string newTokenString)

@@ -33,6 +33,10 @@ namespace Carpool.Infrastructure.Context
                 .HasKey(f => f.Id);
 
             // Configurations des relations
+            // Relation entre User et Address (Un utilisateur peut avoir plusieurs adresses)
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Addresses)
+                .WithOne(a => a.User);
 
             // Relation entre User et Car (Un utilisateur peut avoir plusieurs voitures)
             modelBuilder.Entity<User>()
