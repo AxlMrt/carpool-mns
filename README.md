@@ -155,8 +155,9 @@ If you encounter any issues or have questions, feel free to open a ticket in the
   - JwtService.cs
   - TokenManagerService.cs
 
-- Create new exception to handle null value in all services.
+- Creating a Dashboard repository, service and controller
 - Fixing nullable properties in Entities
 - Creating DTOs for each Services, controllers
+- Check for more error handling in services
 
 Thank you for using our API!
