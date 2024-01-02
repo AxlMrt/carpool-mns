@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
+using Carpool.Application.Exceptions;
 
 namespace Carpool.API.Controllers
 {
@@ -16,20 +14,44 @@ namespace Carpool.API.Controllers
             _addressService = addressService;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Address>>> GetAllAddresses()
+        {
+            try
+            {
+                IEnumerable<Address> addresses = await _addressService.GetAllAddressesAsync();
+                return Ok(addresses);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occured while fetching all the addresses: {ex.Message}");
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Address>> GetAddressById(Guid id)
         {
             try
             {
                 var address = await _addressService.GetAddressByIdAsync(id);
-                if (address == null)
-                    return NotFound();
 
                 return Ok(address);
             }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"An error occured while fetching the addresses list: {ex.Message}");
             }
         }
 
@@ -41,9 +63,13 @@ namespace Carpool.API.Controllers
                 var createdAddress = await _addressService.CreateAddressAsync(address);
                 return CreatedAtAction(nameof(GetAddressById), new { id = createdAddress.Id }, createdAddress);
             }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"An error occured while creating a new address: {ex.Message}");
             }
         }
 
@@ -53,14 +79,16 @@ namespace Carpool.API.Controllers
             try
             {
                 var updatedAddress = await _addressService.UpdateAddressAsync(id, address);
-                if (updatedAddress == null)
-                    return NotFound();
 
                 return NoContent();
             }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"An error occured while updating the address: {ex.Message}");
             }
         }
 
@@ -70,28 +98,20 @@ namespace Carpool.API.Controllers
             try
             {
                 var deleted = await _addressService.DeleteAddressAsync(id);
-                if (!deleted)
-                    return NotFound();
 
                 return NoContent();
             }
-            catch (Exception ex)
+            catch (BadRequestException ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return BadRequest(ex.Message);
             }
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Address>>> GetAllAddresses()
-        {
-            try
+            catch (NotFoundException ex)
             {
-                var addresses = await _addressService.GetAllAddressesAsync();
-                return Ok(addresses);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"An error occured while removing the address: {ex.Message}");
             }
         }
     }

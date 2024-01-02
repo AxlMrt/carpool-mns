@@ -157,5 +157,6 @@ If you encounter any issues or have questions, feel free to open a ticket in the
 
 - Create new exception to handle null value in all services.
 - Fixing nullable properties in Entities
+- Creating DTOs for each Services, controllers
 
 Thank you for using our API!

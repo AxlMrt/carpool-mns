@@ -1,5 +1,4 @@
 using System.Security.Authentication;
-using System.Security.Claims;
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
@@ -35,9 +34,9 @@ namespace Carpool.API.Controllers
             {
                 return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while fetching the users list.");
+                return StatusCode(500, $"An error occurred while fetching the users list: {ex.Message}");
             }
         }
 
@@ -61,9 +60,9 @@ namespace Carpool.API.Controllers
             {
                 return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while fetching the user.");
+                return StatusCode(500, $"An error occurred while fetching the user: {ex.Message}");
             }
         }
 
@@ -92,9 +91,9 @@ namespace Carpool.API.Controllers
             {
                 return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while updating the user.");
+                return StatusCode(500, $"An error occurred while updating the user: {ex.Message}");
             }
         }
 
@@ -119,9 +118,9 @@ namespace Carpool.API.Controllers
             {
                 return Forbid(ex.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while removing the user.");
+                return StatusCode(500, $"An error occurred while removing the user: {ex.Message}");
             }
         }
     }

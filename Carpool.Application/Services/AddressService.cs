@@ -14,24 +14,38 @@ namespace Carpool.Application.Services
             _addressRepository = addressRepository;
         }
 
-        public async Task<Address> GetAddressByIdAsync(Guid id)
-        {
-            return await _addressRepository.GetAddressByIdAsync(id);
-        }
-
         public async Task<IEnumerable<Address>> GetAllAddressesAsync()
         {
-            return await _addressRepository.GetAllAddressesAsync();
+            IEnumerable<Address> addresses = await _addressRepository.GetAllAddressesAsync();
+
+            if (addresses is null || !addresses.Any())
+                throw new NotFoundException("No addresses found in database.");
+            
+            return addresses;
+        }
+
+        public async Task<Address> GetAddressByIdAsync(Guid id)
+        {
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+            
+            return await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
         }
 
         public async Task<Address> CreateAddressAsync(Address address)
         {
+            if (address is null)
+                throw new BadRequestException("Address object cannot be null.");
+            
             await _addressRepository.CreateAddressAsync(address);
             return address;
         }
 
         public async Task<Address> UpdateAddressAsync(Guid id, Address address)
         {
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+
             var existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
             address.Id = existingAddress.Id;
@@ -41,6 +55,9 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteAddressAsync(Guid id)
         {
+            if (id == Guid.Empty)
+                throw new BadRequestException("Empty ID is not allowed.");
+            
             var existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
             await _addressRepository.DeleteAddressAsync(id);
             return true;
