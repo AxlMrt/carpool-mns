@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Application.Exceptions;
+using Microsoft.AspNetCore.Authorization;
+using Carpool.Domain.Roles;
 
 namespace Carpool.API.Controllers
 {
+    [Authorize]
     public class FeedbackController : BaseApiController, IExceptionFilter
     {
         private readonly IFeedbackService _feedbackService;
@@ -15,18 +18,12 @@ namespace Carpool.API.Controllers
             _feedbackService = feedbackService;
         }
 
-        [HttpGet("all")]
+        [Authorize(Roles = Roles.Administrator)]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Feedback>>> GetAllFeedbacks()
         {
             IEnumerable<Feedback> feedbacks = await _feedbackService.GetAllFeedbacksAsync();
             return Ok(feedbacks);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteFeedback(Guid id)
-        {
-            await _feedbackService.DeleteFeedbackAsync(id);
-            return NoContent();
         }
 
         [HttpGet("{id}")]
@@ -54,6 +51,13 @@ namespace Carpool.API.Controllers
         public async Task<ActionResult<Feedback>> UpdateFeedback(Guid id, Feedback feedback)
         {
             await _feedbackService.UpdateFeedbackAsync(id, feedback);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteFeedback(Guid id)
+        {
+            await _feedbackService.DeleteFeedbackAsync(id);
             return NoContent();
         }
 

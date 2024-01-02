@@ -3,9 +3,11 @@ using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Carpool.API.Controllers
 {
+    [Authorize]
     public class AddressController : BaseApiController, IExceptionFilter
     {
         private readonly IAddressService _addressService;

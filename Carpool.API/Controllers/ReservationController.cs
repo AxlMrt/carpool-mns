@@ -3,9 +3,12 @@ using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Application.Exceptions;
+using Microsoft.AspNetCore.Authorization;
+using Carpool.Domain.Roles;
 
 namespace Carpool.API.Controllers
 {
+    [Authorize]
     public class ReservationController : BaseApiController, IExceptionFilter
     {
         private readonly IReservationService _reservationService;
@@ -15,6 +18,7 @@ namespace Carpool.API.Controllers
             _reservationService = reservationService;
         }
         
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservations()
         {
