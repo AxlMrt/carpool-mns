@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
+using Carpool.Application.Exceptions;
+using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authorization;
+using Carpool.Domain.Roles;
 
 namespace Carpool.API.Controllers
 {
-    [ApiController]
-    [Route("api/cars")]
+    [Authorize]
     public class CarController : BaseApiController
     {
         private readonly ICarService _carService;
@@ -15,6 +18,26 @@ namespace Carpool.API.Controllers
             _carService = carService;
         }
 
+        [Authorize(Roles = Roles.Administrator)]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Car>>> GetAllCars()
+        {
+            try
+            {
+                IEnumerable<Car> cars = await _carService.GetAllCarsAsync();
+                return Ok(cars);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while fetching all the cars: {ex.Message}");
+            }
+        }
+
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUserId(Guid userId)
         {
@@ -23,26 +46,41 @@ namespace Carpool.API.Controllers
                 var cars = await _carService.GetCarsByUserIdAsync(userId);
                 return Ok(cars);
             }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                return StatusCode(500, $"An error occurred while fetching user car: {ex.Message}");
             }
         }
 
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet("{id}")]
         public async Task<ActionResult<Car>> GetCarById(Guid id)
         {
             try
             {
                 var car = await _carService.GetCarByIdAsync(id);
-                if (car == null)
-                    return NotFound();
 
                 return Ok(car);
             }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                return StatusCode(500, $"An error occurred while fetching car: {ex.Message}");
             }
         }
 
@@ -56,7 +94,7 @@ namespace Carpool.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                return StatusCode(500, $"An error occurred while creating the car: {ex.Message}");
             }
         }
 
@@ -65,15 +103,20 @@ namespace Carpool.API.Controllers
         {
             try
             {
-                if (id != car.Id)
-                    return BadRequest();
-
                 await _carService.UpdateCarAsync(id, car);
                 return NoContent();
             }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                return StatusCode(500, $"An error occurred while updating the car: {ex.Message}");
             }
         }
 
@@ -85,9 +128,17 @@ namespace Carpool.API.Controllers
                 await _carService.DeleteCarAsync(id);
                 return NoContent();
             }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                return StatusCode(500, $"An error occurred while removing the car: {ex.Message}");
             }
         }
     }
