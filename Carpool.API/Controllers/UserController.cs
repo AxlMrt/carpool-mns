@@ -29,10 +29,11 @@ namespace Carpool.API.Controllers
 
                 IEnumerable<User> users = await _userService.GetAllUsersAsync();
 
-                if (users is null || !users.Any())
-                    return NotFound("No users found.");
-
                 return Ok(users);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception)
             {
@@ -49,11 +50,12 @@ namespace Carpool.API.Controllers
                 if (!User.IsInRole(Roles.Administrator)) // For testing purpose
                     return Forbid();
 
-                if (id == Guid.Empty)
-                    return BadRequest("Invalid user ID.");
-
                 User user = await _userService.GetUserByIdAsync(id);
                 return Ok(user);
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch(NotFoundException ex)
             {
@@ -71,15 +73,20 @@ namespace Carpool.API.Controllers
         {
             try
             {
-                if (id != user.Id || user.Role != Roles.Administrator)
-                    return Forbid();
-                
-                await _userService.UpdateUserAsync(user);
+                await _userService.UpdateUserAsync(id, user);
                 return NoContent();
             }
-            catch(NotFoundException ex)
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (NotAllowedException ex)
+            {
+                return Forbid(ex.Message);
             }
             catch(InvalidCredentialException ex)
             {
@@ -97,11 +104,12 @@ namespace Carpool.API.Controllers
         {
             try
             {
-                if (id == Guid.Empty)
-                    return BadRequest("Invalid user ID.");
-                
                 await _userService.DeleteUserAsync(id);
                 return NoContent();
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (NotFoundException ex)
             {
