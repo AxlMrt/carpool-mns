@@ -2,6 +2,7 @@ using System.Security.Authentication;
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
+using Carpool.Domain.Roles;
 using Carpool.Infrastructure.Interfaces;
 
 namespace Carpool.Application.Services
@@ -43,6 +44,10 @@ namespace Carpool.Application.Services
         public async Task DeleteUserAsync(Guid userId)
         {
             User existingUser = await GetUserByIdAsync(userId) ?? throw new NotFoundException($"User with ID {userId} not found.");
+
+            if (existingUser.Role != Roles.Administrator || existingUser.Id != userId)
+                throw new NotAllowedException("You are not allowed to delete this user.");
+
             await _userRepository.DeleteUserAsync(userId);
         }
     }

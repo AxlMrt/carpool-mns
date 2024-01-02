@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using System.Security.Claims;
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
@@ -54,7 +55,7 @@ namespace Carpool.API.Controllers
                 User user = await _userService.GetUserByIdAsync(id);
                 return Ok(user);
             }
-            catch(UserNotFoundException ex)
+            catch(NotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -76,7 +77,11 @@ namespace Carpool.API.Controllers
                 await _userService.UpdateUserAsync(user);
                 return NoContent();
             }
-            catch(UserNotFoundException ex)
+            catch(NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(InvalidCredentialException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -95,17 +100,16 @@ namespace Carpool.API.Controllers
                 if (id == Guid.Empty)
                     return BadRequest("Invalid user ID.");
                 
-                User currentUser = await _userService.GetUserByIdAsync(id);
-
-                if (currentUser.Role != Roles.Administrator || currentUser.Id != id)
-                    return Forbid();
-
                 await _userService.DeleteUserAsync(id);
                 return NoContent();
             }
-            catch (UserNotFoundException ex)
+            catch (NotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (NotAllowedException ex)
+            {
+                return Forbid(ex.Message);
             }
             catch (Exception)
             {
