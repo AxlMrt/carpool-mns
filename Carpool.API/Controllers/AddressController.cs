@@ -25,7 +25,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Address>> GetAddressById(Guid id)
+        public async Task<ActionResult<Address>> GetAddressById(int id)
         {
             Address address = await _addressService.GetAddressByIdAsync(id);
             return Ok(address);
@@ -39,14 +39,14 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Address>> UpdateAddress(Guid id, Address address)
+        public async Task<ActionResult<Address>> UpdateAddress(int id, Address address)
         {
             await _addressService.UpdateAddressAsync(id, address);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAddress(Guid id)
+        public async Task<ActionResult> DeleteAddress(int id)
         {
             await _addressService.DeleteAddressAsync(id);
             return NoContent();

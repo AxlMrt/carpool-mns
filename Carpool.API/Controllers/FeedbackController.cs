@@ -27,14 +27,14 @@ namespace Carpool.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Feedback>> GetFeedbackById(Guid id)
+        public async Task<ActionResult<Feedback>> GetFeedbackById(int id)
         {
             Feedback feedback = await _feedbackService.GetFeedbackByIdAsync(id);
             return Ok(feedback);
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByUserId(Guid userId)
+        public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByUserId(int userId)
         {
             IEnumerable<Feedback> feedbacks = await _feedbackService.GetFeedbacksByUserIdAsync(userId);
             return Ok(feedbacks);
@@ -48,14 +48,14 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Feedback>> UpdateFeedback(Guid id, Feedback feedback)
+        public async Task<ActionResult<Feedback>> UpdateFeedback(int id, Feedback feedback)
         {
             await _feedbackService.UpdateFeedbackAsync(id, feedback);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteFeedback(Guid id)
+        public async Task<ActionResult> DeleteFeedback(int id)
         {
             await _feedbackService.DeleteFeedbackAsync(id);
             return NoContent();

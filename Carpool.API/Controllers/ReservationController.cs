@@ -27,21 +27,21 @@ namespace Carpool.API.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByUserId(Guid userId)
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByUserId(int userId)
         {
             IEnumerable<Reservation> reservations = await _reservationService.GetReservationsByUserIdAsync(userId);
             return Ok(reservations);
         }
 
         [HttpGet("trip/{tripId}")]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByTripId(Guid tripId)
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByTripId(int tripId)
         {
             IEnumerable<Reservation> reservations = await _reservationService.GetReservationsByTripIdAsync(tripId);
             return Ok(reservations);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Reservation>> GetReservationById(Guid id)
+        public async Task<ActionResult<Reservation>> GetReservationById(int id)
         {
             Reservation reservation = await _reservationService.GetReservationByIdAsync(id);
             return Ok(reservation);
@@ -55,7 +55,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpDelete("cancel/{id}")]
-        public async Task<ActionResult> CancelReservation(Guid id)
+        public async Task<ActionResult> CancelReservation(int id)
         {
             await _reservationService.DeleteReservationAsync(id);
             return NoContent();

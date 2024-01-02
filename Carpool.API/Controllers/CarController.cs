@@ -28,7 +28,7 @@ namespace Carpool.API.Controllers
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUserId(Guid userId)
+        public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUserId(int userId)
         {
             IEnumerable<Car> cars = await _carService.GetCarsByUserIdAsync(userId);
             return Ok(cars);
@@ -36,7 +36,7 @@ namespace Carpool.API.Controllers
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Car>> GetCarById(Guid id)
+        public async Task<ActionResult<Car>> GetCarById(int id)
         {
             Car car = await _carService.GetCarByIdAsync(id);
             return Ok(car);
@@ -50,14 +50,14 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Car>> UpdateCar(Guid id, Car car)
+        public async Task<ActionResult<Car>> UpdateCar(int id, Car car)
         {
             await _carService.UpdateCarAsync(id, car);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> RemoveCar(Guid id)
+        public async Task<ActionResult> RemoveCar(int id)
         {
             await _carService.DeleteCarAsync(id);
             return NoContent();

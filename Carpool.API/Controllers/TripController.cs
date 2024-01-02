@@ -23,7 +23,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Trip>> GetTripById(Guid id)
+        public async Task<ActionResult<Trip>> GetTripById(int id)
         {
             Trip trip = await _tripService.GetTripByIdAsync(id);
 
@@ -38,7 +38,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Trip>> UpdateTrip(Guid id, Trip trip)
+        public async Task<ActionResult<Trip>> UpdateTrip(int id, Trip trip)
         {
             await _tripService.UpdateTripAsync(id, trip);
 
@@ -46,7 +46,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteTrip(Guid id)
+        public async Task<ActionResult> DeleteTrip(int id)
         {
             await _tripService.DeleteTripAsync(id);
 
