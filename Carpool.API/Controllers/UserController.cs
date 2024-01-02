@@ -49,6 +49,7 @@ namespace Carpool.API.Controllers
             return NoContent();
         }
 
+        [NonAction]
         public void OnException(ExceptionContext context)
         {
             Exception exception = context.Exception;

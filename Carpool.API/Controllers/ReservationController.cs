@@ -47,7 +47,7 @@ namespace Carpool.API.Controllers
             return Ok(reservation);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<ActionResult<Reservation>> CreateReservation(Reservation reservation)
         {
             Reservation createdReservation = await _reservationService.CreateReservationAsync(reservation);
@@ -61,6 +61,7 @@ namespace Carpool.API.Controllers
             return NoContent();
         }
 
+        [NonAction]
         public void OnException(ExceptionContext context)
         {
             Exception exception = context.Exception;

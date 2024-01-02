@@ -61,6 +61,7 @@ namespace Carpool.API.Controllers
             return Ok(new { AccessToken = newToken });
         }
 
+        [NonAction]
         public void OnException(ExceptionContext context)
         {
             Exception exception = context.Exception;
