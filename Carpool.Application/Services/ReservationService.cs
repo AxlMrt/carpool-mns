@@ -1,3 +1,4 @@
+using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -41,9 +42,7 @@ namespace Carpool.Application.Services
 
         public async Task<Reservation> UpdateReservationAsync(Guid id, Reservation reservation)
         {
-            var existingReservation = await _reservationRepository.GetReservationByIdAsync(id);
-            if (existingReservation == null)
-                return null;
+            var existingReservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
 
             reservation.Id = existingReservation.Id;
             await _reservationRepository.UpdateReservationAsync(reservation);
@@ -52,9 +51,7 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteReservationAsync(Guid id)
         {
-            var existingReservation = await _reservationRepository.GetReservationByIdAsync(id);
-            if (existingReservation == null)
-                return false;
+            var existingReservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
 
             await _reservationRepository.DeleteReservationAsync(id);
             return true;

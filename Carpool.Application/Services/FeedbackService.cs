@@ -1,3 +1,4 @@
+using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -36,9 +37,7 @@ namespace Carpool.Application.Services
 
         public async Task<Feedback> UpdateFeedbackAsync(Guid id, Feedback feedback)
         {
-            var existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id);
-            if (existingFeedback == null)
-                return null;
+            var existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
 
             feedback.Id = existingFeedback.Id;
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
@@ -47,9 +46,7 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteFeedbackAsync(Guid id)
         {
-            var existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id);
-            if (existingFeedback == null)
-                return false;
+            var existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
 
             await _feedbackRepository.DeleteFeedbackAsync(id);
             return true;

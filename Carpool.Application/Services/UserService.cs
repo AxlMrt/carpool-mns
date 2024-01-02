@@ -23,12 +23,12 @@ namespace Carpool.Application.Services
 
         public async Task<User> GetUserByIdAsync(Guid userId)
         {
-            return await _userRepository.GetUserByIdAsync(userId)  ?? throw new UserNotFoundException($"User with ID {userId} not found.");
+            return await _userRepository.GetUserByIdAsync(userId)  ?? throw new NotFoundException($"User with ID {userId} not found.");
         }
 
         public async Task UpdateUserAsync(User user)
         {
-            User existingUser = await GetUserByIdAsync(user.Id) ?? throw new UserNotFoundException($"User with ID {user.Id} not found.");
+            User existingUser = await GetUserByIdAsync(user.Id) ?? throw new NotFoundException($"User with ID {user.Id} not found.");
 
             if (existingUser.Password != user.Password)
                 user.Password = _passwordHasherService.HashPassword(user.Password);
@@ -38,7 +38,7 @@ namespace Carpool.Application.Services
 
         public async Task DeleteUserAsync(Guid userId)
         {
-            User existingUser = await GetUserByIdAsync(userId) ?? throw new UserNotFoundException($"User with ID {userId} not found.");
+            User existingUser = await GetUserByIdAsync(userId) ?? throw new NotFoundException($"User with ID {userId} not found.");
             await _userRepository.DeleteUserAsync(userId);
         }
     }

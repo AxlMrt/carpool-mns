@@ -1,3 +1,4 @@
+using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -31,9 +32,7 @@ namespace Carpool.Application.Services
 
         public async Task<Trip> UpdateTripAsync(Guid id, Trip trip)
         {
-            var existingTrip = await _tripRepository.GetTripByIdAsync(id);
-            if (existingTrip == null)
-                return null;
+            var existingTrip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
             trip.Id = existingTrip.Id;
             await _tripRepository.UpdateTripAsync(trip);
@@ -42,9 +41,7 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteTripAsync(Guid id)
         {
-            var existingTrip = await _tripRepository.GetTripByIdAsync(id);
-            if (existingTrip == null)
-                return false;
+            var existingTrip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
             await _tripRepository.DeleteTripAsync(id);
             return true;

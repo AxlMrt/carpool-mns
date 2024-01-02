@@ -1,3 +1,4 @@
+using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -36,9 +37,7 @@ namespace Carpool.Application.Services
 
         public async Task<Car> UpdateCarAsync(Guid id, Car car)
         {
-            var existingCar = await _carRepository.GetCarByIdAsync(id);
-            if (existingCar == null)
-                return null;
+            var existingCar = await _carRepository.GetCarByIdAsync(id) ?? throw new NotFoundException($"Car with ID {id} not found.");
 
             car.Id = existingCar.Id;
             await _carRepository.UpdateCarAsync(car);
@@ -47,9 +46,7 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteCarAsync(Guid id)
         {
-            var existingCar = await _carRepository.GetCarByIdAsync(id);
-            if (existingCar == null)
-                return false;
+            var existingCar = await _carRepository.GetCarByIdAsync(id) ?? throw new NotFoundException($"Car with ID {id} not found.");
 
             await _carRepository.DeleteCarAsync(id);
             return true;

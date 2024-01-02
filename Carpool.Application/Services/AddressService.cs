@@ -1,3 +1,4 @@
+using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -31,9 +32,7 @@ namespace Carpool.Application.Services
 
         public async Task<Address> UpdateAddressAsync(Guid id, Address address)
         {
-            var existingAddress = await _addressRepository.GetAddressByIdAsync(id);
-            if (existingAddress == null)
-                return null;
+            var existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
             address.Id = existingAddress.Id;
             await _addressRepository.UpdateAddressAsync(address);
@@ -42,10 +41,7 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteAddressAsync(Guid id)
         {
-            var existingAddress = await _addressRepository.GetAddressByIdAsync(id);
-            if (existingAddress == null)
-                return false;
-
+            var existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
             await _addressRepository.DeleteAddressAsync(id);
             return true;
         }
