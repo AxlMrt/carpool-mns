@@ -1,84 +1,35 @@
 using Carpool.Domain.Entities;
+using Carpool.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carpool.Infrastructure.Context
 {
     public class CarpoolDbContext : DbContext
     {
-
-        public CarpoolDbContext(DbContextOptions<CarpoolDbContext> options) : base(options)        
+        public CarpoolDbContext(DbContextOptions<CarpoolDbContext> options) : base(options)
         {
-        }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>()
-                .HasKey(u => u.Id);
-
-            modelBuilder.Entity<Token>()
-                .HasKey(t => t.Id);
-
-            modelBuilder.Entity<Car>()
-                .HasKey(c => c.Id);
-            
-            modelBuilder.Entity<Address>()
-                .HasKey(a => a.Id);
-
-            modelBuilder.Entity<Trip>()
-                .HasKey(t => t.Id);
-
-            modelBuilder.Entity<Reservation>()
-                .HasKey(r => r.Id);
-
-            modelBuilder.Entity<Feedback>()
-                .HasKey(f => f.Id);
-
-            // Configurations des relations
-            // Relation entre User et Address (Un utilisateur peut avoir plusieurs adresses)
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Addresses)
-                .WithOne(a => a.User);
-
-            // Relation entre User et Car (Un utilisateur peut avoir plusieurs voitures)
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Cars)
-                .WithOne(c => c.Owner);
-
-            // Relation entre User et Reservation (Un utilisateur peut effectuer plusieurs réservations)
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Reservations)
-                .WithOne(r => r.User);
-
-            // Relation entre Car et Trip (Une voiture peut être utilisée pour plusieurs trajets)
-            modelBuilder.Entity<Car>()
-                .HasMany(c => c.Trips)
-                .WithOne(t => t.Car);
-
-            // Relation entre Trip et Reservation (Un trajet peut avoir plusieurs réservations)
-            modelBuilder.Entity<Trip>()
-                .HasMany(t => t.Reservations)
-                .WithOne(r => r.Trip);
-
-            // Relation entre User et Feedback (Un utilisateur peut donner plusieurs retours d'expérience)
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.FeedbacksGiven)
-                .WithOne(f => f.User);
-
-            // Relation entre Trip et Feedback (Un trajet peut avoir plusieurs retours d'expérience)
-            modelBuilder.Entity<Trip>()
-                .HasMany(t => t.Feedbacks)
-                .WithOne(f => f.Trip);
-            
-            modelBuilder.Entity<Token>()
-                .HasOne(t => t.User);
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Token> Tokens { get; set; }
-
         public DbSet<Car> Cars { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Appel des configurations séparées
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new TokenConfiguration());
+            modelBuilder.ApplyConfiguration(new CarConfiguration());
+            modelBuilder.ApplyConfiguration(new AddressConfiguration());
+            modelBuilder.ApplyConfiguration(new TripConfiguration());
+            modelBuilder.ApplyConfiguration(new ReservationConfiguration());
+            modelBuilder.ApplyConfiguration(new FeedbackConfiguration());
+        }
     }
 }

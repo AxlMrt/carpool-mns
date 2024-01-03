@@ -2,6 +2,7 @@ using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Context;
+using Carpool.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carpool.Infrastructure.Repositories
@@ -25,35 +26,14 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Addresses.FindAsync(id);
         }
 
-        public async Task CreateAddressAsync(AddressCreateDto addressDto, User user)
+        public async Task CreateAddressAsync(Address address)
         {
-            Address address = new()
-            {
-                Street = addressDto.Street,
-                City = addressDto.City,
-                PostalCode = addressDto.PostalCode,
-                Country = addressDto.Country,
-                Latitude = addressDto.Latitude,
-                Longitude = addressDto.Longitude,
-                User = user
-            };
-
             await _context.Addresses.AddAsync(address);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAddressAsync(AddressUpdateDto addressDto)
+        public async Task UpdateAddressAsync(Address address)
         {
-            Address address = new()
-            {
-                Street = addressDto.Street,
-                City = addressDto.City,
-                PostalCode = addressDto.PostalCode,
-                Country = addressDto.Country,
-                Latitude = addressDto.Latitude,
-                Longitude = addressDto.Longitude,
-            };
-
             _context.Addresses.Update(address);
             await _context.SaveChangesAsync();
         }
