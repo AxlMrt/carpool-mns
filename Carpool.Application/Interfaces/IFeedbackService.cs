@@ -1,3 +1,4 @@
+using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 
 namespace Carpool.Application.Interfaces
@@ -7,8 +8,8 @@ namespace Carpool.Application.Interfaces
         Task<IEnumerable<Feedback>> GetAllFeedbacksAsync();
         Task<Feedback> GetFeedbackByIdAsync(int id);
         Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(int userId);
-        Task<Feedback> CreateFeedbackAsync(Feedback feedback);
-        Task<Feedback> UpdateFeedbackAsync(int id, Feedback feedback);
+        Task<Feedback> CreateFeedbackAsync(FeedbackCreateDto feedback);
+        Task<Feedback> UpdateFeedbackAsync(int id, FeedbackUpdateDto feedback);
         Task<bool> DeleteFeedbackAsync(int id);
     }
 }
