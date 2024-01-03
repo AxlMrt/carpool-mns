@@ -1,17 +1,21 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
+using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
+using Carpool.Infrastructure.Interfaces;
 
 namespace Carpool.Application.Services
 {
     public class AddressService : IAddressService
     {
         private readonly IAddressRepository _addressRepository;
+        private readonly IUserRepository _userRepository;
 
-        public AddressService(IAddressRepository addressRepository)
+        public AddressService(IAddressRepository addressRepository, IUserRepository userRepository)
         {
             _addressRepository = addressRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<IEnumerable<Address>> GetAllAddressesAsync()
@@ -32,25 +36,31 @@ namespace Carpool.Application.Services
             return await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
         }
 
-        public async Task<Address> CreateAddressAsync(Address address)
+        public async Task<AddressCreateDto> CreateAddressAsync(AddressCreateDto addressDto)
         {
-            if (address is null)
+            if (addressDto is null)
                 throw new BadRequestException("Address object cannot be null.");
             
-            await _addressRepository.CreateAddressAsync(address);
-            return address;
+            User user = await _userRepository.GetUserByIdAsync(addressDto.UserId) ?? throw new NotFoundException($"User with ID {addressDto.UserId} not found.");
+
+            await _addressRepository.CreateAddressAsync(addressDto, user);
+            
+            user.Addresses ??= new List<Address>();
+            
+            await _userRepository.UpdateUserAsync(user);
+
+            return addressDto;
         }
 
-        public async Task<Address> UpdateAddressAsync(int id, Address address)
+        public async Task<AddressUpdateDto> UpdateAddressAsync(int id, AddressUpdateDto addressDto)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id != addressDto.Id)
+                throw new BadRequestException("IDs does not match.");
 
             Address existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
-            address.Id = existingAddress.Id;
-            await _addressRepository.UpdateAddressAsync(address);
-            return address;
+            await _addressRepository.UpdateAddressAsync(addressDto);
+            return addressDto;
         }
 
         public async Task<bool> DeleteAddressAsync(int id)

@@ -4,6 +4,7 @@ using Carpool.Domain.Entities;
 using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
+using Carpool.Domain.DTOs;
 
 namespace Carpool.API.Controllers
 {
@@ -32,16 +33,16 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Address>> CreateAddress(Address address)
+        public async Task<ActionResult<AddressCreateDto>> CreateAddress(AddressCreateDto addressDto)
         {
-            Address createdAddress = await _addressService.CreateAddressAsync(address);
-            return CreatedAtAction(nameof(GetAddressById), new { id = createdAddress.Id }, createdAddress);
+            await _addressService.CreateAddressAsync(addressDto);
+            return Ok("Address registered successfully.");
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Address>> UpdateAddress(int id, Address address)
+        public async Task<ActionResult<AddressUpdateDto>> UpdateAddress(int id, AddressUpdateDto addressDto)
         {
-            await _addressService.UpdateAddressAsync(id, address);
+            await _addressService.UpdateAddressAsync(id, addressDto);
             return NoContent();
         }
 
