@@ -5,6 +5,7 @@ using Carpool.Domain.Entities;
 using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Carpool.Domain.Roles;
+using Carpool.Domain.DTOs;
 
 namespace Carpool.API.Controllers
 {
@@ -41,14 +42,14 @@ namespace Carpool.API.Controllers
         }
         
         [HttpPost]
-        public async Task<ActionResult<Feedback>> AddFeedback(Feedback feedback)
+        public async Task<ActionResult<Feedback>> AddFeedback(FeedbackCreateDto feedback)
         {
             Feedback createdFeedback = await _feedbackService.CreateFeedbackAsync(feedback);
             return CreatedAtAction(nameof(GetFeedbackById), new { id = createdFeedback.Id }, createdFeedback);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Feedback>> UpdateFeedback(int id, Feedback feedback)
+        public async Task<ActionResult<Feedback>> UpdateFeedback(int id, FeedbackUpdateDto feedback)
         {
             await _feedbackService.UpdateFeedbackAsync(id, feedback);
             return NoContent();
