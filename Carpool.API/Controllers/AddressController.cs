@@ -33,10 +33,10 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AddressCreateDto>> CreateAddress(AddressCreateDto addressDto)
+        public async Task<ActionResult<Address>> CreateAddress(AddressCreateDto addressDto)
         {
-            await _addressService.CreateAddressAsync(addressDto);
-            return Ok("Address registered successfully.");
+            Address address = await _addressService.CreateAddressAsync(addressDto);
+            return CreatedAtAction(nameof(GetAddressById), new { id = address.Id }, address);
         }
 
         [HttpPut("{id}")]

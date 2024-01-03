@@ -36,31 +36,55 @@ namespace Carpool.Application.Services
             return await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
         }
 
-        public async Task<AddressCreateDto> CreateAddressAsync(AddressCreateDto addressDto)
+        public async Task<Address> CreateAddressAsync(AddressCreateDto addressDto)
         {
             if (addressDto is null)
                 throw new BadRequestException("Address object cannot be null.");
             
             User user = await _userRepository.GetUserByIdAsync(addressDto.UserId) ?? throw new NotFoundException($"User with ID {addressDto.UserId} not found.");
 
-            await _addressRepository.CreateAddressAsync(addressDto, user);
-            
-            user.Addresses ??= new List<Address>();
-            
+            Address address = new()
+            {
+                Street = addressDto.Street,
+                City = addressDto.City,
+                PostalCode = addressDto.PostalCode,
+                Country = addressDto.Country,
+                Latitude = addressDto.Latitude,
+                Longitude = addressDto.Longitude,
+                UserId = user.Id
+            };
+
+            await _addressRepository.CreateAddressAsync(address);
+
+            user.Addresses.Add(address);
+
             await _userRepository.UpdateUserAsync(user);
 
-            return addressDto;
+            return address;
         }
 
-        public async Task<AddressUpdateDto> UpdateAddressAsync(int id, AddressUpdateDto addressDto)
+        public async Task<Address> UpdateAddressAsync(int id, AddressUpdateDto addressDto)
         {
-            if (id != addressDto.Id)
-                throw new BadRequestException("IDs does not match.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             Address existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
-            await _addressRepository.UpdateAddressAsync(addressDto);
-            return addressDto;
+            if (!string.IsNullOrEmpty(addressDto.Street) && addressDto.Street != existingAddress.Street)
+                existingAddress.Street = addressDto.Street;
+            if (!string.IsNullOrEmpty(addressDto.City) && addressDto.City != existingAddress.City)
+                existingAddress.City = addressDto.City;
+            if (!string.IsNullOrEmpty(addressDto.PostalCode) && addressDto.PostalCode != existingAddress.PostalCode)
+                existingAddress.PostalCode = addressDto.PostalCode;
+            if (!string.IsNullOrEmpty(addressDto.Country) && addressDto.Country != existingAddress.Country)
+                existingAddress.Country = addressDto.Country;
+            if (addressDto.Latitude != existingAddress.Latitude)
+                existingAddress.Latitude = addressDto.Latitude;
+            if (addressDto.Longitude != existingAddress.Longitude)
+                existingAddress.Longitude = addressDto.Longitude;
+
+            await _addressRepository.UpdateAddressAsync(existingAddress);
+            return existingAddress;
         }
 
         public async Task<bool> DeleteAddressAsync(int id)

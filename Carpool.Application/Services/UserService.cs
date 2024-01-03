@@ -36,24 +36,30 @@ namespace Carpool.Application.Services
             return await _userRepository.GetUserByIdAsync(id)  ?? throw new NotFoundException($"User with ID {id} not found.");
         }
 
-        public async Task UpdateUserAsync(int id, User user)
+        public async Task UpdateUserAsync(int id, User updatedUserData)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid user ID.");
 
-            User existingUser = await GetUserByIdAsync(user.Id) ?? throw new NotFoundException($"User with ID {user.Id} not found.");
+            User existingUser = await _userRepository.GetUserByIdAsync(id) ?? throw new NotFoundException($"User with ID {id} not found.");
 
-            if (existingUser.Id != user.Id || user.Role != Roles.Administrator)
+            if (existingUser.Role != Roles.Administrator)
                 throw new NotAllowedException("You are not allowed to update this user.");
 
-            bool valid_password = _passwordHasherService.VerifyPassword(existingUser.Password, user.Password);
-            
-            if (!valid_password)
-                throw new InvalidCredentialException($"Wrong credentials.");
+            existingUser.FirstName = updatedUserData.FirstName ?? existingUser.FirstName;
+            existingUser.LastName = updatedUserData.LastName ?? existingUser.LastName;
+            existingUser.Email = updatedUserData.Email ?? existingUser.Email;
 
-            user.Password = _passwordHasherService.HashPassword(user.Password);
-    
-            await _userRepository.UpdateUserAsync(user);
+            if (!string.IsNullOrEmpty(updatedUserData.Password))
+            {
+                bool validPassword = _passwordHasherService.VerifyPassword(existingUser.Password, updatedUserData.Password);
+                if (!validPassword)
+                    throw new InvalidCredentialException("Wrong credentials.");
+
+                existingUser.Password = _passwordHasherService.HashPassword(updatedUserData.Password);
+            }
+
+            await _userRepository.UpdateUserAsync(existingUser);
         }
 
         public async Task DeleteUserAsync(int id)

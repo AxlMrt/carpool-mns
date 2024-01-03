@@ -15,7 +15,7 @@ namespace Carpool.Infrastructure.Configurations
 
             builder.HasOne(t => t.User)
                    .WithMany()
-                   .HasForeignKey(t => t.User)
+                   .HasForeignKey(t => t.UserId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated tokens if the user is deleted
         }
     }

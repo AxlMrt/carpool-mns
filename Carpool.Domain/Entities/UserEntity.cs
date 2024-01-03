@@ -9,9 +9,9 @@ namespace Carpool.Domain.Entities
         public string Password { get; set; }
         public string Role { get; set; } = Roles.Roles.User;
 
-        public ICollection<Car> Cars { get; set; }
-        public ICollection<Address> Addresses { get; set; }
-        public ICollection<Reservation> Reservations { get; set; }
-        public ICollection<Feedback> FeedbacksGiven { get; set; }
+        public ICollection<Car> Cars { get; set; } = new List<Car>();
+        public ICollection<Address> Addresses { get; set; } = new List<Address>();
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+        public ICollection<Feedback> FeedbacksGiven { get; set; } = new List<Feedback>();
     }
 }

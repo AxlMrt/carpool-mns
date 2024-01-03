@@ -19,13 +19,13 @@ namespace Carpool.Infrastructure.Configurations
             // Relationship with User (Driver)
             builder.HasOne(t => t.Driver)
                    .WithMany()
-                   .HasForeignKey(t => t.Driver) // Assuming DriverId is the foreign key property
+                   .HasForeignKey(t => t.DriverId)
                    .OnDelete(DeleteBehavior.Restrict); // Prevent deletion if the associated driver is deleted
 
             // Relationship with Car
             builder.HasOne(t => t.Car)
                    .WithMany(c => c.Trips)
-                   .HasForeignKey(t => t.Car) // Assuming CarId is the foreign key property
+                   .HasForeignKey(t => t.CarId)
                    .OnDelete(DeleteBehavior.Restrict); // Prevent deletion if the associated car is deleted
 
             // Relationship with Departure Address
@@ -43,13 +43,13 @@ namespace Carpool.Infrastructure.Configurations
             // Relationship with Reservations
             builder.HasMany(t => t.Reservations)
                    .WithOne(r => r.Trip)
-                   .HasForeignKey(r => r.Trip) // Assuming TripId is the foreign key property in Reservation
+                   .HasForeignKey(r => r.TripId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated reservations if the trip is deleted
 
             // Relationship with Feedbacks
             builder.HasMany(t => t.Feedbacks)
                    .WithOne(f => f.Trip)
-                   .HasForeignKey(f => f.Trip) // Assuming TripId is the foreign key property in Feedback
+                   .HasForeignKey(f => f.TripId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated feedback if the trip is deleted
         }
     }

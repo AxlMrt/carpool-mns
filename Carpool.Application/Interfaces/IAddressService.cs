@@ -7,8 +7,8 @@ namespace Carpool.Application.Interfaces
     {
         Task<IEnumerable<Address>> GetAllAddressesAsync();
         Task<Address> GetAddressByIdAsync(int id);
-        Task<AddressCreateDto> CreateAddressAsync(AddressCreateDto addressDto);
-        Task<AddressUpdateDto> UpdateAddressAsync(int id, AddressUpdateDto addressDto);
+        Task<Address> CreateAddressAsync(AddressCreateDto addressDto);
+        Task<Address> UpdateAddressAsync(int id, AddressUpdateDto addressDto);
         Task<bool> DeleteAddressAsync(int id);
     }
 }

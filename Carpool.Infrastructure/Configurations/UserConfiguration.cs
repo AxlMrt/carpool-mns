@@ -8,33 +8,33 @@ namespace Carpool.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            // Defining the primary key
             builder.HasKey(u => u.Id);
 
+            // Required properties
             builder.Property(u => u.LastName).IsRequired();
             builder.Property(u => u.FirstName).IsRequired();
             builder.Property(u => u.Email).IsRequired();
             builder.Property(u => u.Password).IsRequired();
             builder.Property(u => u.Role).IsRequired();
 
+            // Relationship User - Cars
             builder.HasMany(u => u.Cars)
                    .WithOne(c => c.Owner)
-                   .HasForeignKey(c => c.Owner)
+                   .HasForeignKey(c => c.OwnerId)
                    .OnDelete(DeleteBehavior.Restrict); // Delete associated cars if the user is deleted
 
+            // Relationship User - Addresses
             builder.HasMany(u => u.Addresses)
                    .WithOne(a => a.User)
-                   .HasForeignKey(a => a.User)
-                   .OnDelete(DeleteBehavior.Cascade); // Delete associated adresses if the user is deleted
+                   .HasForeignKey(a => a.UserId) 
+                   .OnDelete(DeleteBehavior.Cascade); // Delete associated addresses if the user is deleted
 
+            // Relationship User - Reservations
             builder.HasMany(u => u.Reservations)
                    .WithOne(r => r.User)
-                   .HasForeignKey(r => r.User)
-                   .OnDelete(DeleteBehavior.Cascade); // Delete associated reservation if the user is deleted
-
-            builder.HasMany(u => u.FeedbacksGiven)
-                   .WithOne(f => f.User)
-                   .HasForeignKey(f => f.User)
-                   .OnDelete(DeleteBehavior.Cascade); // Delete associated feedbacks if the user is deleted
+                   .HasForeignKey(r => r.UserId)
+                   .OnDelete(DeleteBehavior.Cascade); // Delete associated reservations if the user is deleted
         }
     }
 }

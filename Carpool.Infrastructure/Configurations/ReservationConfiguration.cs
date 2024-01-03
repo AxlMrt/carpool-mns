@@ -15,12 +15,12 @@ namespace Carpool.Infrastructure.Configurations
 
             builder.HasOne(r => r.User)
                    .WithMany(u => u.Reservations)
-                   .HasForeignKey(r => r.User)
+                   .HasForeignKey(r => r.UserId) 
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated reservations if the user is deleted
 
             builder.HasOne(r => r.Trip)
                    .WithMany(t => t.Reservations)
-                   .HasForeignKey(r => r.Trip)
+                   .HasForeignKey(r => r.TripId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated reservations if the trip is deleted
         }
     }

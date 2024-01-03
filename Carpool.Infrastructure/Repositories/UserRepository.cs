@@ -16,23 +16,18 @@ namespace Carpool.Infrastructure.Repositories
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _dbContext.Users.ToListAsync();
+            return await _dbContext.Users.Include(u => u.Addresses).ToListAsync();
         }
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return await _dbContext.Users.Include(u => u.Addresses).FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task UpdateUserAsync(User user)
         {
-            var existingUser = await _dbContext.Users.FindAsync(user.Id);
-            if (existingUser != null)
-            {
-                _dbContext.Entry(existingUser).CurrentValues.SetValues(user);
-
-                await _dbContext.SaveChangesAsync();
-            }
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteUserAsync(int id)

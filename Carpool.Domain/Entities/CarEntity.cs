@@ -12,7 +12,8 @@ namespace Carpool.Domain.Entities
         public DateTime TechnicalInspectionDate { get; set; }
         public DateTime InsuranceExpirationDate { get; set; }
 
+        public int OwnerId { get; set; }
         public User Owner { get; set; }
-        public ICollection<Trip> Trips { get; set; } // A car can be used for multiple trips
+        public ICollection<Trip> Trips { get; set; } = new List<Trip>(); // A car can be used for multiple trips
     }
 }
