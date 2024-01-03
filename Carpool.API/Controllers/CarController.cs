@@ -5,6 +5,7 @@ using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
+using Carpool.Domain.DTOs;
 
 namespace Carpool.API.Controllers
 {
@@ -43,14 +44,14 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Car>> AddCar(Car car)
+        public async Task<ActionResult<Car>> AddCar(CarCreateDto car)
         {
             Car createdCar = await _carService.CreateCarAsync(car);
             return CreatedAtAction(nameof(GetCarById), new { id = createdCar.Id }, createdCar);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Car>> UpdateCar(int id, Car car)
+        public async Task<ActionResult<Car>> UpdateCar(int id, CarUpdateDto car)
         {
             await _carService.UpdateCarAsync(id, car);
             return NoContent();
