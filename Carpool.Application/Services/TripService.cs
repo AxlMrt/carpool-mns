@@ -1,5 +1,6 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
+using Carpool.Application.Utils;
 using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -44,16 +45,7 @@ namespace Carpool.Application.Services
 
             User user = await _userRepository.GetUserByIdAsync(tripDto.DriverId) ?? throw new NotFoundException($"User with ID {tripDto.DriverId} not found.");
 
-            Trip trip = new()
-            {
-                DriverId = user.Id,
-                CarId = tripDto.CarId,
-                DepartureAddressId = tripDto.DepartureAddressId,
-                DestinationAddressId = tripDto.DestinationAddressId,
-                DepartureTime = tripDto.DepartureTime,
-                AvailableSeats = tripDto.AvailableSeats,
-                IsSmokingAllowed = tripDto.IsSmokingAllowed
-            };
+            Trip trip = ObjectUpdater.MapDtoToObject<Trip>(tripDto);
 
             await _tripRepository.CreateTripAsync(trip);
 
@@ -65,17 +57,12 @@ namespace Carpool.Application.Services
             if (id < 0)
                 throw new BadRequestException("ID cannot be negative.");
 
-            Trip existingTrip = await GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
+            Trip trip = await GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
-            if (existingTrip.CarId != tripDto.CarId)
-                existingTrip.CarId = tripDto.CarId;
-            if (existingTrip.AvailableSeats != tripDto.AvailableSeats)
-                existingTrip.AvailableSeats = tripDto.AvailableSeats;
-            if (existingTrip.IsSmokingAllowed != tripDto.IsSmokingAllowed)
-                existingTrip.IsSmokingAllowed = tripDto.IsSmokingAllowed;
+            ObjectUpdater.UpdateObject<Trip, TripUpdateDto>(trip, tripDto);
 
-            await _tripRepository.UpdateTripAsync(existingTrip);
-            return existingTrip;
+            await _tripRepository.UpdateTripAsync(trip);
+            return trip;
         }
 
         public async Task<bool> DeleteTripAsync(int id)

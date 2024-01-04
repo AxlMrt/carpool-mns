@@ -1,5 +1,6 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
+using Carpool.Application.Utils;
 using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -29,16 +30,16 @@ namespace Carpool.Application.Services
 
         public async Task<Car> GetCarByIdAsync(int id)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             return await _carRepository.GetCarByIdAsync(id);
         }
 
         public async Task<IEnumerable<Car>> GetCarsByUserIdAsync(int userId)
         {
-            if (userId < 0)
-                throw new BadRequestException("Empty ID is not allowed.");
+            if (userId <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             User user = await _userRepository.GetUserByIdAsync(userId) ?? throw new NotFoundException($"User with ID {userId} not found.");
             return await _carRepository.GetCarsByUserIdAsync(userId);
@@ -51,18 +52,8 @@ namespace Carpool.Application.Services
             
             User user = await _userRepository.GetUserByIdAsync(carDto.OwnerId) ?? throw new NotFoundException($"User with ID {carDto.OwnerId} not found.");
 
-            Car car = new()
-            {
-                Brand = carDto.Brand,
-                Model = carDto.Model,
-                Color = carDto.Color,
-                LicensePlate = carDto.LicensePlate,
-                Year = carDto.Year,
-                NumberOfSeats = carDto.NumberOfSeats,
-                InsuranceExpirationDate = carDto.InsuranceExpirationDate,
-                TechnicalInspectionDate = carDto.TechnicalInspectionDate,
-                OwnerId = user.Id
-            };
+            Car car = ObjectUpdater.MapDtoToObject<Car>(carDto);
+
             await _carRepository.CreateCarAsync(car);
 
             user.Cars.Add(car);
@@ -74,27 +65,12 @@ namespace Carpool.Application.Services
 
         public async Task<Car> UpdateCarAsync(int id, CarUpdateDto carDto)
         {
-            if (id < 0)
+            if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
             Car car = await _carRepository.GetCarByIdAsync(carDto.Id) ?? throw new NotFoundException($"Car with ID {id} not found.");
     
-            if (!string.IsNullOrEmpty(carDto.Brand) && carDto.Brand != car.Brand)
-                car.Brand = carDto.Brand;
-            if (!string.IsNullOrEmpty(carDto.Model) && carDto.Model != car.Model)
-                car.Model = carDto.Model;
-            if (!string.IsNullOrEmpty(carDto.Color) && carDto.Color != car.Color)
-                car.Color = carDto.Color;
-            if (!string.IsNullOrEmpty(carDto.LicensePlate) && carDto.LicensePlate != car.LicensePlate)
-                car.LicensePlate = carDto.LicensePlate;
-            if (carDto.Year != car.Year)
-                car.Year = carDto.Year;
-            if (carDto.NumberOfSeats != car.NumberOfSeats)
-                car.NumberOfSeats = carDto.NumberOfSeats;
-            if (carDto.InsuranceExpirationDate != car.InsuranceExpirationDate)
-                car.InsuranceExpirationDate = carDto.InsuranceExpirationDate;
-            if (carDto.TechnicalInspectionDate != car.TechnicalInspectionDate)
-                car.TechnicalInspectionDate = carDto.TechnicalInspectionDate;
+            ObjectUpdater.UpdateObject<Car, CarUpdateDto>(car, carDto);
 
             await _carRepository.UpdateCarAsync(car);
             return car;

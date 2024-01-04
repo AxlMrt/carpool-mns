@@ -1,5 +1,6 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
+using Carpool.Application.Utils;
 using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -53,14 +54,8 @@ namespace Carpool.Application.Services
             
             User user = await _userRepository.GetUserByIdAsync(feedbackDto.UserId) ?? throw new NotFoundException($"User with ID {feedbackDto.UserId} not found.");
 
-            Feedback feedback = new()
-            {
-                Comment = feedbackDto.Comment,
-                Rating = feedbackDto.Rating,
-                UserId = user.Id,
-                TripId = feedbackDto.TripId,
-                ReservationId = feedbackDto.ReservationId
-            };
+            Feedback feedback = ObjectUpdater.MapDtoToObject<Feedback>(feedbackDto);
+        
             await _feedbackRepository.CreateFeedbackAsync(feedback);
 
             user.FeedbacksGiven.Add(feedback);
@@ -77,10 +72,7 @@ namespace Carpool.Application.Services
 
             Feedback feedback = await _feedbackRepository.GetFeedbackByIdAsync(feedbackDto.Id) ?? throw new NotFoundException($"Car with ID {id} not found.");
     
-            if (!string.IsNullOrEmpty(feedbackDto.Comment) && feedbackDto.Comment != feedback.Comment)
-                feedback.Comment = feedbackDto.Comment;
-            if (feedbackDto.Rating != feedback.Rating)
-                feedback.Rating = feedbackDto.Rating;
+            ObjectUpdater.UpdateObject<Feedback, FeedbackUpdateDto>(feedback, feedbackDto);
 
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
             return feedback;

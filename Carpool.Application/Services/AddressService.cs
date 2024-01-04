@@ -31,8 +31,8 @@ namespace Carpool.Application.Services
 
         public async Task<Address> GetAddressByIdAsync(int id)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
             
             return await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
         }
@@ -44,16 +44,7 @@ namespace Carpool.Application.Services
             
             User user = await _userRepository.GetUserByIdAsync(addressDto.UserId) ?? throw new NotFoundException($"User with ID {addressDto.UserId} not found.");
 
-            Address address = new()
-            {
-                Street = addressDto.Street,
-                City = addressDto.City,
-                PostalCode = addressDto.PostalCode,
-                Country = addressDto.Country,
-                Latitude = addressDto.Latitude,
-                Longitude = addressDto.Longitude,
-                UserId = user.Id
-            };
+            Address address = ObjectUpdater.MapDtoToObject<Address>(addressDto);    
 
             await _addressRepository.CreateAddressAsync(address);
 
@@ -79,10 +70,10 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteAddressAsync(int id)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
             
-            Address existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
+            Address address = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
             await _addressRepository.DeleteAddressAsync(id);
             return true;
         }

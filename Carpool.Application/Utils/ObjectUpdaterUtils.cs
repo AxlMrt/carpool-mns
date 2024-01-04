@@ -1,3 +1,6 @@
+using System;
+using System.Reflection;
+
 namespace Carpool.Application.Utils
 {
     public static class ObjectUpdater
@@ -15,6 +18,33 @@ namespace Carpool.Application.Utils
                     existingProperty?.SetValue(existingObject, updatedValue);
                 }
             }
+        }
+
+        public static T MapDtoToObject<T>(object dto)
+        {
+            if (dto == null)
+            {
+                return default;
+            }
+
+            Type type = typeof(T);
+            T obj = (T)Activator.CreateInstance(type);
+
+            PropertyInfo[] dtoProperties = dto.GetType().GetProperties();
+            PropertyInfo[] objProperties = type.GetProperties();
+
+            foreach (PropertyInfo objProp in objProperties)
+            {
+                PropertyInfo dtoProp = dtoProperties.FirstOrDefault(p => p.Name == objProp.Name);
+
+                if (dtoProp != null)
+                {
+                    object value = dtoProp.GetValue(dto);
+                    objProp.SetValue(obj, value);
+                }
+            }
+
+            return obj;
         }
     }
 }
