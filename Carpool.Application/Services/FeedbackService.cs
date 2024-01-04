@@ -57,7 +57,9 @@ namespace Carpool.Application.Services
             {
                 Comment = feedbackDto.Comment,
                 Rating = feedbackDto.Rating,
-                UserId = user.Id
+                UserId = user.Id,
+                TripId = feedbackDto.TripId,
+                ReservationId = feedbackDto.ReservationId
             };
             await _feedbackRepository.CreateFeedbackAsync(feedback);
 
