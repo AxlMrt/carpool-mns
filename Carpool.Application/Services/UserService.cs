@@ -37,37 +37,34 @@ namespace Carpool.Application.Services
             return await _userRepository.GetUserByIdAsync(id)  ?? throw new NotFoundException($"User with ID {id} not found.");
         }
 
-        public async Task UpdateUserAsync(int id, User updatedUserData)
+        public async Task UpdateUserAsync(int id, User updatedUser)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid user ID.");
 
-            User existingUser = await _userRepository.GetUserByIdAsync(id) ?? throw new NotFoundException($"User with ID {id} not found.");
+            User user = await _userRepository.GetUserByIdAsync(id) ?? throw new NotFoundException($"User with ID {id} not found.");
 
-            if (existingUser.Role != Roles.Administrator)
+            if (user.Role != Roles.Administrator)
                 throw new NotAllowedException("You are not allowed to update this user.");
 
-            if (updatedUserData.Email != null && !ValidationUtils.IsValidEmail(updatedUserData.Email))
+            if (updatedUser.Email != null && !ValidationUtils.IsValidEmail(updatedUser.Email))
                 throw new BadRequestException("Invalid email format.");
 
-            if (updatedUserData.Password != null && !ValidationUtils.IsStrongPassword(updatedUserData.Password))
+            if (updatedUser.Password != null && !ValidationUtils.IsStrongPassword(updatedUser.Password))
                 throw new BadRequestException("Password should be at least 8 characters long, contain at least one uppercase, one lowercase, and one special character.");
 
+            ObjectUpdater.UpdateObject<User, User>(user, updatedUser);
 
-            existingUser.FirstName = updatedUserData.FirstName ?? existingUser.FirstName;
-            existingUser.LastName = updatedUserData.LastName ?? existingUser.LastName;
-            existingUser.Email = updatedUserData.Email ?? existingUser.Email;
-
-            if (!string.IsNullOrEmpty(updatedUserData.Password))
+            if (!string.IsNullOrEmpty(updatedUser.Password))
             {
-                bool validPassword = _passwordHasherService.VerifyPassword(existingUser.Password, updatedUserData.Password);
+                bool validPassword = _passwordHasherService.VerifyPassword(user.Password, user.Password);
                 if (!validPassword)
                     throw new InvalidCredentialException("Wrong credentials.");
 
-                existingUser.Password = _passwordHasherService.HashPassword(updatedUserData.Password);
+                user.Password = _passwordHasherService.HashPassword(updatedUser.Password);
             }
 
-            await _userRepository.UpdateUserAsync(existingUser);
+            await _userRepository.UpdateUserAsync(user);
         }
 
 

@@ -1,5 +1,6 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
+using Carpool.Application.Utils;
 using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -68,23 +69,12 @@ namespace Carpool.Application.Services
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            Address existingAddress = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
+            Address address = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
-            if (!string.IsNullOrEmpty(addressDto.Street) && addressDto.Street != existingAddress.Street)
-                existingAddress.Street = addressDto.Street;
-            if (!string.IsNullOrEmpty(addressDto.City) && addressDto.City != existingAddress.City)
-                existingAddress.City = addressDto.City;
-            if (!string.IsNullOrEmpty(addressDto.PostalCode) && addressDto.PostalCode != existingAddress.PostalCode)
-                existingAddress.PostalCode = addressDto.PostalCode;
-            if (!string.IsNullOrEmpty(addressDto.Country) && addressDto.Country != existingAddress.Country)
-                existingAddress.Country = addressDto.Country;
-            if (addressDto.Latitude != existingAddress.Latitude)
-                existingAddress.Latitude = addressDto.Latitude;
-            if (addressDto.Longitude != existingAddress.Longitude)
-                existingAddress.Longitude = addressDto.Longitude;
+            ObjectUpdater.UpdateObject<Address, AddressUpdateDto>(address, addressDto);
 
-            await _addressRepository.UpdateAddressAsync(existingAddress);
-            return existingAddress;
+            await _addressRepository.UpdateAddressAsync(address);
+            return address;
         }
 
         public async Task<bool> DeleteAddressAsync(int id)
