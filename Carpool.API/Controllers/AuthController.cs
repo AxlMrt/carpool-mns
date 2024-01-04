@@ -68,13 +68,11 @@ namespace Carpool.API.Controllers
             int statusCode = 500;
 
             if (exception is NotFoundException)
-            {
                 statusCode = 404;
-            }
             else if (exception is BadRequestException || exception is ArgumentException)
-            {
                 statusCode = 400;
-            }
+            else if (exception is JwtGenerationException || exception is TokenOperationException)
+                statusCode = 500;
 
             context.Result = new ObjectResult(exception.Message)
             {
