@@ -1,6 +1,7 @@
 using System.Security.Authentication;
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
+using Carpool.Application.Utils;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Roles;
 using Carpool.Infrastructure.Interfaces;
@@ -30,8 +31,8 @@ namespace Carpool.Application.Services
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             return await _userRepository.GetUserByIdAsync(id)  ?? throw new NotFoundException($"User with ID {id} not found.");
         }
@@ -45,6 +46,13 @@ namespace Carpool.Application.Services
 
             if (existingUser.Role != Roles.Administrator)
                 throw new NotAllowedException("You are not allowed to update this user.");
+
+            if (updatedUserData.Email != null && !ValidationUtils.IsValidEmail(updatedUserData.Email))
+                throw new BadRequestException("Invalid email format.");
+
+            if (updatedUserData.Password != null && !ValidationUtils.IsStrongPassword(updatedUserData.Password))
+                throw new BadRequestException("Password should be at least 8 characters long, contain at least one uppercase, one lowercase, and one special character.");
+
 
             existingUser.FirstName = updatedUserData.FirstName ?? existingUser.FirstName;
             existingUser.LastName = updatedUserData.LastName ?? existingUser.LastName;
@@ -62,10 +70,11 @@ namespace Carpool.Application.Services
             await _userRepository.UpdateUserAsync(existingUser);
         }
 
+
         public async Task DeleteUserAsync(int id)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             User existingUser = await GetUserByIdAsync(id) ?? throw new NotFoundException($"User with ID {id} not found.");
 

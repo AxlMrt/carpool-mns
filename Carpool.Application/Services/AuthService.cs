@@ -26,74 +26,47 @@ namespace Carpool.Application.Services
 
         public async Task RegisterUserAsync(RegisterUserDto userDto)
         {
-            try
-            {
-                if (userDto is null)
-                    throw new BadRequestException("User object cannot be null");
+            if (userDto is null)
+                throw new BadRequestException("User object cannot be null");
 
-                if (!ValidationUtils.IsValidEmail(userDto.Email))
-                    throw new BadRequestException("Invalid email format");
+            if (!ValidationUtils.IsValidEmail(userDto.Email))
+                throw new BadRequestException("Invalid email format");
 
-                if (!ValidationUtils.IsStrongPassword(userDto.Password))
-                    throw new BadRequestException("Password should be at least 8 characters long, contain at least one uppercase, one lowercase, and one special character.");
+            if (!ValidationUtils.IsStrongPassword(userDto.Password))
+                throw new BadRequestException("Password should be at least 8 characters long, contain at least one uppercase, one lowercase, and one special character.");
 
-                User user = await _authRepository.FindUserAsync(userDto.Email);
+            User user = await _authRepository.FindUserAsync(userDto.Email);
 
-                if (user != null)
-                    throw new BadRequestException("This email is already associated with an account.");
+            if (user != null)
+                throw new BadRequestException("This email is already associated with an account.");
 
-                userDto.Password = _passwordHasherService.HashPassword(userDto.Password);
-                await _authRepository.RegisterUserAsync(userDto);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            userDto.Password = _passwordHasherService.HashPassword(userDto.Password);
+            await _authRepository.RegisterUserAsync(userDto);
         }
 
         public async Task<Token> AuthenticateAsync(LoginDto loginData)
         {
-            try
-            {
-                User user = await _authRepository.FindUserAsync(loginData.Email) ?? throw new InvalidCredentialException("Invalid email.");
+            User user = await _authRepository.FindUserAsync(loginData.Email) ?? throw new InvalidCredentialException("Invalid email.");
 
-                if (!_passwordHasherService.VerifyPassword(user.Password, loginData.Password))
-                    throw new InvalidCredentialException("Invalid password.");
+            if (!_passwordHasherService.VerifyPassword(user.Password, loginData.Password))
+                throw new InvalidCredentialException("Invalid password.");
 
-                string token = await _jwtService.GenerateTokenAsync(user.Id.ToString(), user.Role) ?? throw new JwtGenerationException("Failed to generate JWT token.");
+            string token = await _jwtService.GenerateTokenAsync(user.Id.ToString(), user.Role) ?? throw new JwtGenerationException("Failed to generate JWT token.");
 
-                return await _tokenManagerService.AddTokenAsync(user, token);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return await _tokenManagerService.AddTokenAsync(user, token);
         }
 
         public async Task LogoutAsync(string token)
         {
-            try
-            {
-                await _tokenManagerService.RemoveTokenAsync(token);
-            }
-            catch (Exception ex)
-            {
-                throw new TokenOperationException("Failed to remove token.", ex);
-            }
+            await _tokenManagerService.RemoveTokenAsync(token);
         }
 
         public async Task<string> RefreshTokenAsync(string token)
         {
-            try
-            {
-                string newToken = await _jwtService.RefreshTokenAsync(token);
-                await _tokenManagerService.UpdateTokenAsync(token, newToken);
-                return newToken;
-            }
-            catch (Exception ex)
-            {
-                throw new TokenOperationException("Failed to refresh token.", ex);
-            }
+            string newToken = await _jwtService.RefreshTokenAsync(token) ?? throw new TokenOperationException("Failed to refresh token.");
+            await _tokenManagerService.UpdateTokenAsync(token, newToken);
+
+            return newToken;
         }
     }
 }
