@@ -12,11 +12,13 @@ namespace Carpool.Application.Services
     {
         private readonly ITripRepository _tripRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ICarRepository _carRepository;
 
-        public TripService(ITripRepository tripRepository, IUserRepository userRepository)
+        public TripService(ITripRepository tripRepository, IUserRepository userRepository, ICarRepository carRepository)
         {
             _tripRepository = tripRepository;
             _userRepository = userRepository;
+            _carRepository = carRepository;
         }
 
         public async Task<IEnumerable<TripDTO>> GetAllTripsAsync()
@@ -44,6 +46,7 @@ namespace Carpool.Application.Services
                 throw new BadRequestException("Trip object cannot be null.");
 
             User user = await _userRepository.GetUserByIdAsync(tripDto.DriverId) ?? throw new NotFoundException($"User with ID {tripDto.DriverId} not found.");
+            Car car = await _carRepository.GetCarByIdAsync(tripDto.CarId) ?? throw new NotFoundException($"Car with ID {tripDto.CarId} not found.");
 
             Trip trip = ObjectUpdater.MapObject<Trip>(tripDto);
 
@@ -52,6 +55,8 @@ namespace Carpool.Application.Services
                 throw new BadRequestException(validationResult);
 
             await _tripRepository.CreateTripAsync(trip);
+            car.Trips.Add(trip);
+            await _carRepository.UpdateCarAsync(car);
 
             return ObjectUpdater.MapObject<TripDTO>(trip);
 
