@@ -19,33 +19,36 @@ namespace Carpool.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<Car>> GetAllCarsAsync()
+        public async Task<IEnumerable<CarDTO>> GetAllCarsAsync()
         {
             IEnumerable<Car> cars = await _carRepository.GetAllCarsAsync();
             if (cars == null || !cars.Any())
                 throw new NotFoundException("No cars found in the database.");
 
-            return cars;
+            return cars.Select(u => ObjectUpdater.MapObject<CarDTO>(u));
         }
 
-        public async Task<Car> GetCarByIdAsync(int id)
+        public async Task<CarDTO> GetCarByIdAsync(int id)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            return await _carRepository.GetCarByIdAsync(id);
+            Car car = await _carRepository.GetCarByIdAsync(id);
+            return ObjectUpdater.MapObject<CarDTO>(car);
         }
 
-        public async Task<IEnumerable<Car>> GetCarsByUserIdAsync(int userId)
+        public async Task<IEnumerable<CarDTO>> GetCarsByUserIdAsync(int userId)
         {
             if (userId <= 0)
                 throw new BadRequestException("Invalid ID.");
 
             User user = await _userRepository.GetUserByIdAsync(userId) ?? throw new NotFoundException($"User with ID {userId} not found.");
-            return await _carRepository.GetCarsByUserIdAsync(userId);
+            IEnumerable<Car> cars = await _carRepository.GetCarsByUserIdAsync(userId);
+
+            return cars.Select(u => ObjectUpdater.MapObject<CarDTO>(u));
         }
 
-        public async Task<Car> CreateCarAsync(CreateCarDTO carDto)
+        public async Task<CarDTO> CreateCarAsync(CreateCarDTO carDto)
         {
             if (carDto == null)
                 throw new BadRequestException("Car object cannot be null.");
@@ -60,10 +63,10 @@ namespace Carpool.Application.Services
             user.Cars.Add(car);
             await _userRepository.UpdateUserAsync(user);
 
-            return car;
+            return ObjectUpdater.MapObject<CarDTO>(car);
         }
 
-        public async Task<Car> UpdateCarAsync(int id, UpdateCarDTO carDto)
+        public async Task<CarDTO> UpdateCarAsync(int id, UpdateCarDTO carDto)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
@@ -76,7 +79,7 @@ namespace Carpool.Application.Services
                 throw new BadRequestException("Invalid car data.");
 
             await _carRepository.UpdateCarAsync(car);
-            return car;
+            return ObjectUpdater.MapObject<CarDTO>(car);
         }
 
         public async Task<bool> DeleteCarAsync(int id)

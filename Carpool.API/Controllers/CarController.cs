@@ -23,7 +23,7 @@ namespace Carpool.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CarDTO>>> GetAllCars()
         {
-            IEnumerable<Car> cars = await _carService.GetAllCarsAsync();
+            IEnumerable<CarDTO> cars = await _carService.GetAllCarsAsync();
             return Ok(cars);
         }
 
@@ -31,7 +31,7 @@ namespace Carpool.API.Controllers
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<CarDTO>>> GetCarsByUserId(int userId)
         {
-            IEnumerable<Car> cars = await _carService.GetCarsByUserIdAsync(userId);
+            IEnumerable<CarDTO> cars = await _carService.GetCarsByUserIdAsync(userId);
             return Ok(cars);
         }
 
@@ -39,14 +39,14 @@ namespace Carpool.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CarDTO>> GetCarById(int id)
         {
-            Car car = await _carService.GetCarByIdAsync(id);
+            CarDTO car = await _carService.GetCarByIdAsync(id);
             return Ok(car);
         }
 
         [HttpPost]
         public async Task<ActionResult<CarDTO>> AddCar(CreateCarDTO car)
         {
-            Car createdCar = await _carService.CreateCarAsync(car);
+            CarDTO createdCar = await _carService.CreateCarAsync(car);
             return CreatedAtAction(nameof(GetCarById), new { id = createdCar.Id }, createdCar);
         }
 
