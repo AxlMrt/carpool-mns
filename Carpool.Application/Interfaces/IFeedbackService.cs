@@ -1,4 +1,3 @@
-using Carpool.Domain.DTOs;
 using Carpool.Domain.DTOs.Feedback;
 using Carpool.Domain.Entities;
 

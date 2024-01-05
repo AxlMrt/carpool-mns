@@ -1,5 +1,4 @@
 using Carpool.Domain.DTO.User;
-using Carpool.Domain.Entities;
 
 namespace Carpool.Application.Interfaces
 {

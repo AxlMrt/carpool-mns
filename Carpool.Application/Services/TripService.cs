@@ -22,26 +22,26 @@ namespace Carpool.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<Trip>> GetAllTripsAsync()
+        public async Task<IEnumerable<TripDTO>> GetAllTripsAsync()
         {
             IEnumerable<Trip> trips = await _tripRepository.GetAllTripsAsync();
 
             if (trips == null || !trips.Any())
                 throw new NotFoundException("No trips found.");
 
-            return trips;
+            return trips.Select(u => ObjectUpdater.MapObject<TripDTO>(u));
         }
 
-        public async Task<Trip> GetTripByIdAsync(int id)
+        public async Task<TripDTO> GetTripByIdAsync(int id)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
             Trip trip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
-            return trip;
+            return ObjectUpdater.MapObject<TripDTO>(trip);
         }
 
-        public async Task<Trip> CreateTripAsync(CreateTripDTO tripDto)
+        public async Task<TripDTO> CreateTripAsync(CreateTripDTO tripDto)
         {
             if (tripDto is null)
                 throw new BadRequestException("Trip object cannot be null.");
@@ -52,20 +52,20 @@ namespace Carpool.Application.Services
 
             await _tripRepository.CreateTripAsync(trip);
 
-            return trip;
+            return ObjectUpdater.MapObject<TripDTO>(trip);
         }
 
-        public async Task<Trip> UpdateTripAsync(int id, UpdateTripDTO tripDto)
+        public async Task<TripDTO> UpdateTripAsync(int id, UpdateTripDTO tripDto)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            Trip trip = await GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
+            Trip trip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
             ObjectUpdater.UpdateObject<Trip, UpdateTripDTO>(trip, tripDto);
 
             await _tripRepository.UpdateTripAsync(trip);
-            return trip;
+            return ObjectUpdater.MapObject<TripDTO>(trip);
         }
 
         public async Task<bool> DeleteTripAsync(int id)
@@ -73,7 +73,7 @@ namespace Carpool.Application.Services
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            Trip existingTrip = await GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
+            Trip existingTrip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
             await _tripRepository.DeleteTripAsync(id);
             return true;

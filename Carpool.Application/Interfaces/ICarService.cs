@@ -1,5 +1,4 @@
 using Carpool.Application.DTO.Car;
-using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 
 namespace Carpool.Application.Interfaces
