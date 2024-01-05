@@ -56,5 +56,12 @@ namespace Carpool.Application.Utils
                 && car.TechnicalInspectionDate > DateTime.Now
                 && car.InsuranceExpirationDate > DateTime.Now;
         }
+
+        public static bool IsValidFeedback(Feedback feedback)
+        {
+            return !string.IsNullOrEmpty(feedback.Comment)
+                && feedback.Rating >= 1 && feedback.Rating <= 5
+                && feedback.UserId > 0;
+        }
     }
 }

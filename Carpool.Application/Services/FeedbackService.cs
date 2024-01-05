@@ -55,6 +55,9 @@ namespace Carpool.Application.Services
             User user = await _userRepository.GetUserByIdAsync(feedbackDto.UserId) ?? throw new NotFoundException($"User with ID {feedbackDto.UserId} not found.");
 
             Feedback feedback = ObjectUpdater.MapObject<Feedback>(feedbackDto);
+
+            if (!ValidationUtils.IsValidFeedback(feedback))
+                throw new BadRequestException("Invalid feedback data.");
         
             await _feedbackRepository.CreateFeedbackAsync(feedback);
 
@@ -73,6 +76,9 @@ namespace Carpool.Application.Services
             Feedback feedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
     
             ObjectUpdater.UpdateObject<Feedback, UpdateFeedbackDTO>(feedback, feedbackDto);
+
+            if (!ValidationUtils.IsValidFeedback(feedback))
+                throw new BadRequestException("Invalid feedback data.");
 
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
             return feedback;
