@@ -47,9 +47,13 @@ namespace Carpool.Application.Services
 
             Trip trip = ObjectUpdater.MapObject<Trip>(tripDto);
 
+            if (!ValidationUtils.IsValidTrip(trip))
+                throw new BadRequestException("Invalid trip data.");
+
             await _tripRepository.CreateTripAsync(trip);
 
             return ObjectUpdater.MapObject<TripDTO>(trip);
+
         }
 
         public async Task<TripDTO> UpdateTripAsync(int id, UpdateTripDTO tripDto)
@@ -60,6 +64,9 @@ namespace Carpool.Application.Services
             Trip trip = await _tripRepository.GetTripByIdAsync(id) ?? throw new NotFoundException($"Trip with ID {id} not found.");
 
             ObjectUpdater.UpdateObject<Trip, UpdateTripDTO>(trip, tripDto);
+
+            if (!ValidationUtils.IsValidTrip(trip))
+                throw new BadRequestException("Invalid trip data.");
 
             await _tripRepository.UpdateTripAsync(trip);
             return ObjectUpdater.MapObject<TripDTO>(trip);

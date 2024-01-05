@@ -63,5 +63,14 @@ namespace Carpool.Application.Utils
                 && feedback.Rating >= 1 && feedback.Rating <= 5
                 && feedback.UserId > 0;
         }
+
+        public static bool IsValidTrip(Trip trip)
+        {
+            return trip.CarId > 0
+                && trip.DepartureAddressId != null && trip.DepartureAddressId > 0
+                && trip.DestinationAddressId != null && trip.DestinationAddressId > 0
+                && trip.DepartureTime > DateTime.Now
+                && trip.AvailableSeats > 0;
+        }
     }
 }
