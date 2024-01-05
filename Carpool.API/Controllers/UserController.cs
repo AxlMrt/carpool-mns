@@ -1,66 +1,73 @@
-using Carpool.Domain.Entities;
-using Carpool.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Carpool.Application.Interfaces;
+using Carpool.Application.Exceptions;
+using Carpool.Domain.Roles;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Authorization;
+using Carpool.Domain.DTO.User;
 
 namespace Carpool.API.Controllers
 {
-    public class UserController : BaseApiController
+    public class UserController : BaseApiController, IExceptionFilter
     {
         private readonly IUserService _userService;
-        private readonly IPasswordHasherService _passwordHasherService;
 
-        public UserController(IUserService userService, IPasswordHasherService passwordHasherService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _passwordHasherService = passwordHasherService;
         }
 
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            IEnumerable<User> users = await _userService.GetAllUsersAsync();
+            IEnumerable<UserDTO> users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
 
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(Guid id)
+        public async Task<IActionResult> GetUser(int id)
         {
-            User user = await _userService.GetUserByIdAsync(id);
-            if (user is null)
-                return NotFound();
-
+            UserDTO user = await _userService.GetUserByIdAsync(id);
             return Ok(user);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(User user)
-        {
-            user.Password = _passwordHasherService.HashPassword(user.Password);
-
-            await _userService.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
-        }
-
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, User user)
+        public async Task<IActionResult> UpdateUser(int id, UpdateUserDTO user)
         {
-            
-            User existingUser = await _userService.GetUserByIdAsync(id);
-
-            if (existingUser is null) return NotFound("User not found");
-
-            if (existingUser.Password != user.Password)
-                user.Password = _passwordHasherService.HashPassword(user.Password);
-            
-            await _userService.UpdateUserAsync(user);
+            await _userService.UpdateUserAsync(id, user);
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             await _userService.DeleteUserAsync(id);
             return NoContent();
+        }
+
+        [NonAction]
+        public void OnException(ExceptionContext context)
+        {
+            Exception exception = context.Exception;
+            int statusCode = 500;
+
+            if (exception is NotFoundException)
+            {
+                statusCode = 404;
+            }
+            else if (exception is BadRequestException || exception is ArgumentException)
+            {
+                statusCode = 400;
+            }
+
+            context.Result = new ObjectResult(exception.Message)
+            {
+                StatusCode = statusCode
+            };
         }
     }
 }

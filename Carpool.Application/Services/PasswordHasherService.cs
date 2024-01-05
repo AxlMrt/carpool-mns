@@ -1,4 +1,4 @@
-using Carpool.Domain.Interfaces;
+using Carpool.Application.Interfaces;
 
 namespace Carpool.Application.Services
 {

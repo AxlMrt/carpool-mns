@@ -1,5 +1,5 @@
 using Carpool.Domain.Entities;
-using Carpool.Domain.Interfaces;
+using Carpool.Infrastructure.Interfaces;
 using Carpool.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,31 +19,20 @@ namespace Carpool.Infrastructure.Repositories
             return await _dbContext.Users.ToListAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(Guid userId)
+        public async Task<User> GetUserByIdAsync(int id)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        }
-
-        public async Task CreateUserAsync(User user)
-        {
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
+            return await _dbContext.Users.Include(u => u.Addresses).Include(u => u.Cars).FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task UpdateUserAsync(User user)
         {
-            var existingUser = await _dbContext.Users.FindAsync(user.Id);
-            if (existingUser != null)
-            {
-                _dbContext.Entry(existingUser).CurrentValues.SetValues(user);
-
-                await _dbContext.SaveChangesAsync();
-            }
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteUserAsync(Guid userId)
+        public async Task DeleteUserAsync(int id)
         {
-            User user = await _dbContext.Users.FirstOrDefaultAsync(u=> u.Id == userId);
+            User user = await _dbContext.Users.FirstOrDefaultAsync(u=> u.Id == id);
             if (user != null)
             {
                 _dbContext.Users.Remove(user);
