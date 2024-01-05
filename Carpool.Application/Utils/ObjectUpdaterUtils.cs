@@ -20,7 +20,7 @@ namespace Carpool.Application.Utils
             }
         }
 
-        public static T MapDtoToObject<T>(object dto)
+        public static T MapObject<T>(object dto)
         {
             if (dto == null)
             {

@@ -15,17 +15,9 @@ namespace Carpool.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task RegisterUserAsync(RegisterUserDto user)
+        public async Task RegisterUserAsync(User user)
         {
-            User newUser = new()
-            {
-                LastName = user.LastName,
-                FirstName = user.FirstName,
-                Email = user.Email,
-                Password = user.Password,
-            };
-    
-            await _dbContext.Users.AddAsync(newUser);
+            await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
         }
 

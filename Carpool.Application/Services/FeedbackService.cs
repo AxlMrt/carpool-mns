@@ -1,7 +1,7 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Application.Utils;
-using Carpool.Domain.DTOs;
+using Carpool.Domain.DTOs.Feedback;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Interfaces;
@@ -43,18 +43,18 @@ namespace Carpool.Application.Services
             if (userId < 0)
                 throw new BadRequestException("ID cannot be negative.");
 
-            IEnumerable<Feedback> feedback = await _feedbackRepository.GetFeedbacksByUserIdAsync(userId) ?? throw new NotFoundException($"Feedbacks with user ID {userId} not found.");
-            return feedback;
+            IEnumerable<Feedback> feedbacks = await _feedbackRepository.GetFeedbacksByUserIdAsync(userId) ?? throw new NotFoundException($"Feedbacks with user ID {userId} not found.");
+            return feedbacks;
         }
 
-        public async Task<Feedback> CreateFeedbackAsync(FeedbackCreateDto feedbackDto)
+        public async Task<Feedback> CreateFeedbackAsync(CreateFeedbackDTO feedbackDto)
         {
             if (feedbackDto is null)
                 throw new BadRequestException("Feedback object cannot be null.");
-            
+
             User user = await _userRepository.GetUserByIdAsync(feedbackDto.UserId) ?? throw new NotFoundException($"User with ID {feedbackDto.UserId} not found.");
 
-            Feedback feedback = ObjectUpdater.MapDtoToObject<Feedback>(feedbackDto);
+            Feedback feedback = ObjectUpdater.MapObject<Feedback>(feedbackDto);
         
             await _feedbackRepository.CreateFeedbackAsync(feedback);
 
@@ -65,14 +65,14 @@ namespace Carpool.Application.Services
             return feedback;
         }
 
-        public async Task<Feedback> UpdateFeedbackAsync(int id, FeedbackUpdateDto feedbackDto)
+        public async Task<Feedback> UpdateFeedbackAsync(int id, UpdateFeedbackDTO feedbackDto)
         {
-            if (id <= 0 || id != feedbackDto.Id)
+            if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            Feedback feedback = await _feedbackRepository.GetFeedbackByIdAsync(feedbackDto.Id) ?? throw new NotFoundException($"Car with ID {id} not found.");
+            Feedback feedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
     
-            ObjectUpdater.UpdateObject<Feedback, FeedbackUpdateDto>(feedback, feedbackDto);
+            ObjectUpdater.UpdateObject<Feedback, UpdateFeedbackDTO>(feedback, feedbackDto);
 
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
             return feedback;

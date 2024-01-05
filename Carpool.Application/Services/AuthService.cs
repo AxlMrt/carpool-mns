@@ -1,11 +1,11 @@
-using Carpool.Domain.DTOs;
-using Carpool.Application.Interfaces;
-using Carpool.Infrastructure.Interfaces;
-using Carpool.Domain;
-using Carpool.Domain.Entities;
+using Carpool.Application.DTO.Auth;
 using Carpool.Application.Exceptions;
-using System.Security.Authentication;
+using Carpool.Application.Interfaces;
 using Carpool.Application.Utils;
+using Carpool.Domain.Entities;
+using Carpool.Infrastructure.Interfaces;
+using System.Security.Authentication;
+using System.Threading.Tasks;
 
 namespace Carpool.Application.Services
 {
@@ -24,7 +24,7 @@ namespace Carpool.Application.Services
             _tokenManagerService = tokenManagerService;
         }
 
-        public async Task RegisterUserAsync(RegisterUserDto userDto)
+        public async Task RegisterUserAsync(RegisterUserDTO userDto)
         {
             if (userDto is null)
                 throw new BadRequestException("User object cannot be null");
@@ -41,10 +41,12 @@ namespace Carpool.Application.Services
                 throw new BadRequestException("This email is already associated with an account.");
 
             userDto.Password = _passwordHasherService.HashPassword(userDto.Password);
-            await _authRepository.RegisterUserAsync(userDto);
+    
+            User newUser = ObjectUpdater.MapObject<User>(userDto);
+            await _authRepository.RegisterUserAsync(newUser);
         }
 
-        public async Task<Token> AuthenticateAsync(LoginDto loginData)
+        public async Task<Token> AuthenticateAsync(LoginDTO loginData)
         {
             User user = await _authRepository.FindUserAsync(loginData.Email) ?? throw new InvalidCredentialException("Invalid email.");
 

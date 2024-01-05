@@ -1,4 +1,4 @@
-using Carpool.Domain.DTOs;
+using Carpool.Domain.DTOs.Address;
 using Carpool.Domain.Entities;
 
 namespace Carpool.Application.Interfaces
@@ -7,8 +7,8 @@ namespace Carpool.Application.Interfaces
     {
         Task<IEnumerable<Address>> GetAllAddressesAsync();
         Task<Address> GetAddressByIdAsync(int id);
-        Task<Address> CreateAddressAsync(AddressCreateDto addressDto);
-        Task<Address> UpdateAddressAsync(int id, AddressUpdateDto addressDto);
+        Task<Address> CreateAddressAsync(CreateAddressDTO addressDto);
+        Task<Address> UpdateAddressAsync(int id, UpdateAddressDTO addressDto);
         Task<bool> DeleteAddressAsync(int id);
     }
 }

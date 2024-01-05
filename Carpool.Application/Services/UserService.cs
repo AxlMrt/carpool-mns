@@ -5,6 +5,7 @@ using Carpool.Application.Utils;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Roles;
 using Carpool.Infrastructure.Interfaces;
+using Carpool.Domain.DTO.User;
 
 namespace Carpool.Application.Services
 {
@@ -19,25 +20,27 @@ namespace Carpool.Application.Services
             _passwordHasherService = passwordHasherService;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             IEnumerable<User> users = await _userRepository.GetAllUsersAsync();
-            
+
             if (users is null || !users.Any())
                 throw new NotFoundException("No users found in database.");
-            
-            return users;
+
+            return users.Select(u => ObjectUpdater.MapObject<UserDTO>(u));
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            return await _userRepository.GetUserByIdAsync(id)  ?? throw new NotFoundException($"User with ID {id} not found.");
+            User user = await _userRepository.GetUserByIdAsync(id) ?? throw new NotFoundException($"User with ID {id} not found.");
+
+            return ObjectUpdater.MapObject<UserDTO>(user);
         }
 
-        public async Task UpdateUserAsync(int id, User updatedUser)
+        public async Task UpdateUserAsync(int id, UpdateUserDTO updatedUserDto)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid user ID.");
@@ -47,33 +50,32 @@ namespace Carpool.Application.Services
             if (user.Role != Roles.Administrator)
                 throw new NotAllowedException("You are not allowed to update this user.");
 
-            if (updatedUser.Email != null && !ValidationUtils.IsValidEmail(updatedUser.Email))
+            if (updatedUserDto.Email != null && !ValidationUtils.IsValidEmail(updatedUserDto.Email))
                 throw new BadRequestException("Invalid email format.");
 
-            if (updatedUser.Password != null && !ValidationUtils.IsStrongPassword(updatedUser.Password))
+            if (updatedUserDto.Password != null && !ValidationUtils.IsStrongPassword(updatedUserDto.Password))
                 throw new BadRequestException("Password should be at least 8 characters long, contain at least one uppercase, one lowercase, and one special character.");
 
-            ObjectUpdater.UpdateObject<User, User>(user, updatedUser);
+            ObjectUpdater.UpdateObject(user, updatedUserDto);
 
-            if (!string.IsNullOrEmpty(updatedUser.Password))
+            if (!string.IsNullOrEmpty(updatedUserDto.Password))
             {
-                bool validPassword = _passwordHasherService.VerifyPassword(user.Password, user.Password);
+                bool validPassword = _passwordHasherService.VerifyPassword(user.Password, updatedUserDto.Password);
                 if (!validPassword)
                     throw new InvalidCredentialException("Wrong credentials.");
 
-                user.Password = _passwordHasherService.HashPassword(updatedUser.Password);
+                user.Password = _passwordHasherService.HashPassword(updatedUserDto.Password);
             }
 
             await _userRepository.UpdateUserAsync(user);
         }
-
 
         public async Task DeleteUserAsync(int id)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            User existingUser = await GetUserByIdAsync(id) ?? throw new NotFoundException($"User with ID {id} not found.");
+            User existingUser = await _userRepository.GetUserByIdAsync(id) ?? throw new NotFoundException($"User with ID {id} not found.");
 
             if (existingUser.Role != Roles.Administrator || existingUser.Id != id)
                 throw new NotAllowedException("You are not allowed to delete this user.");

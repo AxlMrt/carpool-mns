@@ -1,7 +1,7 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Application.Utils;
-using Carpool.Domain.DTOs;
+using Carpool.Domain.DTOs.Address;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Interfaces;
@@ -25,7 +25,7 @@ namespace Carpool.Application.Services
 
             if (addresses is null || !addresses.Any())
                 throw new NotFoundException("No addresses found in database.");
-            
+
             return addresses;
         }
 
@@ -33,18 +33,18 @@ namespace Carpool.Application.Services
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
-            
+
             return await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
         }
 
-        public async Task<Address> CreateAddressAsync(AddressCreateDto addressDto)
+        public async Task<Address> CreateAddressAsync(CreateAddressDTO addressDto)
         {
             if (addressDto is null)
                 throw new BadRequestException("Address object cannot be null.");
-            
+
             User user = await _userRepository.GetUserByIdAsync(addressDto.UserId) ?? throw new NotFoundException($"User with ID {addressDto.UserId} not found.");
 
-            Address address = ObjectUpdater.MapDtoToObject<Address>(addressDto);    
+            Address address = ObjectUpdater.MapObject<Address>(addressDto);
 
             await _addressRepository.CreateAddressAsync(address);
 
@@ -55,14 +55,14 @@ namespace Carpool.Application.Services
             return address;
         }
 
-        public async Task<Address> UpdateAddressAsync(int id, AddressUpdateDto addressDto)
+        public async Task<Address> UpdateAddressAsync(int id, UpdateAddressDTO addressDto)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
             Address address = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
-            ObjectUpdater.UpdateObject<Address, AddressUpdateDto>(address, addressDto);
+            ObjectUpdater.UpdateObject<Address, UpdateAddressDTO>(address, addressDto);
 
             await _addressRepository.UpdateAddressAsync(address);
             return address;
@@ -72,7 +72,7 @@ namespace Carpool.Application.Services
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
-            
+
             Address address = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
             await _addressRepository.DeleteAddressAsync(id);
             return true;
