@@ -87,10 +87,10 @@ The API will be accessible at `https://localhost:5011` by default.
 ### Available Endpoints
 
 UserController
-- `GET /users`: Retrieve all registered users.
+- `GET /users`: Retrieve all registered users. (Administrator access only.)
   - Example: `GET https://localhost:5011/users`
 
-- `GET /users/{id}`: Retrieve a user by ID.
+- `GET /users/{id}`: Retrieve a user by ID. (Administrator access only.)
   - Example: `GET https://localhost:5011/users/123`
 
 - `PUT /users/{id}`: Update a user by ID.
@@ -109,6 +109,103 @@ AuthController
 
 - `POST /auth/logout`: Log out a user.
   - Example: `POST https://localhost:5011/auth/logout`
+
+- `POST /auth/refresh-token`: Refresh the authentication token.
+  - Example: `POST https://localhost:5011/auth/refresh-token`
+
+  AddressController
+
+- `GET /addresses`: Retrieve all addresses.
+  - Example: `GET https://localhost:5011/addresses`
+
+- `GET /addresses/{id}`: Retrieve an address by ID.
+  - Example: `GET https://localhost:5011/addresses/123`
+
+- `POST /addresses`: Create a new address.
+  - Example: `POST https://localhost:5011/addresses`
+
+- `PUT /addresses/{id}`: Update an address by ID.
+  - Example: `PUT https://localhost:5011/addresses/123`
+
+- `DELETE /addresses/{id}`: Delete an address by ID.
+  - Example: `DELETE https://localhost:5011/addresses/123`
+
+CarController
+
+- `GET /cars`: Retrieve all cars (Administrator access only).
+  - Example: `GET https://localhost:5011/cars`
+
+- `GET /cars/user/{userId}`: Retrieve cars by user ID (Administrator access only).
+  - Example: `GET https://localhost:5011/cars/user/123`
+
+- `GET /cars/{id}`: Retrieve a car by ID (Administrator access only).
+  - Example: `GET https://localhost:5011/cars/456`
+
+- `POST /cars`: Add a new car.
+  - Example: `POST https://localhost:5011/cars`
+
+- `PUT /cars/{id}`: Update a car by ID.
+  - Example: `PUT https://localhost:5011/cars/789`
+
+- `DELETE /cars/{id}`: Remove a car by ID.
+  - Example: `DELETE https://localhost:5011/cars/789`
+
+FeedbackController
+
+- `GET /feedbacks`: Retrieve all feedbacks (Administrator access only).
+  - Example: `GET https://localhost:5011/feedbacks`
+
+- `GET /feedbacks/{id}`: Retrieve feedback by ID.
+  - Example: `GET https://localhost:5011/feedbacks/123`
+
+- `GET /feedbacks/user/{userId}`: Retrieve feedbacks by user ID.
+  - Example: `GET https://localhost:5011/feedbacks/user/456`
+
+- `POST /feedbacks`: Add a new feedback.
+  - Example: `POST https://localhost:5011/feedbacks`
+
+- `PUT /feedbacks/{id}`: Update a feedback by ID.
+  - Example: `PUT https://localhost:5011/feedbacks/789`
+
+- `DELETE /feedbacks/{id}`: Delete a feedback by ID.
+  - Example: `DELETE https://localhost:5011/feedbacks/789`
+
+ReservationController
+
+- `GET /reservations`: Retrieve all reservations (Administrator access only).
+  - Example: `GET https://localhost:5011/reservations`
+
+- `GET /reservations/user/{userId}`: Retrieve reservations by user ID.
+  - Example: `GET https://localhost:5011/reservations/user/456`
+
+- `GET /reservations/trip/{tripId}`: Retrieve reservations by trip ID.
+  - Example: `GET https://localhost:5011/reservations/trip/789`
+
+- `GET /reservations/{id}`: Retrieve reservation by ID.
+  - Example: `GET https://localhost:5011/reservations/123`
+
+- `POST /reservations`: Add a new reservation.
+  - Example: `POST https://localhost:5011/reservations`
+
+- `DELETE /reservations/cancel/{id}`: Cancel a reservation by ID.
+  - Example: `DELETE https://localhost:5011/reservations/cancel/789`
+
+TripController
+
+- `GET /trips`: Retrieve all trips.
+  - Example: `GET https://localhost:5011/trips`
+
+- `GET /trips/{id}`: Retrieve a trip by ID.
+  - Example: `GET https://localhost:5011/trips/123`
+
+- `POST /trips`: Create a new trip.
+  - Example: `POST https://localhost:5011/trips`
+
+- `PUT /trips/{id}`: Update a trip by ID.
+  - Example: `PUT https://localhost:5011/trips/123`
+
+- `DELETE /trips/{id}`: Delete a trip by ID.
+  - Example: `DELETE https://localhost:5011/trips/123`
 
 ### Middlewares
 #### Exception Handling Middleware
