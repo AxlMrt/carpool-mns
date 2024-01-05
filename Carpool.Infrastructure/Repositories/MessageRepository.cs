@@ -2,6 +2,10 @@ using Carpool.Domain.Entities;
 using Carpool.Infrastructure.Context;
 using Carpool.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Carpool.Infrastructure.Repositories
 {
@@ -11,7 +15,7 @@ namespace Carpool.Infrastructure.Repositories
 
         public MessageRepository(CarpoolDbContext context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _context = context;
         }
 
         public async Task<IEnumerable<Message>> GetMessagesForTripAsync(int tripId)
@@ -19,6 +23,11 @@ namespace Carpool.Infrastructure.Repositories
             return await _context.Messages
                 .Where(m => m.TripId == tripId)
                 .ToListAsync();
+        }
+
+        public async Task<Message> GetMessageByIdAsync(int messageId)
+        {
+            return await _context.Messages.FindAsync(messageId);
         }
 
         public async Task SendMessageAsync(Message message)
