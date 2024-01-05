@@ -10,6 +10,7 @@ namespace Carpool.Infrastructure.Context
         {
         }
 
+        public DbSet<Message> Messages { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<Car> Cars { get; set; }
@@ -30,6 +31,7 @@ namespace Carpool.Infrastructure.Context
             modelBuilder.ApplyConfiguration(new TripConfiguration());
             modelBuilder.ApplyConfiguration(new ReservationConfiguration());
             modelBuilder.ApplyConfiguration(new FeedbackConfiguration());
+            modelBuilder.ApplyConfiguration(new MessageConfiguration());
         }
     }
 }
