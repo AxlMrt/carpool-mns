@@ -5,7 +5,6 @@ using Carpool.Domain.Entities;
 using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Carpool.Domain.Roles;
-using Carpool.Domain.DTOs;
 using Carpool.Domain.DTOs.Feedback;
 
 namespace Carpool.API.Controllers
