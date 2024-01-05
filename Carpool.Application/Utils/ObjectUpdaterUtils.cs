@@ -40,6 +40,15 @@ namespace Carpool.Application.Utils
                 if (dtoProp != null)
                 {
                     object value = dtoProp.GetValue(dto);
+                    
+                    if (objProp.Name.ToLower() != "password")
+                    {
+                        if (value != null && value is string v)
+                        {
+                            value = v.ToLower();
+                        }
+                    }
+
                     objProp.SetValue(obj, value);
                 }
             }

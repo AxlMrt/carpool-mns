@@ -190,7 +190,7 @@ The API will be accessible at `https://localhost:5011` by default.
 - `DELETE /reservations/cancel/{id}`: Cancel a reservation by ID.
   - Example: `DELETE https://localhost:5011/reservations/cancel/789`
 
-TripController
+#### TripController
 
 - `GET /trips`: Retrieve all trips.
   - Example: `GET https://localhost:5011/trips`
@@ -240,6 +240,20 @@ Tests are organized according to the following structure:
   - **Repositories**: Tests for data access repositories.
   - **Utilities**: Utility/helper classes or functions for tests.
 
+## Data Normalization
+
+In this application, non-sensitive data is normalized for consistency across controllers. Specifically:
+
+- Non-sensitive data, such as usernames, email addresses, address etc., is stored in lowercase.
+- This normalization ensures uniformity and facilitates comparisons and searches.
+
+**Considerations:**
+
+- **Server-Side Validation:** Despite normalizing data to lowercase, the server validates inputs to ensure they conform to expected formats.
+- **Special Cases:** Certain cases, such as proper names or languages with case sensitivity requirements, may necessitate maintaining the original case.
+
+This data normalization process is applied uniformly across controllers to maintain data consistency throughout the application.
+
 
 ## Contributions
 Contributions are welcome! If you wish to contribute to this project, make sure to create a branch for your changes and submit a pull request when ready.
@@ -252,9 +266,8 @@ If you encounter any issues or have questions, feel free to open a ticket in the
   - JwtService.cs
   - TokenManagerService.cs
 
-- Creating a Dashboard repository, service and controller
-- Fixing nullable properties in Entities
+- Creating a Dashboard, Notification and Messaging logic
 - Creating DTOs for each Services, controllers
-- Check for more error handling in services
+- Check for more validation and error handling in services
 
 Thank you for using our API!
