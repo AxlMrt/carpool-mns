@@ -47,8 +47,9 @@ namespace Carpool.Application.Services
 
             Trip trip = ObjectUpdater.MapObject<Trip>(tripDto);
 
-            if (!ValidationUtils.IsValidTrip(trip))
-                throw new BadRequestException("Invalid trip data.");
+            string validationResult = ValidationUtils.IsValidTrip(trip);
+            if (validationResult != "Valid")
+                throw new BadRequestException(validationResult);
 
             await _tripRepository.CreateTripAsync(trip);
 
@@ -65,8 +66,9 @@ namespace Carpool.Application.Services
 
             ObjectUpdater.UpdateObject<Trip, UpdateTripDTO>(trip, tripDto);
 
-            if (!ValidationUtils.IsValidTrip(trip))
-                throw new BadRequestException("Invalid trip data.");
+            string validationResult = ValidationUtils.IsValidTrip(trip);
+            if (validationResult != "Valid")
+                throw new BadRequestException(validationResult);
 
             await _tripRepository.UpdateTripAsync(trip);
             return ObjectUpdater.MapObject<TripDTO>(trip);

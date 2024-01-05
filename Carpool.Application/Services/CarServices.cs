@@ -56,8 +56,9 @@ namespace Carpool.Application.Services
             User user = await _userRepository.GetUserByIdAsync(carDto.OwnerId) ?? throw new NotFoundException($"User with ID {carDto.OwnerId} not found.");
             Car car = ObjectUpdater.MapObject<Car>(carDto);
 
-            if (!ValidationUtils.IsCarValid(car))
-                throw new BadRequestException("Invalid car data.");
+            string validationResult = ValidationUtils.IsCarValid(car);
+            if (validationResult != "Valid")
+                throw new BadRequestException(validationResult);
 
             await _carRepository.CreateCarAsync(car);
             user.Cars.Add(car);
@@ -75,8 +76,9 @@ namespace Carpool.Application.Services
 
             ObjectUpdater.UpdateObject<Car, UpdateCarDTO>(car, carDto);
 
-            if (!ValidationUtils.IsCarValid(car))
-                throw new BadRequestException("Invalid car data.");
+            string validationResult = ValidationUtils.IsCarValid(car);
+            if (validationResult != "Valid")
+                throw new BadRequestException(validationResult);
 
             await _carRepository.UpdateCarAsync(car);
             return ObjectUpdater.MapObject<CarDTO>(car);

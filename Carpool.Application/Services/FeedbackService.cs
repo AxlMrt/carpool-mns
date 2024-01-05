@@ -56,8 +56,9 @@ namespace Carpool.Application.Services
 
             Feedback feedback = ObjectUpdater.MapObject<Feedback>(feedbackDto);
 
-            if (!ValidationUtils.IsValidFeedback(feedback))
-                throw new BadRequestException("Invalid feedback data.");
+            string validationResult = ValidationUtils.IsValidFeedback(feedback);
+            if (validationResult != "Valid")
+                throw new BadRequestException(validationResult);
         
             await _feedbackRepository.CreateFeedbackAsync(feedback);
 
@@ -77,8 +78,9 @@ namespace Carpool.Application.Services
     
             ObjectUpdater.UpdateObject<Feedback, UpdateFeedbackDTO>(feedback, feedbackDto);
 
-            if (!ValidationUtils.IsValidFeedback(feedback))
-                throw new BadRequestException("Invalid feedback data.");
+            string validationResult = ValidationUtils.IsValidFeedback(feedback);
+            if (validationResult != "Valid")
+                throw new BadRequestException(validationResult);
 
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
             return feedback;

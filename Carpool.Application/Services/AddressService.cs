@@ -45,8 +45,9 @@ namespace Carpool.Application.Services
             User user = await _userRepository.GetUserByIdAsync(addressDto.UserId) ?? throw new NotFoundException($"User with ID {addressDto.UserId} not found.");
             Address address = ObjectUpdater.MapObject<Address>(addressDto);
 
-            if (!ValidationUtils.IsValidAddress(address))
-                throw new BadRequestException("Invalid address data.");
+            string validationResult = ValidationUtils.IsValidAddress(address);
+            if (validationResult != "Valid")
+                throw new BadRequestException(validationResult);
 
             await _addressRepository.CreateAddressAsync(address);
 
@@ -66,8 +67,9 @@ namespace Carpool.Application.Services
 
             ObjectUpdater.UpdateObject<Address, UpdateAddressDTO>(address, addressDto);
 
-            if (!ValidationUtils.IsValidAddress(address))
-                throw new BadRequestException("Invalid address data.");
+            string validationResult = ValidationUtils.IsValidAddress(address);
+            if (validationResult != "Valid")
+                throw new BadRequestException(validationResult);
 
             await _addressRepository.UpdateAddressAsync(address);
             return address;

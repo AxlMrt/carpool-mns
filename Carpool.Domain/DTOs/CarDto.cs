@@ -1,5 +1,3 @@
-using System;
-
 namespace Carpool.Application.DTO.Car
 {
     public class CarDTO
