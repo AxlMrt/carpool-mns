@@ -49,10 +49,12 @@ namespace Carpool.Application.Services
         {
             if (carDto == null)
                 throw new BadRequestException("Car object cannot be null.");
-
+            
             User user = await _userRepository.GetUserByIdAsync(carDto.OwnerId) ?? throw new NotFoundException($"User with ID {carDto.OwnerId} not found.");
-
             Car car = ObjectUpdater.MapObject<Car>(carDto);
+
+            if (!ValidationUtils.IsCarValid(car))
+                throw new BadRequestException("Invalid car data.");
 
             await _carRepository.CreateCarAsync(car);
             user.Cars.Add(car);
@@ -70,14 +72,17 @@ namespace Carpool.Application.Services
 
             ObjectUpdater.UpdateObject<Car, UpdateCarDTO>(car, carDto);
 
+            if (!ValidationUtils.IsCarValid(car))
+                throw new BadRequestException("Invalid car data.");
+
             await _carRepository.UpdateCarAsync(car);
             return car;
         }
 
         public async Task<bool> DeleteCarAsync(int id)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             Car existingCar = await _carRepository.GetCarByIdAsync(id) ?? throw new NotFoundException($"Car with ID {id} not found.");
 
