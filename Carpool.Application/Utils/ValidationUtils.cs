@@ -16,5 +16,10 @@ namespace Carpool.Application.Utils
             // At least one special char
             return Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$");
         }
+
+        public static bool IsValidPostalCode(string postalCode)
+        {
+            return Regex.IsMatch(postalCode, @"^\d{5}$");
+        }
     }
 }

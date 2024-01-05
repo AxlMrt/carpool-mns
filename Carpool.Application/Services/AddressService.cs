@@ -41,6 +41,12 @@ namespace Carpool.Application.Services
         {
             if (addressDto is null)
                 throw new BadRequestException("Address object cannot be null.");
+            
+            if (!ValidationUtils.IsValidPostalCode(addressDto.PostalCode))
+                throw new BadRequestException("Invalid postal code.");
+            
+            if (addressDto.Latitude < -90 || addressDto.Latitude > 90 || addressDto.Longitude < -180 || addressDto.Longitude > 180)
+                throw new BadRequestException("Latitude must be between -90 and 90. Longitude must be between -180 and 180.");
 
             User user = await _userRepository.GetUserByIdAsync(addressDto.UserId) ?? throw new NotFoundException($"User with ID {addressDto.UserId} not found.");
 
@@ -59,6 +65,9 @@ namespace Carpool.Application.Services
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
+
+            if (addressDto.PostalCode != null && !ValidationUtils.IsValidPostalCode(addressDto.PostalCode))
+                throw new BadRequestException("Invalid postal code.");
 
             Address address = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
 
