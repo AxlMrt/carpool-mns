@@ -59,7 +59,6 @@ namespace Carpool.Application.Services
             await _carRepository.UpdateCarAsync(car);
 
             return ObjectUpdater.MapObject<TripDTO>(trip);
-
         }
 
         public async Task<TripDTO> UpdateTripAsync(int id, UpdateTripDTO tripDto)
