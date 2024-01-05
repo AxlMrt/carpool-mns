@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Carpool.Domain.DTOs;
+using Carpool.Application.DTO.Car;
 
 namespace Carpool.API.Controllers
 {
@@ -21,7 +22,7 @@ namespace Carpool.API.Controllers
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Car>>> GetAllCars()
+        public async Task<ActionResult<IEnumerable<CarDTO>>> GetAllCars()
         {
             IEnumerable<Car> cars = await _carService.GetAllCarsAsync();
             return Ok(cars);
@@ -29,7 +30,7 @@ namespace Carpool.API.Controllers
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUserId(int userId)
+        public async Task<ActionResult<IEnumerable<CarDTO>>> GetCarsByUserId(int userId)
         {
             IEnumerable<Car> cars = await _carService.GetCarsByUserIdAsync(userId);
             return Ok(cars);
@@ -37,21 +38,21 @@ namespace Carpool.API.Controllers
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Car>> GetCarById(int id)
+        public async Task<ActionResult<CarDTO>> GetCarById(int id)
         {
             Car car = await _carService.GetCarByIdAsync(id);
             return Ok(car);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Car>> AddCar(CarCreateDto car)
+        public async Task<ActionResult<CarDTO>> AddCar(CreateCarDTO car)
         {
             Car createdCar = await _carService.CreateCarAsync(car);
             return CreatedAtAction(nameof(GetCarById), new { id = createdCar.Id }, createdCar);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Car>> UpdateCar(int id, CarUpdateDto car)
+        public async Task<ActionResult<CarDTO>> UpdateCar(int id, UpdateCarDTO car)
         {
             await _carService.UpdateCarAsync(id, car);
             return NoContent();

@@ -3,7 +3,7 @@ using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Application.Exceptions;
-using Carpool.Domain.DTOs;
+using Carpool.Application.DTO.Trip;
 
 namespace Carpool.API.Controllers
 {
@@ -17,29 +17,29 @@ namespace Carpool.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Trip>>> GetAllTrips()
+        public async Task<ActionResult<IEnumerable<TripDTO>>> GetAllTrips()
         {
-            IEnumerable<Trip> trips = await _tripService.GetAllTripsAsync();
+            IEnumerable<TripDTO> trips = await _tripService.GetAllTripsAsync();
             return Ok(trips);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Trip>> GetTripById(int id)
+        public async Task<ActionResult<TripDTO>> GetTripById(int id)
         {
-            Trip trip = await _tripService.GetTripByIdAsync(id);
+            TripDTO trip = await _tripService.GetTripByIdAsync(id);
 
             return Ok(trip);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Trip>> CreateTrip(TripCreateDto trip)
+        public async Task<ActionResult<Trip>> CreateTrip(CreateTripDTO trip)
         {
-            Trip createdTrip = await _tripService.CreateTripAsync(trip);
+            TripDTO createdTrip = await _tripService.CreateTripAsync(trip);
             return CreatedAtAction(nameof(GetTripById), new { id = createdTrip.Id }, createdTrip);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Trip>> UpdateTrip(int id, TripUpdateDto trip)
+        public async Task<ActionResult<TripDTO>> UpdateTrip(int id, UpdateTripDTO trip)
         {
             await _tripService.UpdateTripAsync(id, trip);
 

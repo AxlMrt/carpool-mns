@@ -5,6 +5,7 @@ using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Carpool.Domain.DTOs;
+using Carpool.Domain.DTOs.Address;
 
 namespace Carpool.API.Controllers
 {
@@ -33,14 +34,14 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Address>> CreateAddress(AddressCreateDto addressDto)
+        public async Task<ActionResult<Address>> CreateAddress(CreateAddressDTO addressDto)
         {
             Address address = await _addressService.CreateAddressAsync(addressDto);
             return CreatedAtAction(nameof(GetAddressById), new { id = address.Id }, address);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<AddressUpdateDto>> UpdateAddress(int id, AddressUpdateDto addressDto)
+        public async Task<ActionResult<Address>> UpdateAddress(int id, UpdateAddressDTO addressDto)
         {
             await _addressService.UpdateAddressAsync(id, addressDto);
             return NoContent();

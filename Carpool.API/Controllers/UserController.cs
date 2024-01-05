@@ -5,6 +5,7 @@ using Carpool.Application.Exceptions;
 using Carpool.Domain.Roles;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
+using Carpool.Domain.DTO.User;
 
 namespace Carpool.API.Controllers
 {
@@ -21,7 +22,7 @@ namespace Carpool.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            IEnumerable<User> users = await _userService.GetAllUsersAsync();
+            IEnumerable<UserDTO> users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
 
@@ -29,13 +30,13 @@ namespace Carpool.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            User user = await _userService.GetUserByIdAsync(id);
+            UserDTO user = await _userService.GetUserByIdAsync(id);
             return Ok(user);
         }
 
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, User user)
+        public async Task<IActionResult> UpdateUser(int id, UpdateUserDTO user)
         {
             await _userService.UpdateUserAsync(id, user);
             return NoContent();

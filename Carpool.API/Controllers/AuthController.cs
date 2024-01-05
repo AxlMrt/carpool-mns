@@ -5,6 +5,7 @@ using Carpool.Domain;
 using Carpool.Domain.Entities;
 using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Carpool.Application.DTO.Auth;
 
 namespace Carpool.API.Controllers
 {
@@ -18,7 +19,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser(RegisterUserDto user)
+        public async Task<IActionResult> RegisterUser(RegisterUserDTO user)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Invalid registration data.");
@@ -29,7 +30,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Authenticate(LoginDto loginData)
+        public async Task<IActionResult> Authenticate(LoginDTO loginData)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Invalid login data.");

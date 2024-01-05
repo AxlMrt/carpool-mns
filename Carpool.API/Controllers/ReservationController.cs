@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Carpool.Domain.Roles;
+using Carpool.Domain.DTO.Reservation;
 
 namespace Carpool.API.Controllers
 {
@@ -20,37 +21,37 @@ namespace Carpool.API.Controllers
         
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservations()
+        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetAllReservations()
         {
-            IEnumerable<Reservation> reservations = await _reservationService.GetAllReservationsAsync();
+            IEnumerable<ReservationDTO> reservations = await _reservationService.GetAllReservationsAsync();
             return Ok(reservations);
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByUserId(int userId)
+        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservationsByUserId(int userId)
         {
-            IEnumerable<Reservation> reservations = await _reservationService.GetReservationsByUserIdAsync(userId);
+            IEnumerable<ReservationDTO> reservations = await _reservationService.GetReservationsByUserIdAsync(userId);
             return Ok(reservations);
         }
 
         [HttpGet("trip/{tripId}")]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByTripId(int tripId)
+        public async Task<ActionResult<IEnumerable<ReservationDTO>>> GetReservationsByTripId(int tripId)
         {
-            IEnumerable<Reservation> reservations = await _reservationService.GetReservationsByTripIdAsync(tripId);
+            IEnumerable<ReservationDTO> reservations = await _reservationService.GetReservationsByTripIdAsync(tripId);
             return Ok(reservations);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Reservation>> GetReservationById(int id)
+        public async Task<ActionResult<ReservationDTO>> GetReservationById(int id)
         {
-            Reservation reservation = await _reservationService.GetReservationByIdAsync(id);
+            ReservationDTO reservation = await _reservationService.GetReservationByIdAsync(id);
             return Ok(reservation);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Reservation>> CreateReservation(Reservation reservation)
+        public async Task<ActionResult<ReservationDTO>> CreateReservation(CreateReservationDTO reservation)
         {
-            Reservation createdReservation = await _reservationService.CreateReservationAsync(reservation);
+            ReservationDTO createdReservation = await _reservationService.CreateReservationAsync(reservation);
             return CreatedAtAction(nameof(GetReservationById), new { id = createdReservation.Id }, createdReservation);
         }
 
