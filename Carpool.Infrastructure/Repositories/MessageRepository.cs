@@ -1,14 +1,11 @@
 using Carpool.Domain.Entities;
 using Carpool.Infrastructure.Context;
+using Carpool.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Carpool.Infrastructure.Repositories
 {
-    public class MessageRepository
+    public class MessageRepository : IMessageRepository
     {
         private readonly CarpoolDbContext _context;
 
