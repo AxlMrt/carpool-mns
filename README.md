@@ -86,7 +86,7 @@ The API will be accessible at `https://localhost:5011` by default.
 
 ### Available Endpoints
 
-UserController
+#### UserController
 - `GET /users`: Retrieve all registered users. (Administrator access only.)
   - Example: `GET https://localhost:5011/users`
 
@@ -99,7 +99,7 @@ UserController
 - `DELETE /users/{id}`: Delete a user by ID.
   - Example: `DELETE https://localhost:5011/users/123`
 
-AuthController
+#### AuthController
 
 - `POST /auth/register`: Register a new user.
   - Example: `POST https://localhost:5011/auth/register`
@@ -113,7 +113,7 @@ AuthController
 - `POST /auth/refresh-token`: Refresh the authentication token.
   - Example: `POST https://localhost:5011/auth/refresh-token`
 
-  AddressController
+#### AddressController
 
 - `GET /addresses`: Retrieve all addresses.
   - Example: `GET https://localhost:5011/addresses`
@@ -130,7 +130,7 @@ AuthController
 - `DELETE /addresses/{id}`: Delete an address by ID.
   - Example: `DELETE https://localhost:5011/addresses/123`
 
-CarController
+#### CarController
 
 - `GET /cars`: Retrieve all cars (Administrator access only).
   - Example: `GET https://localhost:5011/cars`
@@ -150,7 +150,7 @@ CarController
 - `DELETE /cars/{id}`: Remove a car by ID.
   - Example: `DELETE https://localhost:5011/cars/789`
 
-FeedbackController
+#### FeedbackController
 
 - `GET /feedbacks`: Retrieve all feedbacks (Administrator access only).
   - Example: `GET https://localhost:5011/feedbacks`
@@ -170,7 +170,7 @@ FeedbackController
 - `DELETE /feedbacks/{id}`: Delete a feedback by ID.
   - Example: `DELETE https://localhost:5011/feedbacks/789`
 
-ReservationController
+#### ReservationController
 
 - `GET /reservations`: Retrieve all reservations (Administrator access only).
   - Example: `GET https://localhost:5011/reservations`
