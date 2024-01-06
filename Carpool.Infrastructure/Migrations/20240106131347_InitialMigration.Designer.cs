@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Carpool.Infrastructure.Migrations
 {
     [DbContext(typeof(CarpoolDbContext))]
-    [Migration("20240105145845_MessagingMigration")]
-    partial class MessagingMigration
+    [Migration("20240106131347_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

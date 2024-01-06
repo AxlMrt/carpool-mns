@@ -3,6 +3,7 @@ using Carpool.Application.Interfaces;
 using Carpool.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Application.Exceptions;
+using Carpool.Domain.DTOs;
 using Carpool.Application.DTO.Trip;
 
 namespace Carpool.API.Controllers
@@ -32,7 +33,7 @@ namespace Carpool.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Trip>> CreateTrip(CreateTripDTO trip)
+        public async Task<ActionResult<TripDTO>> CreateTrip(CreateTripDTO trip)
         {
             TripDTO createdTrip = await _tripService.CreateTripAsync(trip);
             return CreatedAtAction(nameof(GetTripById), new { id = createdTrip.Id }, createdTrip);

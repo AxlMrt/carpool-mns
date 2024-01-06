@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Carpool.Application.Interfaces;
+using Carpool.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Authorization;

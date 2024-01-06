@@ -13,12 +13,14 @@ namespace Carpool.Application.Services
         private readonly IReservationRepository _reservationRepository;
         private readonly IUserRepository _userRepository;
         private readonly ITripRepository _tripRepository;
+        private readonly ICarRepository _carRepository;
 
-        public ReservationService(IReservationRepository reservationRepository, IUserRepository userRepository, ITripRepository tripRepository)
+        public ReservationService(IReservationRepository reservationRepository, IUserRepository userRepository, ITripRepository tripRepository, ICarRepository carRepository)
         {
             _reservationRepository = reservationRepository;
             _tripRepository = tripRepository;
             _userRepository = userRepository;
+            _carRepository = carRepository;
         }
 
         public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
@@ -66,19 +68,20 @@ namespace Carpool.Application.Services
             return reservations.Select(r => ObjectUpdater.MapObject<ReservationDTO>(r));
         }
 
-        public async Task<ReservationDTO> CreateReservationAsync(CreateReservationDTO createReservationDto)
+        public async Task<ReservationDTO> CreateReservationAsync(CreateReservationDTO reservationDto)
         {
-            if (createReservationDto == null)
+            if (reservationDto == null)
                 throw new BadRequestException("Reservation object cannot be null.");
             
-            
-            User user = await _userRepository.GetUserByIdAsync(createReservationDto.UserId) ?? throw new NotFoundException($"User with id {createReservationDto.UserId} not found.");
-            Trip trip = await _tripRepository.GetTripByIdAsync(createReservationDto.TripId) ?? throw new NotFoundException($"Trip with id {createReservationDto.TripId} not found.");
+            User user = await _userRepository.GetUserByIdAsync(reservationDto.UserId) ?? throw new NotFoundException($"User with id {reservationDto.UserId} not found.");
+            Trip trip = await _tripRepository.GetTripByIdAsync(reservationDto.TripId) ?? throw new NotFoundException($"Trip with id {reservationDto.TripId} not found.");
+            Car car = await _carRepository.GetCarByIdAsync(trip.CarId) ?? throw new NotFoundException($"Trip with id {trip.CarId} not found.");
 
-            if (createReservationDto.ReservedSeats < 0 || trip.Car.NumberOfSeats < createReservationDto.ReservedSeats)
+            if (reservationDto.ReservedSeats <= 0 || car.NumberOfSeats < reservationDto.ReservedSeats)
                 throw new BadRequestException("Invalid reserved seats.");
 
-            Reservation reservation = ObjectUpdater.MapObject<Reservation>(createReservationDto);
+            Reservation reservation = ObjectUpdater.MapObject<Reservation>(reservationDto);
+
             await _reservationRepository.CreateReservationAsync(reservation);
             return ObjectUpdater.MapObject<ReservationDTO>(reservation);
         }

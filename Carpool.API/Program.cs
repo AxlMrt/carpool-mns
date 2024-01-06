@@ -14,6 +14,8 @@ using Microsoft.OpenApi.Models;
 using Carpool.Infrastructure;
 using Carpool.Domain.Interfaces;
 using System.Text.Json.Serialization;
+using Carpool.Domain.Services;
+using Carpool.ChatHub;
 
 var builder = WebApplication.CreateBuilder(args);
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"]);
@@ -86,7 +88,10 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IChatHubService, ChatHubService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<ITokenManagerService, TokenManagerService>();
 builder.Services.AddScoped<ITripService, TripService>();
@@ -96,7 +101,7 @@ builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<ITokenManagerRepository, TokenManagerRepository>();
 builder.Services.AddScoped<ITripRepository, TripRepository>();
@@ -108,6 +113,8 @@ builder.Services.AddScoped<IJwtService>(provider =>
     var issuer = builder.Configuration["Jwt:Issuer"];
     return new JwtService(secretKey, audience, issuer);
 });
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -141,7 +148,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors(opt =>
 {
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:5173");
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://127.0.0.1:5500");
 });
 app.MapControllers();
+app.MapHub<ChatHubService>("/chat-hub");
 app.Run();

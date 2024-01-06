@@ -23,7 +23,6 @@ namespace Carpool.Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            // Appel des configurations séparées
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new TokenConfiguration());
             modelBuilder.ApplyConfiguration(new CarConfiguration());

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Chat</title>
+</head>
+<body>
+    <input type="text" id="messageInput" />
+    <button onclick="sendMessage()">Envoyer</button>
+
+    <ul id="messagesList"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.11/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:5011/chat-hub") 
+            .build();
+
+        connection.on("ReceiveMessage", (message) => {
+            const messagesList = document.getElementById("messagesList");
+            const li = document.createElement("li");
+            li.textContent = `De: ${message.senderId}, Message: ${message.content}`;
+            messagesList.prepend(li);
+        });
+
+        async function startConnection() {
+            try {
+                await connection.start();
+                console.log("Connexion établie avec le Hub!");
+                
+                await getExistingMessages();
+            } catch (err) {
+                console.error(err.toString());
+            }
+        }
+
+        async function getExistingMessages() {
+            try {
+                const messages = await connection.invoke("GetMessagesForTrip", 3); 
+                const messagesList = document.getElementById("messagesList");
+                messagesList.innerHTML = '';
+    
+                messages.forEach(message => {
+                    const li = document.createElement("li");
+                    li.textContent = `De: ${message.senderId}, Message: ${message.content}`;
+                    messagesList.appendChild(li);
+                });
+            } catch (err) {
+                console.error(err.toString());
+            }
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById("messageInput");
+            const messageContent = messageInput.value;
+
+            await connection.invoke("SendMessage", 2, 3, messageContent)
+                .catch(err => console.error(err.toString()));
+
+            messageInput.value = "";
+
+            await getExistingMessages();
+        }
+
+        startConnection();
+    </script>
+</body>
+</html>
