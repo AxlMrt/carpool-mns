@@ -13,8 +13,9 @@ Before getting started, make sure you have the following tools installed:
 1. **Carpool.API :** Entry point, handling HTTP requests via controllers defining accessible functionalities.
 2. **Carpool.Application :** The functional core, housing business logic through services orchestrating operations.
 3. **Carpool.Domain :** The kernel, defining entities and value objects representing business concepts.
-4. **Carpool.Infrastructure :** Handling data persistence with concrete implementations of the repositories.
-5. **Carpool.Tests :** Containing unit tests ensuring the reliability of each component of the application.
+4. **Carpool.Hubs :** Dedicated hub layer managing real-time messaging functionalities using SignalR for interactive communication between users involved in trips.
+5. **Carpool.Infrastructure :** Handling data persistence with concrete implementations of the repositories.
+6. **Carpool.Tests :** Containing unit tests ensuring the reliability of each component of the application.
 
 ## Setting up PostgreSQL
 ### Installing PostgreSQL
