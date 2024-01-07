@@ -23,5 +23,6 @@ namespace Carpool.Domain.Entities
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
         public ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
         public ICollection<Message> Messages { get; set; } = new List<Message>();
+        public List<Notification> Notifications { get; set; }
     }
 }
