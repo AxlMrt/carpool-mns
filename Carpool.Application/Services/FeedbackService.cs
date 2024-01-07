@@ -31,8 +31,8 @@ namespace Carpool.Application.Services
 
         public async Task<Feedback> GetFeedbackByIdAsync(int id)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             Feedback feedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
             return feedback;
@@ -40,8 +40,8 @@ namespace Carpool.Application.Services
 
         public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(int userId)
         {
-            if (userId < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (userId <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             IEnumerable<Feedback> feedbacks = await _feedbackRepository.GetFeedbacksByUserIdAsync(userId) ?? throw new NotFoundException($"Feedbacks with user ID {userId} not found.");
             return feedbacks;
@@ -88,11 +88,15 @@ namespace Carpool.Application.Services
 
         public async Task<bool> DeleteFeedbackAsync(int id)
         {
-            if (id < 0)
-                throw new BadRequestException("ID cannot be negative.");
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
 
             Feedback existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
+            User user = await _userRepository.GetUserByIdAsync(existingFeedback.UserId) ?? throw new NotFoundException($"User with feedback ID {id} not found.");
+
             await _feedbackRepository.DeleteFeedbackAsync(id);
+            user.FeedbacksGiven.Remove(existingFeedback);
+
             return true;
         }
     }

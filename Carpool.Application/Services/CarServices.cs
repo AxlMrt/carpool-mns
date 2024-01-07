@@ -91,8 +91,10 @@ namespace Carpool.Application.Services
 
             Car existingCar = await _carRepository.GetCarByIdAsync(id) ?? throw new NotFoundException($"Car with ID {id} not found.");
             User user = await _userRepository.GetUserByIdAsync(existingCar.OwnerId) ?? throw new NotFoundException($"User with car ID {id} not found.");
+
             await _carRepository.DeleteCarAsync(id);
             user.Cars.Remove(existingCar);
+
             return true;
         }
     }
