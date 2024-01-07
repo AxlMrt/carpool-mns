@@ -68,7 +68,6 @@ namespace Carpool.ChatHub
                 TripTitle = $"Voyage pour {originalMessage.TripTitle}."
             });
 
-            // Envoi de la réponse au client correspondant (l'utilisateur initial)
             await Clients.User(originalMessage.SenderId.ToString()).SendAsync("ReceiveMessage", new MessageDTO
             {
                 Content = messageContent,

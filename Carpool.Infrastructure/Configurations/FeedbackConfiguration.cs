@@ -23,11 +23,6 @@ namespace Carpool.Infrastructure.Configurations
                    .WithMany(t => t.Feedbacks)
                    .HasForeignKey(f => f.TripId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated feedback if the trip is deleted
-
-            builder.HasOne(f => f.Reservation)
-                   .WithMany()
-                   .HasForeignKey(f => f.ReservationId)
-                   .OnDelete(DeleteBehavior.Cascade); // Delete associated feedback if the reservation is deleted
         }
     }
 }
