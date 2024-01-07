@@ -1,5 +1,6 @@
 using Carpool.Domain.Entities;
 using Carpool.Infrastructure.Configurations;
+using Carpool.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carpool.Infrastructure.Context
@@ -31,6 +32,7 @@ namespace Carpool.Infrastructure.Context
             modelBuilder.ApplyConfiguration(new ReservationConfiguration());
             modelBuilder.ApplyConfiguration(new FeedbackConfiguration());
             modelBuilder.ApplyConfiguration(new MessageConfiguration());
+            modelBuilder.ApplyConfiguration(new NotificationConfiguration());
         }
     }
 }
