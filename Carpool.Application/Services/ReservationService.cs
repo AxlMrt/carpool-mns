@@ -83,6 +83,9 @@ namespace Carpool.Application.Services
             Reservation reservation = ObjectUpdater.MapObject<Reservation>(reservationDto);
 
             await _reservationRepository.CreateReservationAsync(reservation);
+            user.Reservations.Add(reservation);
+            await _userRepository.UpdateUserAsync(user);
+
             return ObjectUpdater.MapObject<ReservationDTO>(reservation);
         }
 
@@ -109,9 +112,10 @@ namespace Carpool.Application.Services
                 throw new BadRequestException("Invalid ID.");
 
             Reservation existingReservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
-
+            User user = await _userRepository.GetUserByIdAsync(existingReservation.UserId);
+            user.Reservations.Remove(existingReservation);
             await _reservationRepository.DeleteReservationAsync(id);
-
+            
             return true;
         }
     }
