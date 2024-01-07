@@ -8,7 +8,6 @@ namespace Carpool.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            // Defining the primary key
             builder.HasKey(u => u.Id);
 
             // Required properties
@@ -35,6 +34,10 @@ namespace Carpool.Infrastructure.Configurations
                    .WithOne(r => r.User)
                    .HasForeignKey(r => r.UserId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated reservations if the user is deleted
+            
+            builder.HasMany(u => u.Notifications) // Ajout de la relation avec les notifications
+                   .WithOne(n => n.User)
+                   .HasForeignKey(n => n.UserId);
         }
     }
 }

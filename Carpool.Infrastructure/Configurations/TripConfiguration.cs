@@ -51,6 +51,10 @@ namespace Carpool.Infrastructure.Configurations
                    .WithOne(f => f.Trip)
                    .HasForeignKey(f => f.TripId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated feedback if the trip is deleted
+
+              builder.HasMany(t => t.Notifications)
+                   .WithOne(n => n.Trip)
+                   .HasForeignKey(n => n.TripId);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Carpool.Infrastructure.Configurations
             builder.HasKey(r => r.Id);
 
             builder.Property(r => r.ReservedSeats).IsRequired();
-            builder.Property(r => r.Status).IsRequired(); // Assuming 'Status' is an enum or limited set of values
+            builder.Property(r => r.Status).IsRequired();
 
             builder.HasOne(r => r.User)
                    .WithMany(u => u.Reservations)
@@ -22,6 +22,10 @@ namespace Carpool.Infrastructure.Configurations
                    .WithMany(t => t.Reservations)
                    .HasForeignKey(r => r.TripId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated reservations if the trip is deleted
+
+            builder.HasMany(r => r.Notifications)
+                   .WithOne(n => n.Reservation)
+                   .HasForeignKey(n => n.ReservationId);
         }
     }
 }
