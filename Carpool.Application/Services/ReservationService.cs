@@ -1,6 +1,7 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Application.Utils;
+using Carpool.Domain.DTO.Notifications;
 using Carpool.Domain.DTO.Reservation;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -14,13 +15,15 @@ namespace Carpool.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly ITripRepository _tripRepository;
         private readonly ICarRepository _carRepository;
+        private readonly INotificationService _notificationService;
 
-        public ReservationService(IReservationRepository reservationRepository, IUserRepository userRepository, ITripRepository tripRepository, ICarRepository carRepository)
+        public ReservationService(IReservationRepository reservationRepository, IUserRepository userRepository, ITripRepository tripRepository, ICarRepository carRepository, INotificationService notificationService)
         {
             _reservationRepository = reservationRepository;
             _tripRepository = tripRepository;
             _userRepository = userRepository;
             _carRepository = carRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
@@ -85,6 +88,13 @@ namespace Carpool.Application.Services
             await _reservationRepository.CreateReservationAsync(reservation);
             user.Reservations.Add(reservation);
             await _userRepository.UpdateUserAsync(user);
+            await _notificationService.CreateNotificationAsync(new NotificationCreationDTO
+            {
+                UserId = user.Id,
+                Content = "New reservation.",
+                Seen = false,
+                Type = NotificationType.NewReservation
+            });
 
             return ObjectUpdater.MapObject<ReservationDTO>(reservation);
         }
@@ -103,6 +113,13 @@ namespace Carpool.Application.Services
             existingReservation.Status = updateReservationDto.Status;
 
             await _reservationRepository.UpdateReservationAsync(existingReservation);
+            await _notificationService.CreateNotificationAsync(new NotificationCreationDTO
+            {
+                UserId = existingReservation.UserId,
+                Content = "Reservation updated",
+                Seen = false,
+                Type = NotificationType.ReservationUpdate
+            });
             return ObjectUpdater.MapObject<ReservationDTO>(existingReservation);
         }
 
