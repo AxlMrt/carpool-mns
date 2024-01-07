@@ -1,6 +1,5 @@
 using Carpool.Domain.Entities;
 using Carpool.Infrastructure.Configurations;
-using Carpool.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carpool.Infrastructure.Context

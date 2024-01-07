@@ -17,6 +17,5 @@ namespace Carpool.Domain.Entities
 
         public int ReservedSeats { get; set; }
         public ReservationStatus Status { get; set; }
-        public List<Notification> Notifications { get; set; }
     }
 }

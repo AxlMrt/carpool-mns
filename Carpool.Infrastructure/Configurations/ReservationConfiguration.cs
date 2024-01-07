@@ -22,10 +22,6 @@ namespace Carpool.Infrastructure.Configurations
                    .WithMany(t => t.Reservations)
                    .HasForeignKey(r => r.TripId)
                    .OnDelete(DeleteBehavior.Cascade); // Delete associated reservations if the trip is deleted
-
-            builder.HasMany(r => r.Notifications)
-                   .WithOne(n => n.Reservation)
-                   .HasForeignKey(n => n.ReservationId);
         }
     }
 }

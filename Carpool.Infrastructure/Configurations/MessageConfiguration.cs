@@ -28,11 +28,6 @@ namespace Carpool.Infrastructure.Configurations
                 .WithMany()
                 .HasForeignKey(m => m.RecipientId)
                 .IsRequired();
-
-            builder.HasOne(m => m.Trip)
-                .WithMany(t => t.Messages)
-                .HasForeignKey(m => m.TripId)
-                .IsRequired();
         }
     }
 }

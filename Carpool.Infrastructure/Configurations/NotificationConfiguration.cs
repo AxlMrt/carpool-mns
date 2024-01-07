@@ -1,8 +1,8 @@
-using Carpool.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Carpool.Domain.Entities;
 
-namespace Carpool.Infrastructure.Data.Configurations
+namespace Carpool.Infrastructure.Configurations
 {
     public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
     {
@@ -10,35 +10,30 @@ namespace Carpool.Infrastructure.Data.Configurations
         {
             builder.HasKey(n => n.Id);
 
-            builder.Property(n => n.Message)
-                .IsRequired();
+            builder.Property(n => n.Content).HasColumnName("Content").IsRequired();
+            builder.Property(n => n.Seen).HasColumnName("Seen").IsRequired();
+            builder.Property(n => n.Timestamp).HasColumnName("Timestamp").IsRequired();
 
-            builder.Property(n => n.Timestamp)
-                .IsRequired()
-                .HasColumnType("timestamp without time zone")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            builder.Property(n => n.Seen)
-                .IsRequired()
-                .HasDefaultValue(false);
-
-            // Relationship with User
             builder.HasOne(n => n.User)
                 .WithMany()
                 .HasForeignKey(n => n.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .IsRequired();
 
-            // Relationship with Reservation
             builder.HasOne(n => n.Reservation)
                 .WithMany()
-                .HasForeignKey(n => n.ReservationId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(n => n.ReservationId);
 
-            // Relationship with Trip
             builder.HasOne(n => n.Trip)
                 .WithMany()
-                .HasForeignKey(n => n.TripId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(n => n.TripId);
+
+            builder.HasOne(n => n.Message)
+                .WithMany()
+                .HasForeignKey(n => n.MessageId);
+
+            builder.HasOne(n => n.Feedback)
+                .WithMany()
+                .HasForeignKey(n => n.FeedbackId);
         }
     }
 }

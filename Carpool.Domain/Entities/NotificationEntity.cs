@@ -4,7 +4,7 @@ namespace Carpool.Domain.Entities
     public class Notification
     {
         public int Id { get; set; }
-        public string Message { get; set; }
+        public string Content { get; set; }
         public bool Seen { get; set; }
         public DateTime Timestamp { get; set; }
 
@@ -16,5 +16,11 @@ namespace Carpool.Domain.Entities
 
         public int? TripId { get; set; }
         public Trip Trip { get; set; }
+
+        public int? MessageId { get; set; }
+        public Message Message { get; set; }
+
+        public int? FeedbackId { get; set; }
+        public Feedback Feedback { get; set; }
     }
 }
