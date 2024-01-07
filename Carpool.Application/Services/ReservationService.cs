@@ -112,7 +112,8 @@ namespace Carpool.Application.Services
                 throw new BadRequestException("Invalid ID.");
 
             Reservation existingReservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
-            User user = await _userRepository.GetUserByIdAsync(existingReservation.UserId);
+            User user = await _userRepository.GetUserByIdAsync(existingReservation.UserId) ?? throw new NotFoundException($"User with reservation ID {id} not found.");
+
             user.Reservations.Remove(existingReservation);
             await _reservationRepository.DeleteReservationAsync(id);
             
