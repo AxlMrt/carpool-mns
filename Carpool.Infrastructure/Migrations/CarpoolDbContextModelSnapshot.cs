@@ -123,18 +123,13 @@ namespace Carpool.Infrastructure.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ReservationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("TripId")
+                    b.Property<int>("TripId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReservationId");
 
                     b.HasIndex("TripId");
 
@@ -385,23 +380,17 @@ namespace Carpool.Infrastructure.Migrations
 
             modelBuilder.Entity("Carpool.Domain.Entities.Feedback", b =>
                 {
-                    b.HasOne("Carpool.Domain.Entities.Reservation", "Reservation")
-                        .WithMany()
-                        .HasForeignKey("ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Carpool.Domain.Entities.Trip", "Trip")
                         .WithMany("Feedbacks")
                         .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Carpool.Domain.Entities.User", "User")
                         .WithMany("FeedbacksGiven")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Reservation");
 
                     b.Navigation("Trip");
 

@@ -146,6 +146,34 @@ namespace Carpool.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Comment = table.Column<string>(type: "text", nullable: false),
+                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    TripId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -209,34 +237,46 @@ namespace Carpool.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Feedbacks",
+                name: "Notifications",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Comment = table.Column<string>(type: "text", nullable: false),
-                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    Seen = table.Column<bool>(type: "boolean", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
+                    ReservationId = table.Column<int>(type: "integer", nullable: true),
                     TripId = table.Column<int>(type: "integer", nullable: true),
-                    ReservationId = table.Column<int>(type: "integer", nullable: true)
+                    MessageId = table.Column<int>(type: "integer", nullable: true),
+                    FeedbackId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Feedbacks_Reservations_ReservationId",
+                        name: "FK_Notifications_Feedbacks_FeedbackId",
+                        column: x => x.FeedbackId,
+                        principalTable: "Feedbacks",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Notifications_Messages_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Messages",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Notifications_Reservations_ReservationId",
                         column: x => x.ReservationId,
                         principalTable: "Reservations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Feedbacks_Trips_TripId",
+                        name: "FK_Notifications_Trips_TripId",
                         column: x => x.TripId,
                         principalTable: "Trips",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Feedbacks_Users_UserId",
+                        name: "FK_Notifications_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -252,11 +292,6 @@ namespace Carpool.Infrastructure.Migrations
                 name: "IX_Cars_OwnerId",
                 table: "Cars",
                 column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Feedbacks_ReservationId",
-                table: "Feedbacks",
-                column: "ReservationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Feedbacks_TripId",
@@ -282,6 +317,31 @@ namespace Carpool.Infrastructure.Migrations
                 name: "IX_Messages_TripId",
                 table: "Messages",
                 column: "TripId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_FeedbackId",
+                table: "Notifications",
+                column: "FeedbackId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_MessageId",
+                table: "Notifications",
+                column: "MessageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_ReservationId",
+                table: "Notifications",
+                column: "ReservationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_TripId",
+                table: "Notifications",
+                column: "TripId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_TripId",
@@ -323,13 +383,16 @@ namespace Carpool.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "Tokens");
+
+            migrationBuilder.DropTable(
                 name: "Feedbacks");
 
             migrationBuilder.DropTable(
                 name: "Messages");
-
-            migrationBuilder.DropTable(
-                name: "Tokens");
 
             migrationBuilder.DropTable(
                 name: "Reservations");

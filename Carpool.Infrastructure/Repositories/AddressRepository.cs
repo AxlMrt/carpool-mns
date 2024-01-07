@@ -1,8 +1,6 @@
-using Carpool.Domain.DTOs;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Context;
-using Carpool.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carpool.Infrastructure.Repositories

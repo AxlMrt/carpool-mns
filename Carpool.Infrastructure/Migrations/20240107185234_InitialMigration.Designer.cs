@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Carpool.Infrastructure.Migrations
 {
     [DbContext(typeof(CarpoolDbContext))]
-    [Migration("20240106131347_InitialMigration")]
+    [Migration("20240107185234_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -126,18 +126,13 @@ namespace Carpool.Infrastructure.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ReservationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("TripId")
+                    b.Property<int>("TripId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReservationId");
 
                     b.HasIndex("TripId");
 
@@ -179,6 +174,60 @@ namespace Carpool.Infrastructure.Migrations
                     b.HasIndex("TripId");
 
                     b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("Carpool.Domain.Entities.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Content");
+
+                    b.Property<int?>("FeedbackId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MessageId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReservationId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Seen")
+                        .HasColumnType("boolean")
+                        .HasColumnName("Seen");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("Timestamp");
+
+                    b.Property<int?>("TripId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackId");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("ReservationId");
+
+                    b.HasIndex("TripId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Carpool.Domain.Entities.Reservation", b =>
@@ -334,23 +383,17 @@ namespace Carpool.Infrastructure.Migrations
 
             modelBuilder.Entity("Carpool.Domain.Entities.Feedback", b =>
                 {
-                    b.HasOne("Carpool.Domain.Entities.Reservation", "Reservation")
-                        .WithMany()
-                        .HasForeignKey("ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Carpool.Domain.Entities.Trip", "Trip")
                         .WithMany("Feedbacks")
                         .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Carpool.Domain.Entities.User", "User")
                         .WithMany("FeedbacksGiven")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Reservation");
 
                     b.Navigation("Trip");
 
@@ -382,6 +425,41 @@ namespace Carpool.Infrastructure.Migrations
                     b.Navigation("Sender");
 
                     b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Carpool.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("Carpool.Domain.Entities.Feedback", "Feedback")
+                        .WithMany()
+                        .HasForeignKey("FeedbackId");
+
+                    b.HasOne("Carpool.Domain.Entities.Message", "Message")
+                        .WithMany()
+                        .HasForeignKey("MessageId");
+
+                    b.HasOne("Carpool.Domain.Entities.Reservation", "Reservation")
+                        .WithMany()
+                        .HasForeignKey("ReservationId");
+
+                    b.HasOne("Carpool.Domain.Entities.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId");
+
+                    b.HasOne("Carpool.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Feedback");
+
+                    b.Navigation("Message");
+
+                    b.Navigation("Reservation");
+
+                    b.Navigation("Trip");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Carpool.Domain.Entities.Reservation", b =>

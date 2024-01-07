@@ -13,7 +13,7 @@ namespace Carpool.Application.Services
 
         public NotificationService(INotificationRepository notificationRepository)
         {
-            _notificationRepository = notificationRepository ?? throw new ArgumentNullException(nameof(notificationRepository));
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<IEnumerable<NotificationDTO>> GetAllNotificationsAsync()

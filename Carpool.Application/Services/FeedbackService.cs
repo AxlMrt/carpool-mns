@@ -58,7 +58,7 @@ namespace Carpool.Application.Services
                 throw new BadRequestException("Feedback object cannot be null.");
 
             User user = await _userRepository.GetUserByIdAsync(feedbackDto.UserId) ?? throw new NotFoundException($"User with ID {feedbackDto.UserId} not found.");
-            Trip trip = await _tripRepository.GetTripByIdAsync((int)feedbackDto.TripId) ?? throw new BadRequestException($"Trip with ID ${feedbackDto.TripId} doesn't exist.");
+            Trip trip = await _tripRepository.GetTripByIdAsync(feedbackDto.TripId) ?? throw new BadRequestException($"Trip with ID ${feedbackDto.TripId} doesn't exist.");
             Feedback feedback = ObjectUpdater.MapObject<Feedback>(feedbackDto);
 
             string validationResult = ValidationUtils.IsValidFeedback(feedback);
