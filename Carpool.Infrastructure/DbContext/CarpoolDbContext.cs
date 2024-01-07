@@ -18,6 +18,7 @@ namespace Carpool.Infrastructure.Context
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
