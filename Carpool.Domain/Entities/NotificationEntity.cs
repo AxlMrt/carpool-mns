@@ -1,12 +1,19 @@
-
 namespace Carpool.Domain.Entities
 {
+    public enum NotificationType
+    {
+        ReservationUpdate,
+        NewReservation,
+        MessageReceived,
+    }
+
     public class Notification
     {
         public int Id { get; set; }
         public string Content { get; set; }
         public bool Seen { get; set; }
         public DateTime Timestamp { get; set; }
+        public NotificationType Type { get; set; }
 
         public int UserId { get; set; }
         public User User { get; set; }

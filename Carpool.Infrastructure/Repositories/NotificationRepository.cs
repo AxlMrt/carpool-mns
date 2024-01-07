@@ -1,4 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Carpool.Domain.Entities;
+using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,39 +11,57 @@ namespace Carpool.Infrastructure.Repositories
 {
     public class NotificationRepository : INotificationRepository
     {
-        private readonly CarpoolDbContext _dbContext;
+        private readonly CarpoolDbContext _context;
 
-        public NotificationRepository(CarpoolDbContext dbContext)
+        public NotificationRepository(CarpoolDbContext context)
         {
-            _dbContext = dbContext;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<Notification> GetByIdAsync(int id)
+        public async Task<IEnumerable<Notification>> GetAllNotificationsAsync()
         {
-            return await _dbContext.Notifications.FindAsync(id);
+            return await _context.Notifications.ToListAsync();
         }
 
-        public async Task<IEnumerable<Notification>> GetAllAsync()
+        public async Task<Notification> GetNotificationByIdAsync(int notificationId)
         {
-            return await _dbContext.Notifications.ToListAsync();
+            return await _context.Notifications.FindAsync(notificationId);
         }
 
-        public async Task AddAsync(Notification notification)
+        public async Task<IEnumerable<Notification>> GetNotificationsForUserAsync(int userId)
         {
-            _dbContext.Notifications.Add(notification);
-            await _dbContext.SaveChangesAsync();
+            return await _context.Notifications
+                .Where(n => n.UserId == userId)
+                .ToListAsync();
         }
 
-        public async Task UpdateAsync(Notification notification)
+        public async Task<IEnumerable<Notification>> GetUnseenNotificationsForUserAsync(int userId)
         {
-            _dbContext.Notifications.Update(notification);
-            await _dbContext.SaveChangesAsync();
+            return await _context.Notifications
+                .Where(n => n.UserId == userId && !n.Seen)
+                .ToListAsync();
         }
 
-        public async Task DeleteAsync(Notification notification)
+        public async Task AddNotificationAsync(Notification notification)
         {
-            _dbContext.Notifications.Remove(notification);
-            await _dbContext.SaveChangesAsync();
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateNotificationAsync(Notification notification)
+        {
+            _context.Entry(notification).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteNotificationAsync(int notificationId)
+        {
+            var notification = await _context.Notifications.FindAsync(notificationId);
+            if (notification != null)
+            {
+                _context.Notifications.Remove(notification);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

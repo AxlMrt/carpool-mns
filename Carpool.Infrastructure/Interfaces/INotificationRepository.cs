@@ -1,10 +1,15 @@
 using Carpool.Domain.Entities;
 
-public interface INotificationRepository
+namespace Carpool.Domain.Interfaces
 {
-    Task<Notification> GetByIdAsync(int id);
-    Task<IEnumerable<Notification>> GetAllAsync();
-    Task AddAsync(Notification notification);
-    Task UpdateAsync(Notification notification);
-    Task DeleteAsync(Notification notification);
+    public interface INotificationRepository
+    {
+        Task<IEnumerable<Notification>> GetAllNotificationsAsync();
+        Task<Notification> GetNotificationByIdAsync(int notificationId);
+        Task<IEnumerable<Notification>> GetNotificationsForUserAsync(int userId);
+        Task<IEnumerable<Notification>> GetUnseenNotificationsForUserAsync(int userId);
+        Task AddNotificationAsync(Notification notification);
+        Task UpdateNotificationAsync(Notification notification);
+        Task DeleteNotificationAsync(int notificationId);
+    }
 }

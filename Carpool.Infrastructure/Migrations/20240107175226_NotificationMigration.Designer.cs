@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Carpool.Infrastructure.Migrations
 {
     [DbContext(typeof(CarpoolDbContext))]
-    [Migration("20240107150549_NotificationMigration")]
+    [Migration("20240107175226_NotificationMigration")]
     partial class NotificationMigration
     {
         /// <inheritdoc />
@@ -214,6 +214,9 @@ namespace Carpool.Infrastructure.Migrations
                     b.Property<int?>("TripId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -229,7 +232,7 @@ namespace Carpool.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Carpool.Domain.Entities.Reservation", b =>
