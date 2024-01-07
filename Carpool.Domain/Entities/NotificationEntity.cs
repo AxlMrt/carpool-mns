@@ -5,6 +5,8 @@ namespace Carpool.Domain.Entities
         ReservationUpdate,
         NewReservation,
         MessageReceived,
+        FeedbackCreated,
+        FeedbackUpdated,
     }
 
     public class Notification

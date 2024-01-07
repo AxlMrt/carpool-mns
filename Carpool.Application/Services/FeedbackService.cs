@@ -1,6 +1,7 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Application.Utils;
+using Carpool.Domain.DTO.Notifications;
 using Carpool.Domain.DTOs.Feedback;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
@@ -12,11 +13,13 @@ namespace Carpool.Application.Services
     {
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IUserRepository _userRepository;
+        private readonly INotificationService _notificationService;
 
-        public FeedbackService(IFeedbackRepository feedbackRepository, IUserRepository userRepository)
+        public FeedbackService(IFeedbackRepository feedbackRepository, IUserRepository userRepository, INotificationService notificationService)
         {
             _feedbackRepository = feedbackRepository;
             _userRepository = userRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<IEnumerable<Feedback>> GetAllFeedbacksAsync()
@@ -66,6 +69,14 @@ namespace Carpool.Application.Services
 
             await _userRepository.UpdateUserAsync(user);
 
+            await _notificationService.CreateNotificationAsync(new NotificationCreationDTO
+            {
+                UserId = user.Id,
+                Content = "New feedback created",
+                Seen = false,
+                Type = NotificationType.FeedbackCreated
+            });
+
             return feedback;
         }
 
@@ -83,6 +94,15 @@ namespace Carpool.Application.Services
                 throw new BadRequestException(validationResult);
 
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
+
+            await _notificationService.CreateNotificationAsync(new NotificationCreationDTO
+            {
+                UserId = feedback.UserId,
+                Content = "Feedback updated",
+                Seen = false,
+                Type = NotificationType.FeedbackUpdated
+            });
+
             return feedback;
         }
 
