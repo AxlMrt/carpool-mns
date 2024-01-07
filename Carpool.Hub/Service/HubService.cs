@@ -11,13 +11,11 @@ namespace Carpool.ChatHub
     {
         private readonly IMessageService _messageService;
         private readonly ITripRepository _tripRepository;
-        private readonly IAddressRepository _addressRepository;
 
-        public ChatHubService(IMessageService messageService, ITripRepository tripRepository, IAddressRepository addressRepository)
+        public ChatHubService(IMessageService messageService, ITripRepository tripRepository)
         {
             _messageService = messageService;
             _tripRepository = tripRepository;
-            _addressRepository = addressRepository;
         }
 
         public async Task SendMessage(int senderId, int tripId, string messageContent)
@@ -49,6 +47,40 @@ namespace Carpool.ChatHub
             });
 
             await Clients.User(driverId.ToString()).SendAsync("ReceiveNotification", "Vous avez reçu un nouveau message !");
+        }
+
+        public async Task SendReplyToMessage(int senderId, int messageId, string messageContent)
+        {
+            ClaimsPrincipal sender = Context.User;
+            MessageDTO originalMessage = await _messageService.GetMessageByIdAsync(messageId);
+
+            if (originalMessage == null || originalMessage.RecipientId != senderId)
+                throw new BadRequestException("Invalid message or recipient.");
+
+            await _messageService.SendMessageAsync(new MessageDTO
+            {
+                Content = messageContent,
+                TimeStamp = DateTime.UtcNow,
+                SenderId = senderId,
+                SenderName = sender.Identity.Name,
+                RecipientId = originalMessage.SenderId,
+                TripId = originalMessage.TripId,
+                TripTitle = $"Voyage pour {originalMessage.TripTitle}."
+            });
+
+            // Envoi de la réponse au client correspondant (l'utilisateur initial)
+            await Clients.User(originalMessage.SenderId.ToString()).SendAsync("ReceiveMessage", new MessageDTO
+            {
+                Content = messageContent,
+                TimeStamp = DateTime.UtcNow,
+                SenderId = senderId,
+                SenderName = sender.Identity.Name,
+                RecipientId = originalMessage.SenderId,
+                TripId = originalMessage.TripId,
+                TripTitle = $"Voyage pour {originalMessage.TripTitle}."
+            });
+
+            await Clients.User(originalMessage.SenderId.ToString()).SendAsync("ReceiveNotification", "Vous avez reçu une réponse à votre message !");
         }
 
         public async Task<IEnumerable<MessageDTO>> GetMessagesForTrip(int tripId)

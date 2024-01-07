@@ -8,9 +8,7 @@ namespace Carpool.Domain.Entities
 
         public int UserId { get; set; }
         public User User { get; set; }
-        public int? TripId { get; set; }
-        public Trip? Trip { get; set; }
-        public int? ReservationId { get; set; }
-        public Reservation? Reservation { get; set; } 
+        public int TripId { get; set; }
+        public Trip Trip { get; set; }
     }
 }

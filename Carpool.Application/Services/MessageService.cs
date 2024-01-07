@@ -31,6 +31,15 @@ namespace Carpool.Domain.Services
             return messages.Select(u => ObjectUpdater.MapObject<MessageDTO>(u));
         }
 
+        public async Task<MessageDTO> GetMessageByIdAsync(int id)
+        {
+            if (id <= 0)
+                throw new BadRequestException("Invalid ID.");
+
+            Message message = await _messageRepository.GetMessageByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
+            return ObjectUpdater.MapObject<MessageDTO>(message);
+        }
+
         public async Task SendMessageAsync(MessageDTO messageDto)
         {
             if (messageDto is null)

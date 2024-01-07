@@ -14,12 +14,14 @@ namespace Carpool.Application.Services
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IUserRepository _userRepository;
         private readonly INotificationService _notificationService;
+        private readonly ITripRepository _tripRepository;
 
-        public FeedbackService(IFeedbackRepository feedbackRepository, IUserRepository userRepository, INotificationService notificationService)
+        public FeedbackService(IFeedbackRepository feedbackRepository, IUserRepository userRepository, INotificationService notificationService, ITripRepository tripRepository)
         {
             _feedbackRepository = feedbackRepository;
             _userRepository = userRepository;
             _notificationService = notificationService;
+            _tripRepository = tripRepository;
         }
 
         public async Task<IEnumerable<Feedback>> GetAllFeedbacksAsync()
@@ -56,7 +58,7 @@ namespace Carpool.Application.Services
                 throw new BadRequestException("Feedback object cannot be null.");
 
             User user = await _userRepository.GetUserByIdAsync(feedbackDto.UserId) ?? throw new NotFoundException($"User with ID {feedbackDto.UserId} not found.");
-
+            Trip trip = await _tripRepository.GetTripByIdAsync((int)feedbackDto.TripId) ?? throw new BadRequestException($"Trip with ID ${feedbackDto.TripId} doesn't exist.");
             Feedback feedback = ObjectUpdater.MapObject<Feedback>(feedbackDto);
 
             string validationResult = ValidationUtils.IsValidFeedback(feedback);
@@ -71,8 +73,8 @@ namespace Carpool.Application.Services
 
             await _notificationService.CreateNotificationAsync(new NotificationCreationDTO
             {
-                UserId = user.Id,
-                Content = "New feedback created",
+                UserId = trip.DriverId,
+                Content = "New feedback added",
                 Seen = false,
                 Type = NotificationType.FeedbackCreated
             });

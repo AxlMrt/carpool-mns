@@ -90,7 +90,7 @@ namespace Carpool.Application.Services
             await _userRepository.UpdateUserAsync(user);
             await _notificationService.CreateNotificationAsync(new NotificationCreationDTO
             {
-                UserId = user.Id,
+                UserId = trip.DriverId,
                 Content = "New reservation.",
                 Seen = false,
                 Type = NotificationType.NewReservation

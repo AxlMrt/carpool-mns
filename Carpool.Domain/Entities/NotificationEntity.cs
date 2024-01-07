@@ -2,8 +2,8 @@ namespace Carpool.Domain.Entities
 {
     public enum NotificationType
     {
-        ReservationUpdate,
         NewReservation,
+        ReservationUpdate,
         MessageReceived,
         FeedbackCreated,
         FeedbackUpdated,
