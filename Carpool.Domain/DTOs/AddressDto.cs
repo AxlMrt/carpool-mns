@@ -1,4 +1,4 @@
-namespace Carpool.Domain.DTOs.Address
+namespace Carpool.Domain.DTO.Address
 {
     public class AddressDTO
     {

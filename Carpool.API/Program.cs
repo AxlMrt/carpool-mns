@@ -1,17 +1,15 @@
 using API.Middleware;
 using Carpool.Application.Services;
 using Carpool.Infrastructure.Context;
-using Carpool.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Carpool.Infrastructure.DependancyInjection;
+using Carpool.Application.DependencyInjection;
 using Carpool.Application.Interfaces;
-using Carpool.Infrastructure.Interfaces;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Carpool.Application;
 using Microsoft.OpenApi.Models;
-using Carpool.Infrastructure;
 using Carpool.Domain.Interfaces;
 using System.Text.Json.Serialization;
 using Carpool.Domain.Services;
@@ -84,27 +82,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddScoped<IAddressService, AddressService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICarService, CarService>();
-builder.Services.AddScoped<IChatHubService, ChatHubService>();
-builder.Services.AddScoped<IFeedbackService, FeedbackService>();
-builder.Services.AddScoped<IMessageService, MessageService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IPasswordHasherService, BCryptPasswordHasherService>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
-builder.Services.AddScoped<ITokenManagerService, TokenManagerService>();
-builder.Services.AddScoped<ITripService, TripService>();
-builder.Services.AddScoped<IUserService, UserService>();
-
-builder.Services.AddScoped<IJwtService>(provider =>
-{
-    var secretKey = builder.Configuration["Jwt:SecretKey"];
-    var audience = builder.Configuration["Jwt:Audience"];
-    var issuer = builder.Configuration["Jwt:Issuer"];
-    return new JwtService(secretKey, audience, issuer);
-});
+builder.Services.AddApplication(builder.Configuration);
 
 builder.Services.AddSignalR();
 

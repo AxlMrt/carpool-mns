@@ -1,7 +1,7 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Application.Utils;
-using Carpool.Domain.DTOs.Address;
+using Carpool.Domain.DTO.Address;
 using Carpool.Domain.Entities;
 using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Interfaces;
