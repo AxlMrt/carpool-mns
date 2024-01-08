@@ -8,8 +8,6 @@ using Carpool.API.Configurations;
 var builder = WebApplication.CreateBuilder(args);
 
 ConfigureServices(builder.Services, builder.Configuration);
-ConfigureApp(builder);
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -26,6 +24,8 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Erreur de connexion à la base de données : {ex.Message}");
     }
 }
+
+ConfigureApp(app);
 
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
@@ -44,10 +44,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddCors();
 }
 
-void ConfigureApp(WebApplicationBuilder builder)
+void ConfigureApp(WebApplication app)
 {
-    var app = builder.Build();
-
     app.UseHttpsRedirection();
     app.UseRouting();
     app.UseMiddleware<ExceptionMiddleware>();
