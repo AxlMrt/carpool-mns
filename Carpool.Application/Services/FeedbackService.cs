@@ -24,35 +24,35 @@ namespace Carpool.Application.Services
             _tripRepository = tripRepository;
         }
 
-        public async Task<IEnumerable<Feedback>> GetAllFeedbacksAsync()
+        public async Task<IEnumerable<FeedbackDTO>> GetAllFeedbacksAsync()
         {
             IEnumerable<Feedback> feedbacks = await _feedbackRepository.GetAllFeedbacksAsync();
 
             if (feedbacks == null || !feedbacks.Any())
                 throw new NotFoundException("No feedbacks found in the database.");
 
-            return feedbacks;
+            return feedbacks.Select(u => ObjectUpdater.MapObject<FeedbackDTO>(u));
         }
 
-        public async Task<Feedback> GetFeedbackByIdAsync(int id)
+        public async Task<FeedbackDTO> GetFeedbackByIdAsync(int id)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
             Feedback feedback = await _feedbackRepository.GetFeedbackByIdAsync(id) ?? throw new NotFoundException($"Feedback with ID {id} not found.");
-            return feedback;
+            return ObjectUpdater.MapObject<FeedbackDTO>(feedback);
         }
 
-        public async Task<IEnumerable<Feedback>> GetFeedbacksByUserIdAsync(int userId)
+        public async Task<IEnumerable<FeedbackDTO>> GetFeedbacksByUserIdAsync(int userId)
         {
             if (userId <= 0)
                 throw new BadRequestException("Invalid ID.");
 
             IEnumerable<Feedback> feedbacks = await _feedbackRepository.GetFeedbacksByUserIdAsync(userId) ?? throw new NotFoundException($"Feedbacks with user ID {userId} not found.");
-            return feedbacks;
+            return feedbacks.Select(u => ObjectUpdater.MapObject<FeedbackDTO>(u));
         }
 
-        public async Task<Feedback> CreateFeedbackAsync(CreateFeedbackDTO feedbackDto)
+        public async Task<FeedbackDTO> CreateFeedbackAsync(CreateFeedbackDTO feedbackDto)
         {
             if (feedbackDto is null)
                 throw new BadRequestException("Feedback object cannot be null.");
@@ -79,10 +79,10 @@ namespace Carpool.Application.Services
                 Type = NotificationType.FeedbackCreated
             });
 
-            return feedback;
+            return ObjectUpdater.MapObject<FeedbackDTO>(feedback);
         }
 
-        public async Task<Feedback> UpdateFeedbackAsync(int id, UpdateFeedbackDTO feedbackDto)
+        public async Task<FeedbackDTO> UpdateFeedbackAsync(int id, UpdateFeedbackDTO feedbackDto)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
@@ -105,7 +105,7 @@ namespace Carpool.Application.Services
                 Type = NotificationType.FeedbackUpdated
             });
 
-            return feedback;
+            return ObjectUpdater.MapObject<FeedbackDTO>(feedback);
         }
 
         public async Task<bool> DeleteFeedbackAsync(int id)
