@@ -14,6 +14,7 @@ namespace Carpool.Application.DependencyInjection
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICarService, CarService>();
+            services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<INotificationService, NotificationService>();
