@@ -54,6 +54,14 @@ namespace Carpool.API.Controllers
             return CreatedAtAction(nameof(GetReservationById), new { id = createdReservation.Id }, createdReservation);
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ReservationDTO>> UpdateTrip(int id, UpdateReservationDTO reservation)
+        {
+            await _reservationService.UpdateReservationAsync(id, reservation);
+
+            return NoContent();
+        }
+
         [HttpDelete("cancel/{id}")]
         public async Task<ActionResult> CancelReservation(int id)
         {
