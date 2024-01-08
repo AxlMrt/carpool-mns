@@ -109,9 +109,6 @@ namespace Carpool.Application.Services
 
             ObjectUpdater.UpdateObject(reservation, updateReservationDto);
 
-            if (reservation.ReservedSeats <= 0)
-                throw new BadRequestException("Invalid reserved seats.");
-
             await _reservationRepository.UpdateReservationAsync(reservation);
             await _notificationService.CreateNotificationAsync(new NotificationCreationDTO
             {
