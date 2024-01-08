@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Carpool.Application.Interfaces;
 using Carpool.Application.Exceptions;
-using Carpool.Domain.Roles;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Carpool.Domain.DTO.User;
+using Carpool.Domain.Common;
 
 namespace Carpool.API.Controllers
 {

@@ -3,8 +3,8 @@ using Carpool.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Application.Exceptions;
 using Microsoft.AspNetCore.Authorization;
-using Carpool.Domain.Roles;
 using Carpool.Domain.DTO.Reservation;
+using Carpool.Domain.Common;
 
 namespace Carpool.API.Controllers
 {

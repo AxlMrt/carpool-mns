@@ -1,6 +1,7 @@
 using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Application.Utils;
+using Carpool.Domain.Common;
 using Carpool.Domain.DTO.Notifications;
 using Carpool.Domain.DTOs.Feedback;
 using Carpool.Domain.Entities;

@@ -1,4 +1,4 @@
-using Carpool.Domain.Entities;
+using Carpool.Domain.Common;
 
 namespace Carpool.Domain.DTO.Notifications
 {

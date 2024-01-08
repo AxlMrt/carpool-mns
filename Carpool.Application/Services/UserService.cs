@@ -3,9 +3,9 @@ using Carpool.Application.Exceptions;
 using Carpool.Application.Interfaces;
 using Carpool.Application.Utils;
 using Carpool.Domain.Entities;
-using Carpool.Domain.Roles;
 using Carpool.Infrastructure.Interfaces;
 using Carpool.Domain.DTO.User;
+using Carpool.Domain.Common;
 
 namespace Carpool.Application.Services
 {

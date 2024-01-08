@@ -3,9 +3,11 @@ using Carpool.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Carpool.Application.Exceptions;
 using Carpool.Application.DTO.Trip;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Carpool.API.Controllers
 {
+    [Authorize]
     public class TripController : BaseApiController, IExceptionFilter
     {
         private readonly ITripService _tripService;
