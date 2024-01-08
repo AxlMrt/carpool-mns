@@ -208,6 +208,64 @@ The API will be accessible at `https://localhost:5011` by default.
 - `DELETE /trips/{id}`: Delete a trip by ID.
   - Example: `DELETE https://localhost:5011/trips/123`
 
+### DashboardController
+
+- `GET /dashboard/stats`: Get dashboard statistics.
+  - Example: `GET https://localhost:5011/dashboard/stats`
+
+- `GET /dashboard/user/{userId}`: Get dashboard for a specific user.
+  - Example: `GET https://localhost:5011/dashboard/user/123`
+
+- `GET /dashboard/trip/{tripId}`: Get dashboard for a specific trip.
+  - Example: `GET https://localhost:5011/dashboard/trip/456`
+
+- `GET /dashboard/global-stats?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD`: Get global dashboard statistics within a date range.
+  - Example: `GET https://localhost:5011/dashboard/global-stats?startDate=2023-01-01&endDate=2023-12-31`
+
+- `GET /dashboard/popular-destinations?topCount={topCount}`: Get the most popular destinations.
+  - Example: `GET https://localhost:5011/dashboard/popular-destinations?topCount=5`
+
+- `GET /dashboard/most-active-drivers?topCount={topCount}`: Get the most active drivers.
+  - Example: `GET https://localhost:5011/dashboard/most-active-drivers?topCount=10`
+
+- `GET /dashboard/most-booked-trips?topCount={topCount}`: Get the most booked trips.
+  - Example: `GET https://localhost:5011/dashboard/most-booked-trips?topCount=7`
+
+#### MessageController
+
+- `GET /message/trip/{tripId}`: Retrieve messages for a specific trip.
+  - Example: `GET https://localhost:5011/message/trip/123`
+
+- `POST /message`: Send a message.
+  - Example: `POST https://localhost:5011/message`
+
+- `PUT /message/{id}`: Update a message by ID.
+  - Example: `PUT https://localhost:5011/message/456`
+
+- `DELETE /message/{id}`: Delete a message by ID.
+  - Example: `DELETE https://localhost:5011/message/789`
+
+#### NotificationController
+
+- `GET /notification`: Retrieve all notifications.
+  - Example: `GET https://localhost:5011/notification`
+
+- `GET /notification/{id}`: Retrieve a notification by ID.
+  - Example: `GET https://localhost:5011/notification/123`
+
+- `GET /notification/user/{userId}`: Retrieve notifications by user ID.
+  - Example: `GET https://localhost:5011/notification/user/456`
+
+- `POST /notification`: Create a new notification.
+  - Example: `POST https://localhost:5011/notification`
+
+- `PUT /notification/{id}`: Update a notification by ID.
+  - Example: `PUT https://localhost:5011/notification/789`
+
+- `DELETE /notification/{id}`: Delete a notification by ID.
+  - Example: `DELETE https://localhost:5011/notificat
+
+
 ### Middlewares
 #### Exception Handling Middleware
 
