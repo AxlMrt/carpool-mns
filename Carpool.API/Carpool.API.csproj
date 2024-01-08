@@ -18,9 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Carpool.Application\Carpool.Application.csproj" />
     <ProjectReference Include="..\Carpool.Infrastructure\Carpool.Infrastructure.csproj" />
     <ProjectReference Include="..\Carpool.Hub\Carpool.Hub.csproj" />
+    <ProjectReference Include="..\Carpool.Application\Carpool.Application.csproj" />
   </ItemGroup>
 
 </Project>

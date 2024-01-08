@@ -98,16 +98,6 @@ builder.Services.AddScoped<ITokenManagerService, TokenManagerService>();
 builder.Services.AddScoped<ITripService, TripService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddScoped<IAddressRepository, AddressRepository>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<ICarRepository, CarRepository>();
-builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-builder.Services.AddScoped<IMessageRepository, MessageRepository>();
-builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
-builder.Services.AddScoped<ITokenManagerRepository, TokenManagerRepository>();
-builder.Services.AddScoped<ITripRepository, TripRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtService>(provider =>
 {
     var secretKey = builder.Configuration["Jwt:SecretKey"];
