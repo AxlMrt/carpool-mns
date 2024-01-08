@@ -1,11 +1,7 @@
+using Carpool.Domain.Common;
+
 namespace Carpool.Domain.Entities
 {
-    public enum ReservationStatus
-    {
-        Confirmed,
-        Pending,
-        Cancelled
-    }
     public class Reservation
     {
         public int Id { get; set; }
@@ -16,6 +12,6 @@ namespace Carpool.Domain.Entities
         public Trip Trip { get; set; }
 
         public int ReservedSeats { get; set; }
-        public ReservationStatus Status { get; set; }
+        public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
     }
 }

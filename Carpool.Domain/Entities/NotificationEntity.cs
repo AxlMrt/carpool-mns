@@ -1,14 +1,7 @@
+using Carpool.Domain.Common;
+
 namespace Carpool.Domain.Entities
 {
-    public enum NotificationType
-    {
-        NewReservation,
-        ReservationUpdate,
-        MessageReceived,
-        FeedbackCreated,
-        FeedbackUpdated,
-    }
-
     public class Notification
     {
         public int Id { get; set; }

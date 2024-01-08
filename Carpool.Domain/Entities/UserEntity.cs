@@ -1,3 +1,5 @@
+using Carpool.Domain.Common;
+
 namespace Carpool.Domain.Entities
 {
     public class User
@@ -7,7 +9,7 @@ namespace Carpool.Domain.Entities
         public string FirstName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; } = Roles.Roles.User;
+        public string Role { get; set; } = Roles.User;
 
         public ICollection<Car> Cars { get; set; } = new List<Car>();
         public ICollection<Address> Addresses { get; set; } = new List<Address>();

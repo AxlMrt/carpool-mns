@@ -1,4 +1,4 @@
-namespace Carpool.Domain.Roles
+namespace Carpool.Domain.Common
 {
     public static class Roles
     {
