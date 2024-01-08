@@ -105,23 +105,22 @@ namespace Carpool.Application.Services
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            Reservation existingReservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
+            Reservation reservation = await _reservationRepository.GetReservationByIdAsync(id) ?? throw new NotFoundException($"Reservation with ID {id} not found.");
 
-            if (updateReservationDto.ReservedSeats <= 0 || existingReservation.ReservedSeats < updateReservationDto.ReservedSeats)
+            ObjectUpdater.UpdateObject(reservation, updateReservationDto);
+
+            if (reservation.ReservedSeats <= 0)
                 throw new BadRequestException("Invalid reserved seats.");
 
-            existingReservation.ReservedSeats = updateReservationDto.ReservedSeats;
-            existingReservation.Status = updateReservationDto.Status;
-
-            await _reservationRepository.UpdateReservationAsync(existingReservation);
+            await _reservationRepository.UpdateReservationAsync(reservation);
             await _notificationService.CreateNotificationAsync(new NotificationCreationDTO
             {
-                UserId = existingReservation.UserId,
+                UserId = reservation.UserId,
                 Content = "Reservation updated",
                 Seen = false,
                 Type = NotificationType.ReservationUpdate
             });
-            return ObjectUpdater.MapObject<ReservationDTO>(existingReservation);
+            return ObjectUpdater.MapObject<ReservationDTO>(reservation);
         }
 
         public async Task<bool> DeleteReservationAsync(int id)

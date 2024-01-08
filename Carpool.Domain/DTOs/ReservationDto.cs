@@ -1,5 +1,4 @@
 using Carpool.Domain.Common;
-using Carpool.Domain.Entities;
 
 namespace Carpool.Domain.DTO.Reservation
 {
@@ -22,7 +21,6 @@ namespace Carpool.Domain.DTO.Reservation
     public class UpdateReservationDTO
     {
         public int UserId { get; set; }
-        public int ReservedSeats { get; set; }
         public ReservationStatus Status { get; set; }
     }
 }
