@@ -1,10 +1,9 @@
 using System.Reflection;
 using Bogus;
 using Carpool.Application;
-using Carpool.Domain.DTOs;
+using Carpool.Application.DTO.Auth;
+using Carpool.Domain.Common;
 using Carpool.Domain.Entities;
-using Carpool.Domain.Roles;
-using Castle.Core.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace Carpool.Tests.Utilities
@@ -16,7 +15,6 @@ namespace Carpool.Tests.Utilities
         {
             return new User
             {
-                Id = Guid.NewGuid(),
                 FirstName = _faker.Person.FirstName,
                 LastName = _faker.Person.LastName,
                 Email = _faker.Person.Email,
@@ -28,7 +26,6 @@ namespace Carpool.Tests.Utilities
         {
             return new User
             {
-                Id = Guid.NewGuid(),
                 FirstName = _faker.Person.FirstName,
                 LastName = _faker.Person.LastName,
                 Email = _faker.Person.Email,
@@ -37,9 +34,9 @@ namespace Carpool.Tests.Utilities
             };
         }
 
-        public static RegisterUserDto GenerateValidRegisterUserDto()
+        public static RegisterUserDTO GenerateValidRegisterUserDto()
         {
-            return new RegisterUserDto
+            return new RegisterUserDTO
             {
                 FirstName = _faker.Person.FirstName,
                 LastName = _faker.Person.LastName,
