@@ -7,19 +7,8 @@ using Carpool.API.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-SwaggerConfiguration.ConfigureSwagger(builder.Services);
-DatabaseConfiguration.ConfigureDatabase(builder.Services, builder.Configuration);
-JwtAuthenticationConfiguration.ConfigureJwtAuthentication(builder.Services, builder.Configuration);
-ApplicationServiceConfiguration.ConfigureServices(builder.Services, builder.Configuration);
-
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    options.JsonSerializerOptions.WriteIndented = true;
-    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-});
-
-builder.Services.AddCors();
+ConfigureServices(builder.Services, builder.Configuration);
+ConfigureApp(builder);
 
 var app = builder.Build();
 
@@ -38,23 +27,45 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseMiddleware<ExceptionMiddleware>();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    SwaggerConfiguration.ConfigureSwagger(services);
+    DatabaseConfiguration.ConfigureDatabase(services, configuration);
+    JwtAuthenticationConfiguration.ConfigureJwtAuthentication(services, configuration);
+    ApplicationServiceConfiguration.ConfigureServices(services, configuration);
+
+    services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+
+    services.AddCors();
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseCors(opt =>
+void ConfigureApp(WebApplicationBuilder builder)
 {
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://127.0.0.1:5500");
-});
-app.MapControllers();
-app.MapHub<ChatHubService>("/chat-hub");
-app.Run();
+    var app = builder.Build();
+
+    app.UseHttpsRedirection();
+    app.UseRouting();
+    app.UseMiddleware<ExceptionMiddleware>();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseCors(opt =>
+    {
+        opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://127.0.0.1:5500");
+    });
+
+    app.MapControllers();
+    app.MapHub<ChatHubService>("/chat-hub");
+    app.Run();
+}
