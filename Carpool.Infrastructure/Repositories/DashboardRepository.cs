@@ -1,8 +1,9 @@
 using Carpool.Domain.Common;
 using Carpool.Domain.Entities;
+using Carpool.Domain.Interfaces;
 using Carpool.Infrastructure.Context;
 
-public class DashboardRepository
+public class DashboardRepository : IDashboardRepository
 {
     private readonly CarpoolDbContext _context;
 
