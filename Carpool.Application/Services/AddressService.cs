@@ -19,25 +19,26 @@ namespace Carpool.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<Address>> GetAllAddressesAsync()
+        public async Task<IEnumerable<AddressDTO>> GetAllAddressesAsync()
         {
             IEnumerable<Address> addresses = await _addressRepository.GetAllAddressesAsync();
 
             if (addresses is null || !addresses.Any())
                 throw new NotFoundException("No addresses found in database.");
 
-            return addresses;
+            return addresses.Select(u => ObjectUpdater.MapObject<AddressDTO>(u));
         }
 
-        public async Task<Address> GetAddressByIdAsync(int id)
+        public async Task<AddressDTO> GetAddressByIdAsync(int id)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
 
-            return await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
+            Address address = await _addressRepository.GetAddressByIdAsync(id) ?? throw new NotFoundException($"Address with ID {id} not found.");
+            return ObjectUpdater.MapObject<AddressDTO>(address);
         }
 
-        public async Task<Address> CreateAddressAsync(CreateAddressDTO addressDto)
+        public async Task<AddressDTO> CreateAddressAsync(CreateAddressDTO addressDto)
         {
             if (addressDto is null)
                 throw new BadRequestException("Address object cannot be null.");
@@ -55,10 +56,10 @@ namespace Carpool.Application.Services
 
             await _userRepository.UpdateUserAsync(user);
 
-            return address;
+            return ObjectUpdater.MapObject<AddressDTO>(address);
         }
 
-        public async Task<Address> UpdateAddressAsync(int id, UpdateAddressDTO addressDto)
+        public async Task<AddressDTO> UpdateAddressAsync(int id, UpdateAddressDTO addressDto)
         {
             if (id <= 0)
                 throw new BadRequestException("Invalid ID.");
@@ -72,7 +73,7 @@ namespace Carpool.Application.Services
                 throw new BadRequestException(validationResult);
 
             await _addressRepository.UpdateAddressAsync(address);
-            return address;
+            return ObjectUpdater.MapObject<AddressDTO>(address);
         }
 
         public async Task<bool> DeleteAddressAsync(int id)
