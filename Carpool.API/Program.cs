@@ -1,25 +1,17 @@
 using API.Middleware;
-using Carpool.Application.Services;
 using Carpool.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using Carpool.Infrastructure.DependancyInjection;
-using Carpool.Application.DependencyInjection;
-using Carpool.Application.Interfaces;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Carpool.Application;
-using Microsoft.OpenApi.Models;
-using Carpool.Domain.Interfaces;
 using System.Text.Json.Serialization;
-using Carpool.Domain.Services;
 using Carpool.ChatHub;
+using Carpool.API.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
-var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"]);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+SwaggerConfiguration.ConfigureSwagger(builder.Services);
+DatabaseConfiguration.ConfigureDatabase(builder.Services, builder.Configuration);
+JwtAuthenticationConfiguration.ConfigureJwtAuthentication(builder.Services, builder.Configuration);
+ApplicationServiceConfiguration.ConfigureServices(builder.Services, builder.Configuration);
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -28,63 +20,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddCors();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Carpool", Version = "v1" });
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT"
-    });
-
-    var securityRequirement = new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    };
-
-    c.AddSecurityRequirement(securityRequirement);
-});
-
-builder.Services.AddDbContext<CarpoolDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
-});
-
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication(builder.Configuration);
-
-builder.Services.AddSignalR();
 
 var app = builder.Build();
 
