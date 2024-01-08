@@ -21,35 +21,35 @@ namespace Carpool.API.Controllers
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Feedback>>> GetAllFeedbacks()
+        public async Task<ActionResult<IEnumerable<FeedbackDTO>>> GetAllFeedbacks()
         {
-            IEnumerable<Feedback> feedbacks = await _feedbackService.GetAllFeedbacksAsync();
+            IEnumerable<FeedbackDTO> feedbacks = await _feedbackService.GetAllFeedbacksAsync();
             return Ok(feedbacks);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Feedback>> GetFeedbackById(int id)
+        public async Task<ActionResult<FeedbackDTO>> GetFeedbackById(int id)
         {
-            Feedback feedback = await _feedbackService.GetFeedbackByIdAsync(id);
+            FeedbackDTO feedback = await _feedbackService.GetFeedbackByIdAsync(id);
             return Ok(feedback);
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacksByUserId(int userId)
+        public async Task<ActionResult<IEnumerable<FeedbackDTO>>> GetFeedbacksByUserId(int userId)
         {
-            IEnumerable<Feedback> feedbacks = await _feedbackService.GetFeedbacksByUserIdAsync(userId);
+            IEnumerable<FeedbackDTO> feedbacks = await _feedbackService.GetFeedbacksByUserIdAsync(userId);
             return Ok(feedbacks);
         }
         
         [HttpPost]
-        public async Task<ActionResult<Feedback>> AddFeedback(CreateFeedbackDTO feedback)
+        public async Task<ActionResult<FeedbackDTO>> AddFeedback(CreateFeedbackDTO feedback)
         {
-            Feedback createdFeedback = await _feedbackService.CreateFeedbackAsync(feedback);
+            FeedbackDTO createdFeedback = await _feedbackService.CreateFeedbackAsync(feedback);
             return CreatedAtAction(nameof(GetFeedbackById), new { id = createdFeedback.Id }, createdFeedback);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Feedback>> UpdateFeedback(int id, UpdateFeedbackDTO feedback)
+        public async Task<ActionResult<FeedbackDTO>> UpdateFeedback(int id, UpdateFeedbackDTO feedback)
         {
             await _feedbackService.UpdateFeedbackAsync(id, feedback);
             return NoContent();

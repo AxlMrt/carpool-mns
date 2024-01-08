@@ -20,28 +20,28 @@ namespace Carpool.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Address>>> GetAllAddresses()
+        public async Task<ActionResult<IEnumerable<AddressDTO>>> GetAllAddresses()
         {
-            IEnumerable<Address> addresses = await _addressService.GetAllAddressesAsync();
+            IEnumerable<AddressDTO> addresses = await _addressService.GetAllAddressesAsync();
             return Ok(addresses);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Address>> GetAddressById(int id)
+        public async Task<ActionResult<AddressDTO>> GetAddressById(int id)
         {
-            Address address = await _addressService.GetAddressByIdAsync(id);
+            AddressDTO address = await _addressService.GetAddressByIdAsync(id);
             return Ok(address);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Address>> CreateAddress(CreateAddressDTO addressDto)
+        public async Task<ActionResult<AddressDTO>> CreateAddress(CreateAddressDTO addressDto)
         {
-            Address address = await _addressService.CreateAddressAsync(addressDto);
+            AddressDTO address = await _addressService.CreateAddressAsync(addressDto);
             return CreatedAtAction(nameof(GetAddressById), new { id = address.Id }, address);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Address>> UpdateAddress(int id, UpdateAddressDTO addressDto)
+        public async Task<ActionResult<AddressDTO>> UpdateAddress(int id, UpdateAddressDTO addressDto)
         {
             await _addressService.UpdateAddressAsync(id, addressDto);
             return NoContent();

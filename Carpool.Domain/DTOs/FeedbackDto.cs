@@ -4,6 +4,7 @@ namespace Carpool.Domain.DTOs.Feedback
 {
     public class FeedbackDTO
     {
+        public int Id { get; set; }
         public User User { get; set; }
         public string Comment { get; set; }
         public int Rating { get; set; }
